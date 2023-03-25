@@ -1,0 +1,18 @@
+digraph List {
+	dpi = 100;
+	fontname = "Comic Sans MS";
+	fontsize = 20;
+	rankdir  = TB;
+graph [fillcolor = lightgreen, ranksep = 1.3, nodesep = 0.5, style = "rounded", color = green, penwidth = 2];
+edge [color = darkgrey, arrowhead = onormal, arrowsize = 1, penwidth = 1.2];
+node1 [shape = record, color = blue, style = solid, label = "{left: 0x4a97540| operator: *| right: 0x4a975a0}"]
+node1 -> node2; node1 -> node3; 
+node2 [shape = record, color = blue, style = solid, label = "{left: 0x4a97480| operator: +| right: 0x4a974e0}"]
+node2 -> node3; node2 -> node4; 
+node3 [shape = record, color = red, style = solid, label = "{left: (nil)| value: 10| right: (nil)}"]
+
+node4 [shape = record, color = red, style = solid, label = "{left: (nil)| value: 5| right: (nil)}"]
+
+node5 [shape = record, color = red, style = solid, label = "{left: (nil)| value: 7| right: (nil)}"]
+
+}
