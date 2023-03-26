@@ -25,7 +25,7 @@ struct Node{
 typedef struct Node Node;
 
 typedef struct {
-    Node* data;
+    Node** elem_address;
     int head;
     int tail;
     int size;
@@ -35,7 +35,7 @@ typedef struct {
 const int QueueInitSize = 10;
 
 void queue_init(Queue* queue, int size);
-void queue_enqueue(Queue* queue, Node value);
+void queue_enqueue(Queue* queue, Node* value);
 Node* queue_dequeue(Queue* queue);
 void queue_dtor(Queue* queue);
 void queue_print(Queue queue);
