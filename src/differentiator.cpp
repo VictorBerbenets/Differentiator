@@ -1,8 +1,6 @@
 #include "..//include//differentiator.h"
 #include "..//include//graphviz.h"
 
-
-
 Node* CreateNewNode(int TYPE_NUM, elem_t value, Node* left_node, Node* right_node) {
 
     Node* new_node = (Node*) calloc(ONE_NODE, sizeof(Node));
@@ -26,48 +24,7 @@ Node* CreateNewNode(int TYPE_NUM, elem_t value, Node* left_node, Node* right_nod
     return new_node;
 }
 
-int queue_is_empty(Queue* queue) {
-
-    return (queue->size == 0);
-}
-
-void queue_init(Queue* queue, int size) {
-
-    if (size < 0) {
-        size = QueueInitSize;
-    }
-    queue->capacity = size;
-    queue->elem_address = (Node**) calloc(queue->capacity, sizeof(Node*));
-    queue->head = 1;
-    queue->tail = 0;
-    queue->size = 0;
-}
-void queue_enqueue(Queue* queue, Node* value) {
-
-    queue->tail++;
-    queue->elem_address[queue->tail] = value;
-    queue->size++;
-}
-Node* queue_dequeue(Queue* queue) {
-
-    queue->head++;
-    queue->size--;
-    return (queue->elem_address[queue->head - 1]);
-}
-void queue_dtor(Queue* queue) {
-
-    free(queue->elem_address);
-}
-// void queue_print(Queue queue) {
-
-//     printf("head: %d;   tail: %d;   size: %d\n", queue.head, queue.tail, queue.size);
-//     for (int i = 1; i <= queue.size; i++) {
-//         printf("%lg ", *queue.elem_address[i]->value.);
-//     }
-//     printf("\n");
-// }
-
-int TreeDump(Node* tree) {
+int TreeDump(const Node* tree) {
 
     DotStartGraph("data//list.dot");
     Validator(dot_file == nullptr, in opening file:'data//list.dot', return -1;);
@@ -83,7 +40,7 @@ int TreeDump(Node* tree) {
 
     Queue q = {};
     queue_init(&q, QueueInitSize);
-    queue_enqueue(&q, tree);
+    queue_enqueue(&q, (Node*)tree);
 
     int node_head = 1;
     int node_next = 2;
@@ -124,12 +81,12 @@ void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter) {
                 *node_counter,  ptr, ptr->value.number, ptr->left_branch, ptr->right_branch);
     }
     else {
-        DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#ABCDD1\", label = \"{address: %p|operator: '%c'| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
-                *node_counter,  ptr, ptr->value.oper, ptr->left_branch, ptr->right_branch);
+        DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#ABFFF1\", label = \"{address: %p|operator: '%c'| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
+                *node_counter,  ptr, ptr->value.oper, ptr->left_branch, ptr->right_branch); 
     }
 }
   
-void PrintTree(Node* tree) {
+void PrintTree(const Node* tree) {
 
     if (!tree) { return; }
     TabsForTreePrint += 5;
@@ -152,6 +109,38 @@ void PrintTree(Node* tree) {
     return ;
 }
 
+// calculate tree
+double Ebal(const Node* node_ptr) { 
+
+    if (!node_ptr) {
+        return INVALID_NODE;
+    }
+    if (node_ptr->type == NUMBER) {
+        Validator(node_ptr->left_branch,  invalid node address, return INVALID_NODE;);
+        Validator(node_ptr->right_branch, invalid node address, return INVALID_NODE;);
+        return node_ptr->value.number;
+    }
+        printf("oper = %c\n", node_ptr->value.oper);
+
+    switch(node_ptr->value.oper) {
+        case OP_PLUS: return Ebal(node_ptr->left_branch) + Ebal(node_ptr->right_branch);
+        case OP_SUB : return Ebal(node_ptr->left_branch) - Ebal(node_ptr->right_branch);
+        case OP_MUL : return Ebal(node_ptr->left_branch) * Ebal(node_ptr->right_branch);
+        case OP_DIV : {
+            int divider = Ebal(node_ptr->right_branch);
+            if (!divider) {
+                fprintf(stderr, "" Purple "" White"Warning:" Grey "" White "%s:%d:" Grey "\n\t|Trying to divide by 0\n", \
+                    __PRETTY_FUNCTION__, __LINE__);
+                return DIVIDE_ERROR;
+            }
+            return Ebal(node_ptr->left_branch) / divider;
+        }
+        default: fprintf(stderr, "" Purple "" White"Warning:" Grey "" White "%s:%d:" Grey "\n\t|Invalid operator: %c\n",\
+             __PRETTY_FUNCTION__, __LINE__, node_ptr->value.oper); 
+                return INVALID_OPERATOR;
+    }
+}
+
 // Node* FindNode(Node* real_node, elem_t value) {
 
 //     if (!real_node) {
@@ -170,13 +159,47 @@ void PrintTree(Node* tree) {
 //     return nullptr;
 // }
 
-void DeleteTree(Node* tree) {
+void DeleteTree(const Node* tree) {
 
     if (!tree) { return ; }
 
     DeleteTree(tree->left_branch);
     DeleteTree(tree->right_branch);
 
-    free(tree);
+    free((Node*)tree);
     return ;
+}
+
+
+int queue_is_empty(Queue* queue) {
+
+    return (queue->size == 0);
+}
+
+void queue_init(Queue* queue, int size) {
+
+    if (size < 0) {
+        size = QueueInitSize;
+    }
+    queue->capacity = size;
+    queue->elem_address = (Node**) calloc(queue->capacity, sizeof(Node*));
+    queue->head = 1;
+    queue->tail = 0;
+    queue->size = 0;
+}
+void queue_enqueue(Queue* queue, Node* value) {
+
+    queue->tail++;
+    queue->elem_address[queue->tail] = value;
+    queue->size++;
+}
+Node* queue_dequeue(Queue* queue) {
+
+    queue->head++;
+    queue->size--;
+    return (queue->elem_address[queue->head - 1]);
+}
+void queue_dtor(Queue* queue) {
+
+    free(queue->elem_address);
 }

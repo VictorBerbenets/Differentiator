@@ -7,17 +7,19 @@
 int main() {
 
     // int size = 3;
-    Node* tree;
+    const Node* tree;
     Node* node1 = CreateNewNode(NUMBER, 5, NULL, NULL);
     Node* node2 = CreateNewNode(NUMBER, 7, NULL, NULL);
     Node* node3 = CreateNewNode(OPER, '+', node1, node2);
     Node* node4 = CreateNewNode(NUMBER, 10, NULL, NULL);
-    Node* node5 = CreateNewNode(OPER, '*', node3, node4);
-    Node* node7 = CreateNewNode(NUMBER, -2, NULL, NULL);
-    Node* node8 = CreateNewNode(OPER, '//', node5, node7);
+    Node* node0 = CreateNewNode(NUMBER, -100, NULL, NULL);
+    Node* node6 = CreateNewNode(OPER, '-', node4, node0);
+    Node* node5 = CreateNewNode(OPER, '*', node3, node6);
+    Node* node7 = CreateNewNode(NUMBER, -5.5, NULL, NULL);
+    Node* node8 = CreateNewNode(OPER, '/', node5, node7);
     tree = node8;
     PrintTree(tree);
-
+    printf("ebal togo rot = %lg\n", Ebal(tree));
     TreeDump(tree);
 
     DeleteTree(tree);

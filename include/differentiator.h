@@ -38,13 +38,13 @@ void queue_init(Queue* queue, int size);
 void queue_enqueue(Queue* queue, Node* value);
 Node* queue_dequeue(Queue* queue);
 void queue_dtor(Queue* queue);
-void queue_print(Queue queue);
 int queue_is_empty(Queue* queue);
 
 enum ListConsts {
 
-    TREE_INITED = 10,
-    ONE_NODE = 1,
+    TREE_INITED,
+    ONE_NODE,
+    ALL_RIGHT,
 };
 
 enum Position {
@@ -53,8 +53,10 @@ enum Position {
 };
 
 enum ListErrors {
-
-    MEMORY_ALLOC_ERR = 100,
+    MEMORY_ALLOC_ERR,
+    INVALID_OPERATOR,
+    INVALID_NODE,
+    DIVIDE_ERROR,
 };
 
 // void TreeCtor(Node** tree);
@@ -66,10 +68,12 @@ Node* CreateNewNode(int TYPE_NUM, elem_t value, Node* left_node, Node* right_nod
 void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter);
 void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_next, Position position);
 
-void PrintTree(Node* tree);
+double Ebal(const Node* node_ptr);
 
-void DeleteTree(Node* tree);
+void PrintTree(const Node* tree);
 
-int TreeDump(Node* tree);
+void DeleteTree(const Node* tree);
+
+int TreeDump(const Node* tree);
 
 #endif

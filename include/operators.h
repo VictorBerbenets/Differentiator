@@ -9,7 +9,7 @@ enum Operators {
     OP_PLUS = '+',
     OP_SUB  = '-',
     OP_MUL  = '*',
-    OP_DIV  = '\\',
+    OP_DIV  = '/',
 };
 
 #endif
