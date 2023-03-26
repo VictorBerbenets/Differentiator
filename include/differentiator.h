@@ -13,7 +13,6 @@ static int TabsForTreePrint = 0;
 typedef double elem_t;
 
 struct Node{
-
     int type;  
     union data{
         int oper;
@@ -33,6 +32,8 @@ typedef struct {
     int capacity;
 } Queue;
 
+const int QueueInitSize = 10;
+
 void queue_init(Queue* queue, int size);
 void queue_enqueue(Queue* queue, Node value);
 Node queue_dequeue(Queue* queue);
@@ -46,6 +47,11 @@ enum ListConsts {
     ONE_NODE = 1,
 };
 
+enum Position {
+    LEFT,
+    RIGHT,
+};
+
 enum ListErrors {
 
     MEMORY_ALLOC_ERR = 100,
@@ -57,10 +63,13 @@ enum ListErrors {
 
 Node* CreateNewNode(int TYPE_NUM, elem_t value, Node* left_node, Node* right_node);
 
+void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter);
+void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_next, Position position);
+
 void PrintTree(Node* tree);
 
 void DeleteTree(Node* tree);
 
-int TreeDump(Node* tree, Queue* q);
+int TreeDump(Node* tree);
 
 #endif

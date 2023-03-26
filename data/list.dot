@@ -4,15 +4,25 @@ digraph List {
 	fontsize = 20;
 	rankdir  = TB;
 graph [fillcolor = lightgreen, ranksep = 1.3, nodesep = 0.5, style = "rounded", color = green, penwidth = 2];
-edge [color = darkgrey, arrowhead = onormal, arrowsize = 1, penwidth = 1.2];
-node1 [shape = record, color = blue, style = solid, label = "{left: 0x4a97540| operator: *| right: 0x4a975a0}"]
-node1 -> node2; node1 -> node3; 
-node2 [shape = record, color = blue, style = solid, label = "{left: 0x4a97480| operator: +| right: 0x4a974e0}"]
-node2 -> node3; node2 -> node4; 
-node3 [shape = record, color = red, style = solid, label = "{left: (nil)| value: 10| right: (nil)}"]
+edge [color = dark, arrowhead = diamond, arrowsize = 1, penwidth = 1.2];
+node1 [shape = Mrecord, color = blue, style = solid, label = "{address: 0x1ffefffc70|operator: /| { <ptr1> left: 0x4a971c0| <ptr2> right: 0x4a97280}}"]
+node2 [shape = Mrecord, color = blue, style = solid, label = "{address: 0x1ffefffc70|operator: /| { <ptr1> left: 0x4a971c0| <ptr2> right: 0x4a97280}}"]
+node1: <ptr1> -> node2; node3 [shape = Mrecord, color = blue, style = solid, label = "{address: 0x1ffefffc70|operator: /| { <ptr1> left: 0x4a971c0| <ptr2> right: 0x4a97280}}"]
+node1: <ptr2> -> node3; 
+node2 [shape = Mrecord, color = blue, style = solid, label = "{address: 0x1ffefffc70|operator: *| { <ptr1> left: 0x4a97100| <ptr2> right: 0x4a97160}}"]
+node4 [shape = Mrecord, color = blue, style = solid, label = "{address: 0x1ffefffc70|operator: *| { <ptr1> left: 0x4a97100| <ptr2> right: 0x4a97160}}"]
+node2: <ptr1> -> node4; node5 [shape = Mrecord, color = blue, style = solid, label = "{address: 0x1ffefffc70|operator: *| { <ptr1> left: 0x4a97100| <ptr2> right: 0x4a97160}}"]
+node2: <ptr2> -> node5; 
+node3 [shape = Mrecord, color = red, style = solid, label = "{address: 0x1ffefffc70|value: -2| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
 
-node4 [shape = record, color = red, style = solid, label = "{left: (nil)| value: 5| right: (nil)}"]
+node4 [shape = Mrecord, color = blue, style = solid, label = "{address: 0x1ffefffc70|operator: +| { <ptr1> left: 0x4a97040| <ptr2> right: 0x4a970a0}}"]
+node6 [shape = Mrecord, color = blue, style = solid, label = "{address: 0x1ffefffc70|operator: +| { <ptr1> left: 0x4a97040| <ptr2> right: 0x4a970a0}}"]
+node4: <ptr1> -> node6; node7 [shape = Mrecord, color = blue, style = solid, label = "{address: 0x1ffefffc70|operator: +| { <ptr1> left: 0x4a97040| <ptr2> right: 0x4a970a0}}"]
+node4: <ptr2> -> node7; 
+node5 [shape = Mrecord, color = red, style = solid, label = "{address: 0x1ffefffc70|value: 10| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
 
-node5 [shape = record, color = red, style = solid, label = "{left: (nil)| value: 7| right: (nil)}"]
+node6 [shape = Mrecord, color = red, style = solid, label = "{address: 0x1ffefffc70|value: 5| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+
+node7 [shape = Mrecord, color = red, style = solid, label = "{address: 0x1ffefffc70|value: 7| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
 
 }
