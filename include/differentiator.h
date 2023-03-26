@@ -36,7 +36,7 @@ const int QueueInitSize = 10;
 
 void queue_init(Queue* queue, int size);
 void queue_enqueue(Queue* queue, Node value);
-Node queue_dequeue(Queue* queue);
+Node* queue_dequeue(Queue* queue);
 void queue_dtor(Queue* queue);
 void queue_print(Queue queue);
 int queue_is_empty(Queue* queue);

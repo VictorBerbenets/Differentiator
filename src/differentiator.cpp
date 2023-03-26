@@ -49,13 +49,13 @@ void queue_enqueue(Queue* queue, Node value) {
     queue->data[queue->tail] = value;
     queue->size++;
 }
-Node queue_dequeue(Queue* queue) {
+Node* queue_dequeue(Queue* queue) {
 
-    Node ret_value = queue->data[queue->head];
+    // Node ret_value = queue->data[queue->head];
     queue->head++;
     queue->size--;
 
-    return ret_value;
+    return &(queue->data[queue->head - 1]);
 }
 void queue_dtor(Queue* queue) {
 
@@ -94,8 +94,7 @@ int TreeDump(Node* tree) {
 
     while (q.size) {
 
-        Node queue_node = queue_dequeue(&q);
-        Node* ptr = &queue_node;
+        Node* ptr = queue_dequeue(&q);
         CreateGraphNode(dot_file, ptr, &node_head);
 
         if (ptr->left_branch) {
@@ -125,12 +124,12 @@ void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_ne
 void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter) {
 
     if (ptr->type == NUMBER) {
-        DotPrint("node%d [shape = Mrecord, color = red, style = solid, label = \"{address: %p|value: %lg| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
+        DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#FFD0D0\", label = \"{address: %p|value: %lg| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
                 *node_counter,  ptr, ptr->value.number, ptr->left_branch, ptr->right_branch);
         printf("%lf\n", ptr->value.number);
     }
     else {
-        DotPrint("node%d [shape = Mrecord, color = blue, style = solid, label = \"{address: %p|operator: %c| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
+        DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#ABCDD1\", label = \"{address: %p|operator: '%c'| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
                 *node_counter,  ptr, ptr->value.oper, ptr->left_branch, ptr->right_branch);
         printf("%c\n", ptr->value.oper);
     }
