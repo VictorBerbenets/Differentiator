@@ -6,10 +6,12 @@ const int NUMBER = -1;
 const int OPER   = 0;
 enum Operators {
 
-    OP_PLUS = '+',
-    OP_SUB  = '-',
-    OP_MUL  = '*',
-    OP_DIV  = '/',
+    OP_PLUS        = '+',
+    OP_SUB         = '-',
+    OP_MUL         = '*',
+    OP_DIV         = '/',
+    OPEN_BRACKET   = '(',
+    CLOSE_BRACKET  = ')',
 };
 
 #endif

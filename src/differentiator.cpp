@@ -1,6 +1,43 @@
 #include "..//include//differentiator.h"
 #include "..//include//graphviz.h"
 
+Node* CreateTree(const char* file_name) {
+
+    FILE* TreeFile = fopen(file_name, "rb");
+    Validator(!TreeFile, reading file error, exit(ERROR_IN_READING_FILE));
+
+    unsigned int buffer_size = GetFileSize(file_name);
+    char* buffer = (char*) calloc(buffer_size, sizeof(char));
+    Validator(!buffer, memory giving error, exit(MEMORY_ALLOC_ERR));
+
+    int fread_ret_value = fread(buffer, sizeof(char), buffer_size, TreeFile);
+    Validator(fread_ret_value != buffer_size, fread reading error, exit(FREAD_READING_ERROR));
+
+    // char* buffer_ptr  = buffer;
+    int symb_position = 1;
+    int bracket_count = 0;
+    char symbol       = 0;
+    double value      = 0;
+    Node* tree        = {};
+//pre_order
+    for (int symb_count = 0; symb_count < buffer_size; symb_count++) {
+        if (sscanf(buffer, " %c", &symbol) && symbol == OPEN_BRACKET) {
+            symb_position++;
+            bracket_count++;
+            if (sscanf(buffer, " %lg", &value)) {
+
+            }
+        }
+        else if (symbol == CLOSE_BRACKET) {
+            symb_position++;
+            bracket_count--;
+        }
+
+    }
+
+    fclose(TreeFile);
+}
+
 Node* CreateNewNode(int TYPE_NUM, elem_t value, Node* left_node, Node* right_node) {
 
     Node* new_node = (Node*) calloc(ONE_NODE, sizeof(Node));
@@ -112,15 +149,11 @@ void PrintTree(const Node* tree) {
 // calculate tree
 double Ebal(const Node* node_ptr) { 
 
-    if (!node_ptr) {
-        return INVALID_NODE;
-    }
     if (node_ptr->type == NUMBER) {
         Validator(node_ptr->left_branch,  invalid node address, return INVALID_NODE;);
         Validator(node_ptr->right_branch, invalid node address, return INVALID_NODE;);
         return node_ptr->value.number;
     }
-        printf("oper = %c\n", node_ptr->value.oper);
 
     switch(node_ptr->value.oper) {
         case OP_PLUS: return Ebal(node_ptr->left_branch) + Ebal(node_ptr->right_branch);

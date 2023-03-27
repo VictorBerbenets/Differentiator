@@ -9,10 +9,10 @@ all : Diff
 Diff : $(SRC_DIR)differentiator.o  $(SRC_DIR)main.o 
 	$(CC) $^  -o $@
 
-differentiator.o : differentiator.cpp
+differentiator.o : $(SRC_DIR)differentiator.cpp
 	$(CC) $(CFLAGS) $^
 	
-main.o : main.cpp
+main.o : $(SRC_DIR)main.cpp
 	$(CC) $(CFLAGS) $^
 
 clean:

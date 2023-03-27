@@ -53,6 +53,8 @@ enum Position {
 };
 
 enum ListErrors {
+    ERROR_IN_READING_FILE,
+    FREAD_READING_ERROR,
     MEMORY_ALLOC_ERR,
     INVALID_OPERATOR,
     INVALID_NODE,
@@ -62,6 +64,7 @@ enum ListErrors {
 // void TreeCtor(Node** tree);
 
 // Node* InsertNode(Node* prev_node, elem_t value);
+Node* CreateTree(const char* file_name);
 
 Node* CreateNewNode(int TYPE_NUM, elem_t value, Node* left_node, Node* right_node);
 
@@ -75,5 +78,7 @@ void PrintTree(const Node* tree);
 void DeleteTree(const Node* tree);
 
 int TreeDump(const Node* tree);
+
+size_t GetFileSize (const char *file);
 
 #endif
