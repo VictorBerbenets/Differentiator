@@ -6,13 +6,16 @@ SRC_DIR = ./src/
 
 all : Diff
 
-Diff : $(SRC_DIR)differentiator.o  $(SRC_DIR)main.o 
+Diff : $(SRC_DIR)differentiator.o  $(SRC_DIR)main.o  $(SRC_DIR)file_utils.o
 	$(CC) $^  -o $@
 
 differentiator.o : $(SRC_DIR)differentiator.cpp
 	$(CC) $(CFLAGS) $^
 	
 main.o : $(SRC_DIR)main.cpp
+	$(CC) $(CFLAGS) $^
+
+file_utils.o : $(SRC_DIR) file_utils.cpp
 	$(CC) $(CFLAGS) $^
 
 clean:

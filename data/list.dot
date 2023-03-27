@@ -5,30 +5,18 @@ digraph List {
 	rankdir  = TB;
 graph [fillcolor = lightgreen, ranksep = 1.3, nodesep = 0.5, style = "rounded", color = green, penwidth = 2];
 edge [color = black, arrowhead = diamond, arrowsize = 1, penwidth = 1.2];
-node1 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97340|operator: '/'| { <ptr1> left: 0x4a97280| <ptr2> right: 0x4a972e0}}"]
-node2 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97340|operator: '/'| { <ptr1> left: 0x4a97280| <ptr2> right: 0x4a972e0}}"]
-node1: <ptr1> -> node2; node3 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97340|operator: '/'| { <ptr1> left: 0x4a97280| <ptr2> right: 0x4a972e0}}"]
+node1 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97280|operator: '*'| { <ptr1> left: 0x4a97100| <ptr2> right: 0x4a97160}}"]
+node2 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97280|operator: '*'| { <ptr1> left: 0x4a97100| <ptr2> right: 0x4a97160}}"]
+node1: <ptr1> -> node2; node3 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97280|operator: '*'| { <ptr1> left: 0x4a97100| <ptr2> right: 0x4a97160}}"]
 node1: <ptr2> -> node3; 
-node2 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97280|operator: '*'| { <ptr1> left: 0x4a97100| <ptr2> right: 0x4a97220}}"]
-node4 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97280|operator: '*'| { <ptr1> left: 0x4a97100| <ptr2> right: 0x4a97220}}"]
-node2: <ptr1> -> node4; node5 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97280|operator: '*'| { <ptr1> left: 0x4a97100| <ptr2> right: 0x4a97220}}"]
-node2: <ptr2> -> node5; 
-node3 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label = "{address: 0x4a972e0|value: -5.5| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
-
+node2 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97100|operator: '+'| { <ptr1> left: 0x4a97040| <ptr2> right: 0x4a970a0}}"]
 node4 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97100|operator: '+'| { <ptr1> left: 0x4a97040| <ptr2> right: 0x4a970a0}}"]
-node6 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97100|operator: '+'| { <ptr1> left: 0x4a97040| <ptr2> right: 0x4a970a0}}"]
-node4: <ptr1> -> node6; node7 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97100|operator: '+'| { <ptr1> left: 0x4a97040| <ptr2> right: 0x4a970a0}}"]
-node4: <ptr2> -> node7; 
-node5 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97220|operator: '-'| { <ptr1> left: 0x4a97160| <ptr2> right: 0x4a971c0}}"]
-node8 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97220|operator: '-'| { <ptr1> left: 0x4a97160| <ptr2> right: 0x4a971c0}}"]
-node5: <ptr1> -> node8; node9 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97220|operator: '-'| { <ptr1> left: 0x4a97160| <ptr2> right: 0x4a971c0}}"]
-node5: <ptr2> -> node9; 
-node6 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label = "{address: 0x4a97040|value: 5| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node2: <ptr1> -> node4; node5 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label = "{address: 0x4a97100|operator: '+'| { <ptr1> left: 0x4a97040| <ptr2> right: 0x4a970a0}}"]
+node2: <ptr2> -> node5; 
+node3 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label = "{address: 0x4a97160|value: 10| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
 
-node7 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label = "{address: 0x4a970a0|value: 7| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node4 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label = "{address: 0x4a97040|value: 5| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
 
-node8 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label = "{address: 0x4a97160|value: 10| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
-
-node9 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label = "{address: 0x4a971c0|value: -100| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node5 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label = "{address: 0x4a970a0|value: 7| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
 
 }

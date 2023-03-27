@@ -2,6 +2,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+
 size_t GetFileSize (const char *file) { 
     
     Validator(!file, invalid file name, exit(ERROR_IN_READING_FILE););

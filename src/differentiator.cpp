@@ -1,30 +1,44 @@
 #include "..//include//differentiator.h"
 #include "..//include//graphviz.h"
 
-Node* CreateTree(const char* file_name) {
+Node* ConstructTree(const char* file_name) {
 
+
+    Buffer buff = ReadFile(file_name);
+    Node* tree = ConstructNode(&buff);
+}
+
+Buffer ReadFile(const char* file_name) {
+
+    Buffer buff = {};
     FILE* TreeFile = fopen(file_name, "rb");
+
     Validator(!TreeFile, reading file error, exit(ERROR_IN_READING_FILE));
 
-    unsigned int buffer_size = GetFileSize(file_name);
-    char* buffer = (char*) calloc(buffer_size, sizeof(char));
-    Validator(!buffer, memory giving error, exit(MEMORY_ALLOC_ERR));
+    buff.buffer_size = GetFileSize(file_name);
+    buff.buffer = (char*) calloc(buff.buffer_size, sizeof(char));
+    Validator(!buff.buffer, memory giving error, exit(MEMORY_ALLOC_ERR));
 
-    int fread_ret_value = fread(buffer, sizeof(char), buffer_size, TreeFile);
-    Validator(fread_ret_value != buffer_size, fread reading error, exit(FREAD_READING_ERROR));
+    int fread_ret_value = fread(buff.buffer, sizeof(char), buff.buffer_size, TreeFile);
+    Validator(fread_ret_value != buff.buffer_size, fread reading error, exit(FREAD_READING_ERROR));
 
-    // char* buffer_ptr  = buffer;
+    fclose(TreeFile);
+    return buff;
+}
+
+Node* ConstructNode(Buffer* buff) {
+
     int symb_position = 1;
     int bracket_count = 0;
     char symbol       = 0;
-    double value      = 0;
+    elem_t value      = 0;
     Node* tree        = {};
 //pre_order
-    for (int symb_count = 0; symb_count < buffer_size; symb_count++) {
-        if (sscanf(buffer, " %c", &symbol) && symbol == OPEN_BRACKET) {
+    for (int symb_count = 0; symb_count < buff->buffer_size; symb_count++) {
+        if (sscanf(buff->buffer, " %c", &symbol) && symbol == OPEN_BRACKET) {
             symb_position++;
             bracket_count++;
-            if (sscanf(buffer, " %lg", &value)) {
+            if (sscanf(buff->buffer, " %lg", &value)) {
 
             }
         }
@@ -32,10 +46,7 @@ Node* CreateTree(const char* file_name) {
             symb_position++;
             bracket_count--;
         }
-
     }
-
-    fclose(TreeFile);
 }
 
 Node* CreateNewNode(int TYPE_NUM, elem_t value, Node* left_node, Node* right_node) {
@@ -122,8 +133,95 @@ void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter) {
                 *node_counter,  ptr, ptr->value.oper, ptr->left_branch, ptr->right_branch); 
     }
 }
-  
-void PrintTree(const Node* tree) {
+
+int PrintTreeToFile(Node* tree, PrintType type) {
+
+    const char* file_name = nullptr;
+    switch (type) {
+        case IN_ORDER: file_name = "data//in_order_tree.txt"; break;
+
+        case PRE_ORDER: file_name = "data//pre_order_tree.txt"; break;
+
+        case POST_ORDER: file_name = "data//post_order_tree.txt"; break;
+
+        default: fprintf(stderr, "%s:%d:error: invalid print type: '%d'\n", __PRETTY_FUNCTION__, __LINE__, type); return INVALID_PRINT_TYPE;
+    }
+
+    FILE* TreeFile = fopen(file_name, "w");
+    switch(type) {
+        case IN_ORDER: InOrder(tree, TreeFile); break;
+
+        case PRE_ORDER: PreOrder(tree, TreeFile); break;
+
+        case POST_ORDER: PostOrder(tree, TreeFile); break;
+    }
+}
+
+void PreOrder(Node* tree,  FILE* Tree_file) {
+
+    if (!tree) { 
+        return; 
+    }
+
+    fprintf(Tree_file, "(");
+    if (tree->type == NUMBER) {
+        fprintf(Tree_file, "%lg", tree->value.number);
+    }
+    else {
+        fprintf(Tree_file, "%c", tree->value.oper);
+    }
+
+    PreOrder(tree->left_branch, Tree_file);
+    PreOrder(tree->right_branch, Tree_file);
+    fprintf(Tree_file, ")"); 
+
+    return ;
+}
+
+void InOrder(Node* tree, FILE* Tree_file) {
+    
+    if (!tree) { 
+        return; 
+    }
+
+    fprintf(Tree_file, "(");
+    InOrder(tree->left_branch, Tree_file);
+
+    if (tree->type == NUMBER) {
+        fprintf(Tree_file, "%lg", tree->value.number);
+    }
+    else {
+        fprintf(Tree_file, "%c", tree->value.oper);
+    }
+
+    InOrder(tree->right_branch, Tree_file);
+    fprintf(Tree_file, ")"); 
+
+    return ;
+}
+
+void PostOrder(Node* tree, FILE* Tree_file) {
+    
+    if (!tree) { 
+        return; 
+    }
+    fprintf(Tree_file, "(");
+    PostOrder(tree->left_branch, Tree_file);
+    PostOrder(tree->right_branch, Tree_file);
+    if (tree->type == NUMBER) {
+        fprintf(Tree_file, "%lg", tree->value.number);
+    }
+    else {
+        fprintf(Tree_file, "%c", tree->value.oper);
+    }
+
+    fprintf(Tree_file, ")"); 
+
+    return ;
+}
+
+//Print to console
+void PrintTree(const Node* tree) { 
 
     if (!tree) { return; }
     TabsForTreePrint += 5;
@@ -147,7 +245,7 @@ void PrintTree(const Node* tree) {
 }
 
 // calculate tree
-double Ebal(const Node* node_ptr) { 
+elem_t Ebal(const Node* node_ptr) { 
 
     if (node_ptr->type == NUMBER) {
         Validator(node_ptr->left_branch,  invalid node address, return INVALID_NODE;);
