@@ -6,7 +6,7 @@ SRC_DIR = ./src/
 
 all : Diff
 
-Diff : $(SRC_DIR)differentiator.o  $(SRC_DIR)main.o  $(SRC_DIR)file_utils.o
+Diff : $(SRC_DIR)differentiator.o  $(SRC_DIR)main.o  $(SRC_DIR)file_utils.o $(SRC_DIR)queue.o
 	$(CC) $^  -o $@
 
 differentiator.o : $(SRC_DIR)differentiator.cpp
@@ -18,6 +18,8 @@ main.o : $(SRC_DIR)main.cpp
 file_utils.o : $(SRC_DIR) file_utils.cpp
 	$(CC) $(CFLAGS) $^
 
+queue.o : $(SRC_DIR) queue.cpp
+	$(CC) $(CFLAGS) $^
 clean:
 	rm -rf *.o Diff
 

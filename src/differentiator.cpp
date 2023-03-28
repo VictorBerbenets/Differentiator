@@ -86,24 +86,25 @@ int TreeDump(const Node* tree) {
     DotSetGraph("lightgreen", 1.3, 0.5, "rounded", "green", 2.);
     DotSetEdge("black", "diamond", 1., 1.2);
 
-    Queue q = {};
-    queue_init(&q, QueueInitSize);
-    queue_enqueue(&q, (Node*)tree);
+    Queue queue = {};
+    
+    queue_init(&queue, QueueInitSize);
+    queue_enqueue(&queue, (Node*)tree);
 
     int node_head = 1;
     int node_next = 2;
 
-    while (q.size) {
+    while (queue.size) {
 
-        Node* ptr = queue_dequeue(&q);
+        Node* ptr = queue_dequeue(&queue);
         CreateGraphNode(dot_file, ptr, &node_head);
         if (ptr->left_branch) {
             CreateNextGraphNode(dot_file, ptr, &node_head, &node_next, LEFT);
-            queue_enqueue(&q, ptr->left_branch);
+            queue_enqueue(&queue, ptr->left_branch);
         }
         if (ptr->right_branch) {
             CreateNextGraphNode(dot_file, ptr, &node_head, &node_next, RIGHT);
-            queue_enqueue(&q, ptr->right_branch);
+            queue_enqueue(&queue, ptr->right_branch);
 
         }
         DotPrint("\n");
@@ -112,7 +113,7 @@ int TreeDump(const Node* tree) {
 
     DotEndGraph(dot_file);
     DotPrintGraph(file, 1);
-    queue_dtor(&q);
+    queue_dtor(&queue);
 }
 
 void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_next, Position position) {
@@ -272,24 +273,6 @@ elem_t Ebal(const Node* node_ptr) {
     }
 }
 
-// Node* FindNode(Node* real_node, elem_t value) {
-
-//     if (!real_node) {
-//         return nullptr;
-//     }
-//     if (!strcmp(value, real_node->value)) {
-//         return real_node;
-//     }
-
-//     Node* find_left = FindNode (real_node->left_branch, value);
-//     Node* find_right = FindNode (real_node->right_branch, value);
-
-//     if (find_left) return find_left;
-//     if (find_right) return find_right;
-
-//     return nullptr;
-// }
-
 void DeleteTree(const Node* tree) {
 
     if (!tree) { return ; }
@@ -319,9 +302,13 @@ void queue_init(Queue* queue, int size) {
     queue->size = 0;
 }
 void queue_enqueue(Queue* queue, Node* value) {
-
+    
     queue->tail++;
-    queue->elem_address[queue->tail] = value;
+    if (queue->tail == queue->capacity) {
+        queue->capacity = queue->capacity + QueueInitSize;
+        queue->elem_address = (Node**) realloc(queue->elem_address, queue->capacity*sizeof(Node*));
+    }
+    *(queue->elem_address + queue->tail) = value;
     queue->size++;
 }
 Node* queue_dequeue(Queue* queue) {
