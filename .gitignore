@@ -1,4 +1,6 @@
 *.o
 Diff
 .vscode
-
+MakefileOld
+out
+main

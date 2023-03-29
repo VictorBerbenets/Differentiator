@@ -1,11 +1,13 @@
-#include "..//include//differentiator.h"
-#include "..//include//graphviz.h"
+#include "differentiator.h"
+#include "graphviz.h"
+#include "math.h"
 
 Node* ConstructTree(const char* file_name) {
 
 
     Buffer buff = ReadFile(file_name);
     Node* tree = ConstructNode(&buff);
+    return tree;
 }
 
 Buffer ReadFile(const char* file_name) {
@@ -19,10 +21,11 @@ Buffer ReadFile(const char* file_name) {
     buff.buffer = (char*) calloc(buff.buffer_size, sizeof(char));
     Validator(!buff.buffer, memory giving error, exit(MEMORY_ALLOC_ERR));
 
-    int fread_ret_value = fread(buff.buffer, sizeof(char), buff.buffer_size, TreeFile);
+    size_t fread_ret_value = fread(buff.buffer, sizeof(char), buff.buffer_size, TreeFile);
     Validator(fread_ret_value != buff.buffer_size, fread reading error, exit(FREAD_READING_ERROR));
 
     fclose(TreeFile);
+
     return buff;
 }
 
@@ -34,7 +37,7 @@ Node* ConstructNode(Buffer* buff) {
     elem_t value      = 0;
     Node* tree        = {};
 //pre_order
-    for (int symb_count = 0; symb_count < buff->buffer_size; symb_count++) {
+    for (size_t symb_count = 0; symb_count < buff->buffer_size; symb_count++) {
         if (sscanf(buff->buffer, " %c", &symbol) && symbol == OPEN_BRACKET) {
             symb_position++;
             bracket_count++;
@@ -47,6 +50,7 @@ Node* ConstructNode(Buffer* buff) {
             bracket_count--;
         }
     }
+    return tree;
 }
 
 Node* CreateNewNode(int TYPE_NUM, elem_t value, Node* left_node, Node* right_node) {
@@ -72,10 +76,10 @@ Node* CreateNewNode(int TYPE_NUM, elem_t value, Node* left_node, Node* right_nod
     return new_node;
 }
 
-int TreeDump(const Node* tree) {
+int TreeDump(Node* tree) {
 
     DotStartGraph("data//list.dot");
-    Validator(dot_file == nullptr, in opening file:'data//list.dot', return -1;);
+    Validator(dot_file == nullptr, in opening file:'data//list.dot', return ERROR_IN_READING_FILE;);
 
     const char dot_header[] = "digraph List {\n"
                               "\tdpi = 100;\n"
@@ -88,23 +92,23 @@ int TreeDump(const Node* tree) {
 
     Queue queue = {};
     
-    queue_init(&queue, QueueInitSize);
-    queue_enqueue(&queue, (Node*)tree);
-
+    QueueInit(&queue, QueueInitSize);
+    QueuePush(&queue, (Node*)tree);
+    
     int node_head = 1;
     int node_next = 2;
 
     while (queue.size) {
 
-        Node* ptr = queue_dequeue(&queue);
+        Node* ptr = QueuePop(&queue);
         CreateGraphNode(dot_file, ptr, &node_head);
         if (ptr->left_branch) {
             CreateNextGraphNode(dot_file, ptr, &node_head, &node_next, LEFT);
-            queue_enqueue(&queue, ptr->left_branch);
+            QueuePush(&queue, ptr->left_branch);
         }
         if (ptr->right_branch) {
             CreateNextGraphNode(dot_file, ptr, &node_head, &node_next, RIGHT);
-            queue_enqueue(&queue, ptr->right_branch);
+            QueuePush(&queue, ptr->right_branch);
 
         }
         DotPrint("\n");
@@ -113,7 +117,9 @@ int TreeDump(const Node* tree) {
 
     DotEndGraph(dot_file);
     DotPrintGraph(file, 1);
-    queue_dtor(&queue);
+    QueueDtor(&queue);
+
+    return ALL_RIGHT;
 }
 
 void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_next, Position position) {
@@ -139,23 +145,20 @@ int PrintTreeToFile(Node* tree, PrintType type) {
 
     const char* file_name = nullptr;
     switch (type) {
-        case IN_ORDER: file_name = "data//in_order_tree.txt"; break;
-
-        case PRE_ORDER: file_name = "data//pre_order_tree.txt"; break;
-
-        case POST_ORDER: file_name = "data//post_order_tree.txt"; break;
-
+        case IN_ORDER: file_name = "data//in_order_tree.txt";        break;
+        case PRE_ORDER: file_name = "data//pre_order_tree.txt";      break;
+        case POST_ORDER: file_name = "data//post_order_tree.txt";    break;
         default: fprintf(stderr, "%s:%d:error: invalid print type: '%d'\n", __PRETTY_FUNCTION__, __LINE__, type); return INVALID_PRINT_TYPE;
     }
 
     FILE* TreeFile = fopen(file_name, "w");
     switch(type) {
-        case IN_ORDER: InOrder(tree, TreeFile); break;
-
-        case PRE_ORDER: PreOrder(tree, TreeFile); break;
-
-        case POST_ORDER: PostOrder(tree, TreeFile); break;
+        case IN_ORDER: InOrder(tree, TreeFile);        break;
+        case PRE_ORDER: PreOrder(tree, TreeFile);      break;
+        case POST_ORDER: PostOrder(tree, TreeFile);    break;
+        default: fprintf(stderr,"What the f...\n");    break;
     }
+    return ALL_RIGHT;
 }
 
 void PreOrder(Node* tree,  FILE* Tree_file) {
@@ -221,32 +224,8 @@ void PostOrder(Node* tree, FILE* Tree_file) {
     return ;
 }
 
-//Print to console
-void PrintTree(const Node* tree) { 
-
-    if (!tree) { return; }
-    TabsForTreePrint += 5;
-
-    PrintTree(tree->left_branch);
-
-    for (int tabs_counter = 0; tabs_counter < TabsForTreePrint; ++tabs_counter) {
-        printf(" ");
-    }
-    if (tree->type == NUMBER) {
-        printf("%lf\n", tree->value.number);
-    }
-    else {
-        printf("%c\n", tree->value.oper);
-    }
-
-    PrintTree(tree->right_branch);
-
-    TabsForTreePrint -= 5;
-    return ;
-}
-
 // calculate tree
-elem_t Ebal(const Node* node_ptr) { 
+elem_t Ebal(Node* node_ptr) { 
 
     if (node_ptr->type == NUMBER) {
         Validator(node_ptr->left_branch,  invalid node address, return INVALID_NODE;);
@@ -259,8 +238,8 @@ elem_t Ebal(const Node* node_ptr) {
         case OP_SUB : return Ebal(node_ptr->left_branch) - Ebal(node_ptr->right_branch);
         case OP_MUL : return Ebal(node_ptr->left_branch) * Ebal(node_ptr->right_branch);
         case OP_DIV : {
-            int divider = Ebal(node_ptr->right_branch);
-            if (!divider) {
+            elem_t divider = Ebal(node_ptr->right_branch);
+            if (is_equal(divider, 0)) {
                 fprintf(stderr, "" Purple "" White"Warning:" Grey "" White "%s:%d:" Grey "\n\t|Trying to divide by 0\n", \
                     __PRETTY_FUNCTION__, __LINE__);
                 return DIVIDE_ERROR;
@@ -273,7 +252,13 @@ elem_t Ebal(const Node* node_ptr) {
     }
 }
 
-void DeleteTree(const Node* tree) {
+int is_equal(elem_t value1, elem_t value2) {
+
+    const static elem_t Epsilon = 1e-17;
+    return fabs(value1 - value2) <= Epsilon;
+}
+
+void DeleteTree(Node* tree) {
 
     if (!tree) { return ; }
 
@@ -282,42 +267,4 @@ void DeleteTree(const Node* tree) {
 
     free((Node*)tree);
     return ;
-}
-
-
-int queue_is_empty(Queue* queue) {
-
-    return (queue->size == 0);
-}
-
-void queue_init(Queue* queue, int size) {
-
-    if (size < 0) {
-        size = QueueInitSize;
-    }
-    queue->capacity = size;
-    queue->elem_address = (Node**) calloc(queue->capacity, sizeof(Node*));
-    queue->head = 1;
-    queue->tail = 0;
-    queue->size = 0;
-}
-void queue_enqueue(Queue* queue, Node* value) {
-    
-    queue->tail++;
-    if (queue->tail == queue->capacity) {
-        queue->capacity = queue->capacity + QueueInitSize;
-        queue->elem_address = (Node**) realloc(queue->elem_address, queue->capacity*sizeof(Node*));
-    }
-    *(queue->elem_address + queue->tail) = value;
-    queue->size++;
-}
-Node* queue_dequeue(Queue* queue) {
-
-    queue->head++;
-    queue->size--;
-    return (queue->elem_address[queue->head - 1]);
-}
-void queue_dtor(Queue* queue) {
-
-    free(queue->elem_address);
 }

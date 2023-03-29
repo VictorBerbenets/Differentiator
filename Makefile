@@ -1,26 +1,18 @@
-CC = g++
+include SOURCES
 
-CFLAGS =-c -g -Wall -Wextra -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equal -Winline -Wunreachable-code -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Weffc++ -Wmain -Wextra -Wall -g -pipe -fexceptions -Wcast-qual -Wconversion -Wctor-dtor-privacy -Wempty-body -Wformat-security -Wformat=2 -Wignored-qualifiers -Wlogical-op -Wnon-virtual-dtor -Woverloaded-virtual -Wpointer-arith -Wsign-promo -Wstack-usage=8192 -Wstrict-aliasing -Wstrict-null-sentinel -Wtype-limits -Wwrite-strings -D_DEBUG -D_EJUDGE_CLIENT_SIDE
+#compiling & linking
 
-SRC_DIR = ./src/
+OBJ_TMP = $(subst .cpp,.o,       $(SRC))
+OBJ     = $(subst src,src/build, $(OBJ_TMP)) # src/main.cpp -> src/main.o -> src/build/main.o
 
-all : Diff
+#compiling
+                                             
+link : $(OBJ) 
+	$(CC) $(IFLAGS) $(CFLAGS) $^ -o $(OUTPUT_FILE_NAME) 
 
-Diff : $(SRC_DIR)differentiator.o  $(SRC_DIR)main.o  $(SRC_DIR)file_utils.o $(SRC_DIR)queue.o
-	$(CC) $^  -o $@
+src/build/%.o : src/%.cpp	
+	mkdir -p $(@D)
+	$(CC) $(IFLAGS) $(CFLAGS) -c $^ -o $@	
 
-differentiator.o : $(SRC_DIR)differentiator.cpp
-	$(CC) $(CFLAGS) $^
-	
-main.o : $(SRC_DIR)main.cpp
-	$(CC) $(CFLAGS) $^
-
-file_utils.o : $(SRC_DIR) file_utils.cpp
-	$(CC) $(CFLAGS) $^
-
-queue.o : $(SRC_DIR) queue.cpp
-	$(CC) $(CFLAGS) $^
-clean:
-	rm -rf *.o Diff
-
-rebuild: clean all
+clear :
+	rm   -f ./src/build/*.o 

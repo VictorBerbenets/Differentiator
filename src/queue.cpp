@@ -1,6 +1,9 @@
 #include "..//include//Queue.h"
 
 void QueueInit(Queue* queue, int queue_size) {
+        queue->size           = 0;
+        queue->head           = 0;
+        queue->tail           = 0;
         queue->capacity       = queue_size;
         queue->tail_max_value = queue_size - 1;
         queue->elem_address   = (Data*) calloc(queue->capacity, sizeof(Data));
@@ -9,9 +12,10 @@ void QueueInit(Queue* queue, int queue_size) {
 
 void QueuePush(Queue* queue, Data value) {
 
-    if ((queue->tail == queue->head && !queue->size) || queue->size == queue->capacity) {
+    if ((queue->tail == queue->head && queue->size)) {
         QueueResize(queue);
     }
+
     queue->elem_address[queue->tail] = value;
     queue->size++;
     queue->tail++;
@@ -33,13 +37,14 @@ Data QueuePop(Queue* queue) {
 
 int QueueResize(Queue* queue) {
 
-    queue->tail = queue->capacity;
+    queue->tail     = queue->capacity;
     queue->capacity = queue->capacity*2;
     queue->tail_max_value = queue->capacity - 1;
-    Data* data_ptr = (Data*) realloc(queue->elem_address, sizeof(Data)*queue->capacity);
+    Data* data_ptr  = (Data*) realloc(queue->elem_address, sizeof(Data)*queue->capacity);
     Validator(!data_ptr, in realloc: could not get memory, return MEMORY_ALLOC_ERROR);
 
     queue->elem_address = data_ptr;
+    return 0;
 }
 
 void _QueueLog(Queue* queue, int line, const char* func_name) {
@@ -57,13 +62,13 @@ void _QueueLog(Queue* queue, int line, const char* func_name) {
     fprintf(Log_Queue, "queue's capacity  = %d\n", queue->capacity);
     fprintf(Log_Queue, "        Queue elemenst:\n");
 
-    for (size_t number = 0; number < queue->size; number++) {
-        fprintf(Log_Queue, "[%zd] = %lg\n", queue->head + number, queue->elem_address[queue->head  + number]);
+    for (int number = 0; number < queue->size; number++) {
+        fprintf(Log_Queue, "[%d] = %lg\n", queue->head + number, queue->elem_address[queue->head  + number]->value.number);
     }
 
     fprintf(Log_Queue, "**************************************************************************************************************"
     "**************************************\n\n");
-    char is_file_close = fclose(Log_Queue);
+    int is_file_close = fclose(Log_Queue);
     Validator(is_file_close, in closing file, exit(EXIT_FAILURE););
 }
 

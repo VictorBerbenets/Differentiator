@@ -5,9 +5,11 @@
 #include <stdlib.h>
 #include "colors.h"
 #include "validator.h"
-#include <iostream>
+#include "Node.h"
 
-typedef double Data;
+const int QueueInitSize = 1024;
+
+typedef Node* Data;
 typedef struct {
     Data* elem_address;
     int tail_max_value;
@@ -20,17 +22,18 @@ typedef struct {
 
 enum Queue_Errors {
     
-    MEMORY_ALLOC_ERROR,
-    INVALID_DATA_SIZE = 0xDEADBEEF1,
-    INVALID_POP_VALUE = 0xDEADBEEF2,
+    MEMORY_ALLOC_ERROR = 14888814,
+    INVALID_DATA_SIZE  = 0xDEADBEEF1,
+    INVALID_POP_VALUE  = 0xDEADBEEF2,
 } ;
 
-#define QueueLog(queue) _QueueLog(queue, __LINE__, __PRETTY_FUNCTION__);
-void _QueueLog(Queue* queue, int line, const char* func_name);
-int QueueResize(Queue* queue);
-Data QueuePop(Queue* queue);
 void QueuePush(Queue* queue, Data value);
+Data QueuePop(Queue* queue);
+void _QueueLog(Queue* queue, int line, const char* func_name);
+int  QueueResize(Queue* queue);
 void QueueInit(Queue* queue, int queue_size);
 void QueueDtor (Queue* queue);
+
+#define QueueLog(queue) _QueueLog(queue, __LINE__, __PRETTY_FUNCTION__);
 
 #endif
