@@ -3,9 +3,10 @@
 
 OUTPUT_FILE_NAME = main
 
-SRC =   src/main.cpp \
-        src/queue.cpp \
-        src/differentiator.cpp \
+SRC =   src/main.cpp   \
+        src/queue.cpp   \
+        src/backend.cpp  \
+        src/frontend.cpp  \
         src/file_utils.cpp \
         src/stack.cpp
 

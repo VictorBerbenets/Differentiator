@@ -34,6 +34,8 @@ enum Position {
 enum TreeErrors {
     ERROR_IN_READING_FILE, 
     INVALID_TREE_POINTER,
+    CLOSING_FILE_ERROR,
+    READING_FILE_ERROR,
     FREAD_READING_ERROR,   
     INVALID_PRINT_TYPE,
     MEMORY_ALLOC_ERR,
@@ -46,7 +48,6 @@ enum TreeErrors {
 Buffer ReadFile(const char* file_name);
 // Node* InsertNode(Node* prev_node, elem_t value);
 Node* ConstructTree(const char* file_name);
-Node* ConstructNode(Buffer* buff);
 Node* BuildTree(Node* tree, Buffer* tree_buffer);
 Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node = nullptr, Node* right_node = nullptr);
 
@@ -55,7 +56,7 @@ void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_ne
 
 elem_t Ebal(Node* node_ptr);
 elem_t GetPower(Node* base, Node* degree);
-elem_t GetQuotient(Node* dividend, Node* divisor);
+elem_t GetDiv(Node* dividend, Node* divisor);
 
 void PreOrder(Node* tree, FILE* file_name);
 void InOrder(Node* tree, FILE* file_name);
