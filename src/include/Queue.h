@@ -9,9 +9,9 @@
 
 const int QueueInitSize = 1024;
 
-typedef Node* Data;
+typedef Node* Data_;
 typedef struct {
-    Data* elem_address;
+    Data_* elem_address;
     int tail_max_value;
     int head;
     int tail;
@@ -27,8 +27,8 @@ enum Queue_Errors {
     INVALID_POP_VALUE  = 0xDEADBEEF2,
 } ;
 
-void QueuePush(Queue* queue, Data value);
-Data QueuePop(Queue* queue);
+void QueuePush(Queue* queue, Data_ value);
+Data_ QueuePop(Queue* queue);
 void _QueueLog(Queue* queue, int line, const char* func_name);
 int  QueueResize(Queue* queue);
 void QueueInit(Queue* queue, int queue_size);

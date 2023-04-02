@@ -1,4 +1,4 @@
-#include "..//include//Queue.h"
+#include "Queue.h"
 
 void QueueInit(Queue* queue, int queue_size) {
         queue->size           = 0;
@@ -6,11 +6,11 @@ void QueueInit(Queue* queue, int queue_size) {
         queue->tail           = 0;
         queue->capacity       = queue_size;
         queue->tail_max_value = queue_size - 1;
-        queue->elem_address   = (Data*) calloc(queue->capacity, sizeof(Data));
+        queue->elem_address   = (Data_*) calloc(queue->capacity, sizeof(Data_));
         Validator(!queue->elem_address, in calloc: could not get memory, exit(MEMORY_ALLOC_ERROR));
 }
 
-void QueuePush(Queue* queue, Data value) {
+void QueuePush(Queue* queue, Data_ value) {
 
     if ((queue->tail == queue->head && queue->size)) {
         QueueResize(queue);
@@ -22,12 +22,12 @@ void QueuePush(Queue* queue, Data value) {
     queue->tail = queue->tail & queue->tail_max_value;
 }
 
-Data QueuePop(Queue* queue) {
+Data_ QueuePop(Queue* queue) {
 
     Validator(!queue->size, fprintf(stderr, "\t| " Blue " \tQueue is empty: you can't pop elements from queue." Grey "\n\t|\n"
     ""); return -111;);
 
-    Data ret_value = queue->elem_address[queue->head];
+    Data_ ret_value = queue->elem_address[queue->head];
     queue->head++;
     queue->head = queue->head & queue->tail_max_value;
     queue->size--;
@@ -40,7 +40,7 @@ int QueueResize(Queue* queue) {
     queue->tail     = queue->capacity;
     queue->capacity = queue->capacity*2;
     queue->tail_max_value = queue->capacity - 1;
-    Data* data_ptr  = (Data*) realloc(queue->elem_address, sizeof(Data)*queue->capacity);
+    Data_* data_ptr  = (Data_*) realloc(queue->elem_address, sizeof(Data_)*queue->capacity);
     Validator(!data_ptr, in realloc: could not get memory, return MEMORY_ALLOC_ERROR);
 
     queue->elem_address = data_ptr;

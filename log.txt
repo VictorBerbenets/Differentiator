@@ -1,0 +1,37 @@
+
+***********************************************************************************
+StackDump was called from '18' line and function: 'int main()'
+Stack name: &st
+		Elements in stack(st.size):   3
+		Stack capacity:               7
+		Stack size:                   3
+		Stack pointer(data):          0x4a97130
+		Stack is damaged?:           'NO'
+Elements in stack:
+*[0] = +
+*[1] = -
+*[2] = =
+ [3] = @ POISON
+ [4] = @ POISON
+ [5] = @ POISON
+ [6] = @ POISON
+************************************************************************************
+
+
+***********************************************************************************
+StackDump was called from '18' line and function: 'int main()'
+Stack name: &st
+		Elements in stack(st.size):   3
+		Stack capacity:               7
+		Stack pointer(data):          0x4a97130
+		Stack is damaged?:           'NO'
+Elements in stack:
+*[0] = +
+*[1] = -
+*[2] = =
+ [3] = @ POISON
+ [4] = @ POISON
+ [5] = @ POISON
+ [6] = @ POISON
+************************************************************************************
+

@@ -1,15 +1,17 @@
 #ifndef Node_h
 #define Node_h
 
+typedef union {
+    double number;
+    char* var;
+    int oper;
+} Params;
+
 struct Node{
     int type;  
-    union data{
-        int oper;
-        double number;
-    } value;
-
-    Node* left_branch  = nullptr;
-    Node* right_branch = nullptr;
+    Params value;
+    Node* left_branch ;
+    Node* right_branch;
 };
 typedef struct Node Node;
 
