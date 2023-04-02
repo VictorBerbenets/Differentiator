@@ -7,4 +7,9 @@ enum PrintType {
     POST_ORDER,
 };
 
+enum ReadType {
+    SYMBOL,
+    STRING,
+};
+
 #endif

@@ -11,6 +11,7 @@
 #include "print.h"
 #include "Node.h"
 #include "DSL.h"
+#include <cmath>
 
 typedef double elem_t;
 
@@ -31,8 +32,9 @@ enum Position {
 };
 
 enum TreeErrors {
-    ERROR_IN_READING_FILE, // 0
-    FREAD_READING_ERROR,   // 1
+    ERROR_IN_READING_FILE, 
+    INVALID_TREE_POINTER,
+    FREAD_READING_ERROR,   
     INVALID_PRINT_TYPE,
     MEMORY_ALLOC_ERR,
     INVALID_OPERATOR,
@@ -46,13 +48,14 @@ Buffer ReadFile(const char* file_name);
 Node* ConstructTree(const char* file_name);
 Node* ConstructNode(Buffer* buff);
 Node* BuildTree(Node* tree, Buffer* tree_buffer);
-
 Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node = nullptr, Node* right_node = nullptr);
 
 void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter);
 void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_next, Position position);
 
 elem_t Ebal(Node* node_ptr);
+elem_t GetPower(Node* base, Node* degree);
+elem_t GetQuotient(Node* dividend, Node* divisor);
 
 void PreOrder(Node* tree, FILE* file_name);
 void InOrder(Node* tree, FILE* file_name);
@@ -67,4 +70,6 @@ int TreeDump(Node* tree);
 size_t GetFileSize (const char *file);
 
 int IsEqual(elem_t value1, elem_t value2);
+
+int IsDigitDigit(char* string);
 #endif
