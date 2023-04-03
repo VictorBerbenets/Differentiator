@@ -7,6 +7,7 @@
 
 //==========================================================================================================================================//
 int TreeDump(Node* tree) {
+    static int graph_number = 0;
     if (!tree) {
         printf("Cant create Graph_Dump: tree pointer = %p\n", tree);
         return INVALID_TREE_POINTER;
@@ -49,8 +50,9 @@ int TreeDump(Node* tree) {
     }
 
     DotEndGraph(dot_file);
-    DotPrintGraph(file, 1);
+    DotPrintGraph(file, graph_number);
     QueueDtor(&queue);
+    graph_number++;
 
     return ALL_RIGHT;
 }
@@ -77,7 +79,7 @@ void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter) {
                 *node_counter,  ptr, ptr->value.oper, ptr->left_branch, ptr->right_branch); 
     }
     else if (ptr->type == VAR) {
-        DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#ABFFF1\", label ="
+        DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#EEAAF1\", label ="
             "\"{address: %p|variable: %s| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
             *node_counter,  ptr, ptr->value.var, ptr->left_branch, ptr->right_branch);
     }

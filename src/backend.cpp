@@ -17,7 +17,6 @@ Node* ConstructTree(const char* file_name) {
     char* save_buff_addr = tree_buffer.buffer;
     Node* tree = CreateNewNode(NUMBER, nullptr);
     tree = BuildTree(tree, &tree_buffer);
-    printf("BUFF2 = %p\n", tree_buffer.buffer);
 
     free(save_buff_addr);
     return tree;
@@ -34,7 +33,7 @@ Buffer ReadFile(const char* file_name) {
     buff.buffer_size = GetFileSize(file_name);
     buff.buffer      = (char*) calloc(buff.buffer_size + 1, sizeof(char));
     Validator(!buff.buffer, memory giving error, exit(MEMORY_ALLOC_ERR));
-    printf("BUFF1 = %p\n", buff.buffer);
+
     size_t fread_ret_value = fread(buff.buffer, sizeof(char), buff.buffer_size, TreeFile);
     Validator(fread_ret_value != buff.buffer_size, fread reading error, exit(FREAD_READING_ERROR));
     buff.buffer[buff.buffer_size] = '\0';
@@ -50,7 +49,7 @@ Buffer ReadFile(const char* file_name) {
 Node* BuildTree(Node* tree, Buffer* tree_buffer) {
 
     static char result_string[MaxVarSize] = {};
-    static const char Operators[]         = {'+', '-', '*', '/', '^','\0'};
+    static const char Operators[]         = "+ - * / ^ sqrt";
     static elem_t value       = 0;
     static char readed_symbol = 0;
     static int counter        = 0;
@@ -67,13 +66,19 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
     Validator(readed_symbol != OPEN_BRACKET, expected open bracket, return nullptr);
 
     ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, STRING);
-    if (strstr(Operators, result_string) && (strlen(result_string) == 1)) {
+    if ((strstr(Operators, result_string) && (strlen(result_string) == 1))) {
         value = result_string[0];
         tree->type = OPER;
         tree->value.oper   = (int)value;
         tree->left_branch  = CreateNewNode(OPER, &value);
         tree->right_branch = CreateNewNode(OPER, &value);
     }
+    // else if (!strcmp("sqrt", result_string)){
+    //     tree->type = OPER;
+    //     tree->value.oper   = OP_SQRT;
+    //     tree->left_branch  = CreateNewNode(OPER, &value);
+    //     tree->right_branch = CreateNewNode(OPER, &value);
+    // }
     else if (IsDigit(result_string)) {
         tree->value.number = atof(result_string);
         tree->type = NUMBER;
@@ -214,6 +219,7 @@ elem_t Ebal(Node* node_ptr) {
         case OP_MUL : return Ebal(node_ptr->left_branch) * Ebal(node_ptr->right_branch);
         case OP_POW : return GetPower(node_ptr->left_branch, node_ptr->right_branch); 
         case OP_DIV : return GetDiv(node_ptr->left_branch, node_ptr->right_branch);
+        case OP_SQRT:
         default: PrintWarningInvalidOper(); return INVALID_OPERATOR;
     }
 }
@@ -255,7 +261,11 @@ void DeleteTree(Node* tree) {
     if (tree->type == VAR) {
         free(tree->value.var);
     }
-    free((Node*)tree);
+    fprintf(stderr, "tree address = <%p>\n", tree);
+    fprintf(stderr, "right address = <%p>\n", tree->right_branch);
+    fprintf(stderr, "left  address = <%p>\n", tree->left_branch);
+    // TreeDump(tree);
+    free(tree);
     return ;
 }
 //==========================================================================================================================================//

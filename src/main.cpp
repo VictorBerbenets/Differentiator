@@ -16,12 +16,19 @@ int main(int argc, char** argv) {
 
     Node* tree = ConstructTree(file_name);
     // printf("%lg\n", Ebal(tree));
-    PrintTreeToFile(tree, IN_ORDER);
-    PrintTreeToFile(tree, PRE_ORDER);
-    PrintTreeToFile(tree, POST_ORDER);
 
+    Node* diff_tree = Diff(tree);
+    PrintTreeToFile(diff_tree, IN_ORDER);
+    PrintTreeToFile(diff_tree, PRE_ORDER);
+    PrintTreeToFile(diff_tree, POST_ORDER);
+    TreeDump(diff_tree);
     TreeDump(tree);
+
     DeleteTree(tree);
-    
+    printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
+    DeleteTree(diff_tree);
+    // fprintf(stderr, "tree = %d\n", tree==nullptr);
+    // PrintTreeToFile(tree, IN_ORDER);
+
     return 0;
 }

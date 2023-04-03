@@ -54,6 +54,7 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node = nullptr, 
 void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter);
 void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_next, Position position);
 
+Node* Diff(Node* node);
 elem_t Ebal(Node* node_ptr);
 elem_t GetPower(Node* base, Node* degree);
 elem_t GetDiv(Node* dividend, Node* divisor);
