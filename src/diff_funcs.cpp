@@ -10,11 +10,10 @@ Node* Diff(Node* node) {
     static int Plus = OP_ADD;
     static int Mul  = OP_MUL;
     static int Div  = OP_DIV;
-    static int const_deriv = 0;
+    static int const_deriv    = 0;
     static elem_t var_deriv   = 1;
-    Node* new_node      = nullptr;
-    fprintf(stderr, "Line = %d\n", __LINE__);
-    printf("type = %d\n", node->type);
+    Node* new_node = nullptr;
+
     if (!node) {
         return nullptr;
     }
@@ -43,13 +42,10 @@ Node* Diff(Node* node) {
                 
                 case OP_POW:
                     if (node->right_branch->type == NUMBER) {
-
                         new_node = CreateNewNode(OPER, &Mul);
                         new_node->left_branch  = CopyNode(node->right_branch);
-
                         new_node->right_branch = CopyNode(node);
-                        // new_node->right_branch->right_branch = CreateNewNode(node->right_branch->type, )
-                        // new_node->right_branch->right_branch->value.number = node->right_branch->value.number - 1;
+
                         new_node->right_branch->left_branch  = CopyNode(node->left_branch);
                         new_node->right_branch->right_branch = CopyNode(node->right_branch);
                         new_node->right_branch->right_branch->value.number--;
@@ -58,10 +54,8 @@ Node* Diff(Node* node) {
                 break;     
             }         
         case NUMBER:
-            fprintf(stderr, "Line = %d\n", __LINE__);
             return CreateNewNode(NUMBER, &const_deriv); 
         case VAR: 
-            fprintf(stderr, "Line = %d\n", __LINE__);
             return CreateNewNode(NUMBER, &var_deriv);   
 
             // case SIN:
@@ -84,10 +78,9 @@ Node* Diff(Node* node) {
 static Node* CopyNode(Node* node_to_copy) {
 
     Node* copied_version  = (Node*) calloc(1, sizeof(Node));
-    // copied_version->left_branch = 
+    
     copied_version->type  = node_to_copy->type;
     copied_version->value = node_to_copy->value;
-    // *copied_version = *node_to_copy;
     return copied_version;
 }
 //==========================================================================================================================================//
