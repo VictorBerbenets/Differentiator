@@ -12,7 +12,7 @@ Node* Diff(Node* node) {
     static int Div  = OP_DIV;
     static int const_deriv = 0;
     static elem_t var_deriv   = 1;
-    Node* new_node      = CreateNewNode(NotAType, 0);
+    Node* new_node      = nullptr;
     fprintf(stderr, "Line = %d\n", __LINE__);
     printf("type = %d\n", node->type);
     if (!node) {

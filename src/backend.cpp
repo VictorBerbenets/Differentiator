@@ -53,6 +53,7 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
     static elem_t value       = 0;
     static char readed_symbol = 0;
     static int counter        = 0;
+    static int string_len     = 0;
     static int ERROR_FLAG     = 0;
 
     if (ERROR_FLAG) {
@@ -84,11 +85,19 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
         tree->type = NUMBER;
     }
     else if (IsVariable(result_string)) {
-        char* variable = (char*) calloc(strlen(result_string) + 1, sizeof(char));
-        memcpy((void*)variable, (const void*)result_string, sizeof(char) * strlen(result_string));
-        variable[strlen(result_string)] = '\0';
-        tree->value.var = variable;
-        tree->type      = VAR;
+        // char* variable = (char*) calloc(strlen(result_string) + 1, sizeof(char));
+        string_len = strlen(result_string);
+        if (string_len < Max_variable_size) {
+            memcpy((void*)tree->value.var, (const void*)result_string, sizeof(char) * string_len);
+            tree->value.var[string_len] = '\0';
+            tree->type = VAR;
+        }
+        else {
+            fprintf(stderr, "Name of the variable '%s' is to long:%d. It have to < %d", result_string, string_len, Max_variable_size);
+            ERROR_FLAG = 1;
+            return nullptr;
+        }
+        // tree->value.var = variable;
     }
     else {
         ERROR_FLAG = 1;
@@ -189,8 +198,9 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
     }
     else if (TYPE_NUM == VAR) {
         new_node->type = VAR;
-        if (value) { 
-            new_node->value.var = (char*)value; 
+        if (value) {
+            memcpy((void*) new_node->value.var, value, sizeof(char)*strlen((char*)value));
+            // new_node->value.var = (char*)value; 
         }
         new_node->left_branch  = left_node;
         new_node->right_branch = right_node;
@@ -258,9 +268,10 @@ void DeleteTree(Node* tree) {
 
     DeleteTree(tree->left_branch);
     DeleteTree(tree->right_branch);
-    if (tree->type == VAR) {
-        free(tree->value.var);
-    }
+    // if (tree->type == VAR) {
+    //     if (tree->value.var)
+    //         free(tree->value.var);
+    // }
     fprintf(stderr, "tree address = <%p>\n", tree);
     fprintf(stderr, "right address = <%p>\n", tree->right_branch);
     fprintf(stderr, "left  address = <%p>\n", tree->left_branch);

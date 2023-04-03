@@ -1,9 +1,11 @@
 #ifndef Node_h
 #define Node_h
 
+const static int Max_variable_size = 25;
+
 typedef union {
     double number;
-    char* var;
+    char var[Max_variable_size] = {};
     int oper;
 } Params;
 
