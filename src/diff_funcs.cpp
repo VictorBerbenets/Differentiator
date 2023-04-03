@@ -1,15 +1,19 @@
 #include "include//differentiator.h"
-
+//------------------------------------------------------------------------------------------------------------------------------------------//
+//-----------------------------------------------Constants and functions-------------------------------------------------- -----------------//
 static Node* CopyNode(Node* node_to_copy);
-
-//==========================================================================================================================================//
+static Node* MulDerivative(Node* node);
+static Node* AddDerivative(Node* node);
+static Node* DivDerivative(Node* node);
+static const int Sub  = OP_SUB;
+static const int Plus = OP_ADD;
+static const int Mul  = OP_MUL;
+static const int Div  = OP_DIV;
+//******************************************************************************************************************************************//
+//---------------------------------------------------Function   bodies----------------------------------------------------------------------//
 
 Node* Diff(Node* node) {
 
-    static int Sub  = OP_SUB;
-    static int Plus = OP_ADD;
-    static int Mul  = OP_MUL;
-    static int Div  = OP_DIV;
     static int const_deriv    = 0;
     static elem_t var_deriv   = 1;
     Node* new_node = nullptr;
@@ -20,26 +24,10 @@ Node* Diff(Node* node) {
     switch(node->type) {
         case OPER:
             switch(node->value.oper) {
-                case OP_ADD: case OP_SUB:
-
-                    new_node = CopyNode(node);
-                    new_node->left_branch  = Diff(node->left_branch);
-                    new_node->right_branch = Diff(node->right_branch);
-                    return new_node;
-                case OP_MUL:
-                    new_node = CreateNewNode(OPER, &Plus);
-
-                    new_node->left_branch  = CreateNewNode(OPER, &Mul);
-                    new_node->right_branch = CreateNewNode(OPER, &Mul);  
-
-                    new_node->left_branch->right_branch = CopyNode(node->right_branch);
-                    new_node->right_branch->left_branch = CopyNode(node->left_branch);
-
-                    new_node->left_branch->left_branch   = Diff(node->left_branch);  
-                    new_node->right_branch->right_branch = Diff(node->right_branch); 
-                    return new_node;
-                case OP_DIV:
-                
+                case OP_ADD: 
+                case OP_SUB: return AddDerivative(node);
+                case OP_MUL: return MulDerivative(node);
+                case OP_DIV: return DivDerivative(node);           
                 case OP_POW:
                     if (node->right_branch->type == NUMBER) {
                         new_node = CreateNewNode(OPER, &Mul);
@@ -75,10 +63,57 @@ Node* Diff(Node* node) {
 
 //==========================================================================================================================================//
 
+static Node* MulDerivative(Node* node) {
+
+    Node* new_node = CreateNewNode(OPER, &Mul);
+
+    new_node->left_branch  = CreateNewNode(OPER, &Mul);
+    new_node->right_branch = CreateNewNode(OPER, &Mul);  
+
+    new_node->left_branch->right_branch = CopyNode(node->right_branch);
+    new_node->right_branch->left_branch = CopyNode(node->left_branch);
+
+    new_node->left_branch->left_branch   = Diff(node->left_branch);  
+    new_node->right_branch->right_branch = Diff(node->right_branch); 
+    return new_node;
+}
+
+//==========================================================================================================================================//
+
+static Node* DivDerivative(Node* node) {
+
+    Node* new_node = CreateNewNode(OPER, &Div);
+    new_node->left_branch  = CreateNewNode(OPER, &Sub);
+    new_node->left_branch->left_branch  = CreateNewNode(OPER, &Mul);
+    new_node->left_branch->right_branch = CreateNewNode(OPER, &Mul);
+
+    new_node->left_branch->right_branch->left_branch = CopyNode(node->left_branch);
+    new_node->left_branch->left_branch->right_branch = CopyNode(node->right_branch);
+
+    new_node->left_branch->right_branch->right_branch = Diff(node->right_branch);
+    new_node->left_branch->left_branch->left_branch   = Diff(node->left_branch);
+
+    new_node->right_branch = CreateNewNode(OPER, &Mul);
+    new_node->right_branch->left_branch  = CopyNode(node->right_branch);
+    new_node->right_branch->right_branch = CopyNode(node->right_branch);
+    return new_node;
+}
+
+//==========================================================================================================================================//
+
+static Node* AddDerivative(Node* node) {
+
+    Node* new_node = CopyNode(node);
+    new_node->left_branch  = Diff(node->left_branch);
+    new_node->right_branch = Diff(node->right_branch);
+    return new_node;
+}
+//==========================================================================================================================================//
+
 static Node* CopyNode(Node* node_to_copy) {
 
     Node* copied_version  = (Node*) calloc(1, sizeof(Node));
-    
+
     copied_version->type  = node_to_copy->type;
     copied_version->value = node_to_copy->value;
     return copied_version;
