@@ -10,7 +10,7 @@ typedef struct {
     int func_id;
 }Function_info;
 
-const Function_info _Diff_Functions_[10] = {{"sqrt", SQRT}, {"sin", SIN}, {"cos", COS}, {"tg", TG}, {"ctg", CTG}, {"e", EXP}};
+const Function_info _Diff_Functions_[] = {{"sqrt", SQRT}, {"sin", SIN}, {"cos", COS}, {"tg", TG}, {"ctg", CTG}, {"e", EXP}};
 
 typedef union {
     double number;

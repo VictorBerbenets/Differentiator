@@ -60,7 +60,9 @@ int TreeDump(Node* tree) {
 //==========================================================================================================================================//
 
 void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_next, Position position) {
-
+    if (!ptr) {
+        return ;
+    }
     CreateGraphNode(dot_file, ptr, node_next);
     DotPrint("node%d: <%s> -> node%d; ", *node_head, position == LEFT ? "ptr1":"ptr2", *node_next);
     (*node_next)++;
@@ -84,12 +86,9 @@ void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter) {
             *node_counter,  ptr, ptr->value.var, ptr->left_branch, ptr->right_branch);
     }
     else if (ptr->type == FUNC) {
-        fprintf(stderr, "ptr->value.func = %d\n", ptr->value.func);
-        fprintf(stderr, "_Diff_Functions_[ptr->value.func].func_name = %s\n", _Diff_Functions_[ptr->value.func].func_name);
         DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#EEAAF1\", label ="
-            "\"{address: %p|function: %s| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
-            *node_counter,  _Diff_Functions_[ptr->value.func].func_name, ptr->left_branch, ptr->right_branch);
-        fprintf(stderr, "IDIIIIIIIIIIII NAAAAAAAAAAAAAAAAAXX\n");
+            "\"{address: %p|function: %s()| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
+            *node_counter,  ptr, _Diff_Functions_[ptr->value.func].func_name, ptr->left_branch, ptr->right_branch);
     }
 
     else {

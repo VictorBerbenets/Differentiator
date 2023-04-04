@@ -20,15 +20,21 @@ int main(int argc, char** argv) {
     Node* tree = ConstructTree(file_name);
     TreeDump(tree);
 
-    printf("%lg\n", Ebal(tree));
+    // printf("%lg\n", Ebal(tree));
     Node* diff_tree = Diff(tree);
+    PrintTree(diff_tree);
+    // for (int i = 0; i < 10; i++) {
+    // DeleteTree(diff_tree);
+
+    //     diff_tree = Diff(tree);
+    // }
     PrintTreeToFile(diff_tree, PRE_ORDER);
     PrintTreeToFile(diff_tree, IN_ORDER);
     PrintTreeToFile(diff_tree, POST_ORDER);
     TreeDump(diff_tree);
 
     DeleteTree(tree);
-    // DeleteTree(diff_tree);
+    DeleteTree(diff_tree);
     // // PrintTreeToFile(tree, IN_ORDER);
 
     return 0;

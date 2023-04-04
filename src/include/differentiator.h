@@ -32,8 +32,10 @@ enum Position {
 };
 
 enum TreeErrors {
+    INVALID_STRING_POINTER,
     ERROR_IN_READING_FILE, 
     INVALID_TREE_POINTER,
+    INVALID_STRING_DATA,
     CLOSING_FILE_ERROR,
     READING_FILE_ERROR,
     FREAD_READING_ERROR,   
@@ -44,9 +46,7 @@ enum TreeErrors {
     DIVIDE_ERROR,
 }; 
 
-// void TreeCtor(Node** tree);
 Buffer ReadFile(const char* file_name);
-// Node* InsertNode(Node* prev_node, elem_t value);
 Node* ConstructTree(const char* file_name);
 Node* BuildTree(Node* tree, Buffer* tree_buffer);
 Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node = nullptr, Node* right_node = nullptr);
@@ -74,5 +74,7 @@ size_t GetFileSize (const char *file);
 int IsEqual(elem_t value1, elem_t value2);
 
 static Node* CopyTree(Node* tree_to_copy, Node* duplic_tree);
+
+void PrintTree(Node* tree);
 
 #endif

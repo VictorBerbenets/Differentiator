@@ -7,9 +7,10 @@
 
 //******************************************************************************************************************************************//
 static void ReadBuffer(char** buffer, char* result_string, char* readed_symbol, ReadType type);
-static int IsVariable(char* string);
-static int IsDigit(char* string);
-static int ERROR_FLAG     = 0;
+static int  RetFuncName(char* result_string);
+static int  IsVariable(char* string);
+static int  IsDigit(char* string);
+static int  ERROR_FLAG = 0;
 //==========================================================================================================================================//
 Node* ConstructTree(const char* file_name) {
 
@@ -19,6 +20,7 @@ Node* ConstructTree(const char* file_name) {
     tree = BuildTree(tree, &tree_buffer);
     if (ERROR_FLAG) {
         DeleteTree(tree);
+        tree = nullptr;
         printf("" Grin "Tree was not created! " Grey "\n");
 
     }
@@ -61,21 +63,14 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
     static int counter        = 0;
     static int string_len     = 0;
 
-
-    // if (ERROR_FLAG) {
-    //     return tree;
-    // }
     if (!tree) {
         return nullptr;
     }
 
     ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, SYMBOL);
-    printf("read symb in the start = %c\n", readed_symbol);
     Validator(readed_symbol != OPEN_BRACKET, expected open bracket, return nullptr);
 
-    printf("buffer = %s\n", tree_buffer->buffer);
     ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, STRING);
-    printf("result string = %s\n", result_string);
     if (strstr(Operators, result_string)) { // && (strlen(result_string) == 1)
         value = result_string[0];
         tree->type = OPER;
@@ -86,9 +81,8 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
     else if (strstr(Functions, result_string)){
 
         tree->type = FUNC;
-        tree->value.func  = 1;
-        int i = 1;
-        tree->left_branch = CreateNewNode(FUNC, &i);
+        tree->value.func  = RetFuncName(result_string);
+        tree->left_branch = CreateNewNode(FUNC, &tree->value.func);
     }
     else if (IsDigit(result_string)) {
         tree->value.number = atof(result_string);
@@ -117,8 +111,6 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
     tree->right_branch = BuildTree(tree->right_branch, tree_buffer);
 
     ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, SYMBOL);
-    printf("read symb in the end = %c\n", readed_symbol);
-
     if (readed_symbol == ')') {
         return tree;
     }
@@ -128,6 +120,21 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
         return nullptr;
     }
 }
+
+//==========================================================================================================================================//
+
+static int RetFuncName(char* result_string) {
+
+    Validator(result_string == nullptr, invalid string pointer, exit(INVALID_STRING_POINTER));
+
+    for (int struct_number = 0; struct_number < sizeof(_Diff_Functions_)/sizeof(_Diff_Functions_[0]); struct_number++) {
+        if (!strcmp(_Diff_Functions_[struct_number].func_name, result_string)) {
+            return _Diff_Functions_[struct_number].func_id;
+        }
+    }
+    return INVALID_STRING_DATA;
+}
+
 //==========================================================================================================================================//
 
 static int IsVariable(char* string) {
@@ -210,12 +217,13 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
         new_node->type = VAR;
         if (value) {
             memcpy((void*) new_node->value.var, value, sizeof(char)*strlen((char*)value));
-            // new_node->value.var = (char*)value; 
         }
         new_node->left_branch  = left_node;
         new_node->right_branch = right_node;
     }
     else if (TYPE_NUM == FUNC) {
+        printf("value = %d\n", *(int*)value);
+        new_node->type = FUNC;
         new_node->value.func = *(int*)value;
     }
     else {
@@ -281,15 +289,36 @@ void DeleteTree(Node* tree) {
 
     DeleteTree(tree->left_branch);
     DeleteTree(tree->right_branch);
-    // if (tree->type == VAR) {
-    //     if (tree->value.var)
-    //         free(tree->value.var);
-    // }
-    fprintf(stderr, "tree address = <%p>\n", tree);
-    fprintf(stderr, "right address = <%p>\n", tree->right_branch);
-    fprintf(stderr, "left  address = <%p>\n", tree->left_branch);
+
+    // fprintf(stderr, "tree address = <%p>\n", tree);
+    // fprintf(stderr, "right address = <%p>\n", tree->right_branch);
+    // fprintf(stderr, "left  address = <%p>\n", tree->left_branch);
  
     free(tree);
     return ;
 }
 //==========================================================================================================================================//
+
+//==========================================================================================================================================//
+void PrintTree(Node* tree) {
+
+    if (!tree) {
+        return;
+    }
+
+    PrintTree(tree->left_branch);
+    PrintTree(tree->right_branch);
+
+    if (tree->type == OPER) {
+        printf("%d ", tree->value.oper);
+    }
+    if (tree->type == NUMBER) {
+        printf("%lg ", tree->value.number);
+    } 
+    if (tree->type == VAR) {
+        printf("%s ", tree->value.var);
+    }
+    if (tree->type == FUNC) {
+        printf("%s ", _Diff_Functions_[tree->value.func].func_name );
+    }
+}
