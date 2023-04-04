@@ -6,7 +6,7 @@ const int OPER          = -2;
 const int VAR           = -3;
 const int FUNC          = -4;
 const int NotAType      = -5;
-const int MaxVarSize    = 100;
+// const int MaxVarSize    = 100;
 
 enum Operations {
 
@@ -18,20 +18,20 @@ enum Operations {
 };
 
 enum Functions {
-    OP_POW  = '^',
-    OP_SQRT,
-    NUM,
-    SIN,
-    COS,
-    TG,
-    CTG,
-    LOG,
-    LN,
-    EXP,
-    SH,
-    CH,
-    CTH,
-    TH,
+    POW  = '^',
+    NUM     = -10,
+    SQRT    = 0,
+    SIN     = 1,
+    COS     = 2,
+    TG      = 3,
+    CTG     = 4,
+    LOG     = 5,
+    LN      = 6,
+    EXP     = 7,
+    SH      = 8,
+    CH      = 9,
+    CTH     = 10,
+    TH      = 11,
 };
 
 enum Brackets {

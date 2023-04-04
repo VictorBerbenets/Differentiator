@@ -11,7 +11,7 @@ static const int Sub  = OP_SUB;
 static const int Plus = OP_ADD;
 static const int Mul  = OP_MUL;
 static const int Div  = OP_DIV;
-static const int Pow  = OP_POW;
+static const int Pow  = POW;
 //******************************************************************************************************************************************//
 //---------------------------------------------------Function   bodies----------------------------------------------------------------------//
 
@@ -32,14 +32,14 @@ Node* Diff(Node* node) {
                 case OP_SUB: return AddDerivative(node);
                 case OP_MUL: return MulDerivative(node);
                 case OP_DIV: return DivDerivative(node);           
-                case OP_POW: return PowDerivative(node);     
+                case POW: return PowDerivative(node);     
                 default:
                     break;   
             }
         case NUMBER: return CreateNewNode(NUMBER, &const_deriv); 
         case VAR:    return CreateNewNode(NUMBER, &var_deriv);
         case FUNC:
-            switch (node->value.func_name)
+            switch (node->value.func)
             {
                 case SIN:
                 case COS:

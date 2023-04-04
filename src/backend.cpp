@@ -9,7 +9,7 @@
 static void ReadBuffer(char** buffer, char* result_string, char* readed_symbol, ReadType type);
 static int IsVariable(char* string);
 static int IsDigit(char* string);
-
+static int ERROR_FLAG     = 0;
 //==========================================================================================================================================//
 Node* ConstructTree(const char* file_name) {
 
@@ -17,6 +17,11 @@ Node* ConstructTree(const char* file_name) {
     char* save_buff_addr = tree_buffer.buffer;
     Node* tree = CreateNewNode(NUMBER, nullptr);
     tree = BuildTree(tree, &tree_buffer);
+    if (ERROR_FLAG) {
+        DeleteTree(tree);
+        printf("" Grin "Tree was not created! " Grey "\n");
+
+    }
 
     free(save_buff_addr);
     return tree;
@@ -48,48 +53,48 @@ Buffer ReadFile(const char* file_name) {
 
 Node* BuildTree(Node* tree, Buffer* tree_buffer) {
 
-    static char result_string[MaxVarSize] = {};
+    static char result_string[Max_variable_size] = {};
     static const char Operators[] = "+ - * / ^";
-    static const char Functions[] = "^ sqrt sin cos tg ctg ln log ch sh th cth";
+    static const char Functions[] = "sqrt sin cos tg ctg ln log ch sh th cth";
     static elem_t value       = 0;
     static char readed_symbol = 0;
     static int counter        = 0;
     static int string_len     = 0;
-    static int ERROR_FLAG     = 0;
 
-    if (ERROR_FLAG) {
-        return nullptr;
-    }
+
+    // if (ERROR_FLAG) {
+    //     return tree;
+    // }
     if (!tree) {
         return nullptr;
     }
 
     ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, SYMBOL);
+    printf("read symb in the start = %c\n", readed_symbol);
     Validator(readed_symbol != OPEN_BRACKET, expected open bracket, return nullptr);
 
+    printf("buffer = %s\n", tree_buffer->buffer);
     ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, STRING);
-    if ((strstr(Operators, result_string) && (strlen(result_string) == 1))) {
+    printf("result string = %s\n", result_string);
+    if (strstr(Operators, result_string)) { // && (strlen(result_string) == 1)
         value = result_string[0];
         tree->type = OPER;
         tree->value.oper   = (int)value;
         tree->left_branch  = CreateNewNode(OPER, &value);
         tree->right_branch = CreateNewNode(OPER, &value);
     }
-    // else if (strstr(Functions, result_string)){
-    //     string_len = strlen(result_string);
-    //     memcpy((void*)tree->value.func, (const void*)result_string, sizeof(char) * string_len);
-    //     tree->value.var[string_len] = '\0';
-    //     tree->type = FUNC;
-    //     tree->value.func   = ;
-    //     tree->left_branch  = CreateNewNode(OPER, &value);
-    //     tree->right_branch = CreateNewNode(OPER, &value);
-    // }
+    else if (strstr(Functions, result_string)){
+
+        tree->type = FUNC;
+        tree->value.func  = 1;
+        int i = 1;
+        tree->left_branch = CreateNewNode(FUNC, &i);
+    }
     else if (IsDigit(result_string)) {
         tree->value.number = atof(result_string);
         tree->type = NUMBER;
     }
     else if (IsVariable(result_string)) {
-        // char* variable = (char*) calloc(strlen(result_string) + 1, sizeof(char));
         string_len = strlen(result_string);
         if (string_len < Max_variable_size) {
             memcpy((void*)tree->value.var, (const void*)result_string, sizeof(char) * string_len);
@@ -101,7 +106,6 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
             ERROR_FLAG = 1;
             return nullptr;
         }
-        // tree->value.var = variable;
     }
     else {
         ERROR_FLAG = 1;
@@ -113,6 +117,8 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
     tree->right_branch = BuildTree(tree->right_branch, tree_buffer);
 
     ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, SYMBOL);
+    printf("read symb in the end = %c\n", readed_symbol);
+
     if (readed_symbol == ')') {
         return tree;
     }
@@ -209,6 +215,9 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
         new_node->left_branch  = left_node;
         new_node->right_branch = right_node;
     }
+    else if (TYPE_NUM == FUNC) {
+        new_node->value.func = *(int*)value;
+    }
     else {
         printf("Error: invalid value type: %d\n", TYPE_NUM);
         new_node->type = NotAType;
@@ -231,9 +240,9 @@ elem_t Ebal(Node* node_ptr) {
         case OP_ADD : return Ebal(node_ptr->left_branch) + Ebal(node_ptr->right_branch);
         case OP_SUB : return Ebal(node_ptr->left_branch) - Ebal(node_ptr->right_branch);
         case OP_MUL : return Ebal(node_ptr->left_branch) * Ebal(node_ptr->right_branch);
-        case OP_POW : return GetPower(node_ptr->left_branch, node_ptr->right_branch); 
         case OP_DIV : return GetDiv(node_ptr->left_branch, node_ptr->right_branch);
-        case OP_SQRT:
+        case POW    : return GetPower(node_ptr->left_branch, node_ptr->right_branch); 
+        case SQRT:
         default: PrintWarningInvalidOper(); return INVALID_OPERATOR;
     }
 }
@@ -276,9 +285,9 @@ void DeleteTree(Node* tree) {
     //     if (tree->value.var)
     //         free(tree->value.var);
     // }
-    // fprintf(stderr, "tree address = <%p>\n", tree);
-    // fprintf(stderr, "right address = <%p>\n", tree->right_branch);
-    // fprintf(stderr, "left  address = <%p>\n", tree->left_branch);
+    fprintf(stderr, "tree address = <%p>\n", tree);
+    fprintf(stderr, "right address = <%p>\n", tree->right_branch);
+    fprintf(stderr, "left  address = <%p>\n", tree->left_branch);
  
     free(tree);
     return ;

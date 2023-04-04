@@ -9,7 +9,7 @@ SRC =   src/main.cpp   \
         src/frontend.cpp  \
         src/file_utils.cpp \
         src/diff_funcs.cpp  \
-        src/stack.cpp
+        #src/stack.cpp
 
 # already compiled objects
 
