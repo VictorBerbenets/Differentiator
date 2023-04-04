@@ -417,10 +417,10 @@ void StackDump (stack* st, int line, const char func[], const char* stack_name)
     for ( ; stack_number < max_counter; stack_number++){
 
         if (st->data[stack_number] != POISON){
-            fprintf(log_txt, "*[%d] = %c\n", stack_number, st->data[stack_number]);
+            fprintf(log_txt, "*[%d] = " spec_form "\n", stack_number, st->data[stack_number]);
         }
         else {
-            fprintf(log_txt, " [%d] = %c POISON\n", stack_number, st->data[stack_number]);
+            fprintf(log_txt, " [%d] =  POISON\n", stack_number, st->data[stack_number]);
         }
     }
 #ifdef STACK_DATA_CANARY_PROTECT

@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <math.h>
+#include "stack.h"
 
 
 int main(int argc, char** argv) {
@@ -16,18 +17,19 @@ int main(int argc, char** argv) {
 
     Node* tree = ConstructTree(file_name);
     // printf("%lg\n", Ebal(tree));
-
+    // Node* copy_tree = nullptr;
+    // CopyTree(tree, &copy_tree);
     Node* diff_tree = Diff(tree);
     PrintTreeToFile(diff_tree, IN_ORDER);
     PrintTreeToFile(diff_tree, PRE_ORDER);
     PrintTreeToFile(diff_tree, POST_ORDER);
     TreeDump(diff_tree);
     TreeDump(tree);
+    // TreeDump(copy_tree);
 
+    // DeleteTree(copy_tree);
     DeleteTree(tree);
-    printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
     DeleteTree(diff_tree);
-    // fprintf(stderr, "tree = %d\n", tree==nullptr);
     // PrintTreeToFile(tree, IN_ORDER);
 
     return 0;

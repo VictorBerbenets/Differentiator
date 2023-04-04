@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
+#include "Node.h"
 
 #define CharFormat
 
@@ -14,21 +15,21 @@
     typedef double Data;
     const double Epsilon = 1e-17;
     const double POISON  = 0xDEADBABE,
-    #define spec_form %lg
+    #define spec_form "%lg"
 #endif
 
 #ifdef IntFormat
     typedef int Data;
     const int Epsilon = 0;
     const int POISON  = -52345236;
-    #define spec_form %d
+    #define spec_form "%d"
 #endif
 
 #ifdef CharFormat
-    typedef char Data;
+    typedef Node Data;
     const char Epsilon = 0;
     const char POISON  = 64;
-    #define spec_form c
+    #define spec_form "%c"
 #endif
 
 

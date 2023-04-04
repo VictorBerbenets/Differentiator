@@ -272,10 +272,10 @@ void DeleteTree(Node* tree) {
     //     if (tree->value.var)
     //         free(tree->value.var);
     // }
-    fprintf(stderr, "tree address = <%p>\n", tree);
-    fprintf(stderr, "right address = <%p>\n", tree->right_branch);
-    fprintf(stderr, "left  address = <%p>\n", tree->left_branch);
-    // TreeDump(tree);
+    // fprintf(stderr, "tree address = <%p>\n", tree);
+    // fprintf(stderr, "right address = <%p>\n", tree->right_branch);
+    // fprintf(stderr, "left  address = <%p>\n", tree->left_branch);
+ 
     free(tree);
     return ;
 }

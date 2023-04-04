@@ -73,5 +73,6 @@ size_t GetFileSize (const char *file);
 
 int IsEqual(elem_t value1, elem_t value2);
 
-int IsDigitDigit(char* string);
+void CopyTree(Node* node_to_copy, Node** duplic_tree);
+
 #endif
