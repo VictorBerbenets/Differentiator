@@ -49,7 +49,8 @@ Buffer ReadFile(const char* file_name) {
 Node* BuildTree(Node* tree, Buffer* tree_buffer) {
 
     static char result_string[MaxVarSize] = {};
-    static const char Operators[]         = "+ - * / ^ sqrt";
+    static const char Operators[] = "+ - * / ^";
+    static const char Functions[] = "^ sqrt sin cos tg ctg ln log ch sh th cth";
     static elem_t value       = 0;
     static char readed_symbol = 0;
     static int counter        = 0;
@@ -74,9 +75,12 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
         tree->left_branch  = CreateNewNode(OPER, &value);
         tree->right_branch = CreateNewNode(OPER, &value);
     }
-    // else if (!strcmp("sqrt", result_string)){
-    //     tree->type = OPER;
-    //     tree->value.oper   = OP_SQRT;
+    // else if (strstr(Functions, result_string)){
+    //     string_len = strlen(result_string);
+    //     memcpy((void*)tree->value.func, (const void*)result_string, sizeof(char) * string_len);
+    //     tree->value.var[string_len] = '\0';
+    //     tree->type = FUNC;
+    //     tree->value.func   = ;
     //     tree->left_branch  = CreateNewNode(OPER, &value);
     //     tree->right_branch = CreateNewNode(OPER, &value);
     // }

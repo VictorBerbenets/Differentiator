@@ -27,7 +27,6 @@ int main(int argc, char** argv) {
     TreeDump(tree);
     // TreeDump(copy_tree);
 
-    // DeleteTree(copy_tree);
     DeleteTree(tree);
     DeleteTree(diff_tree);
     // PrintTreeToFile(tree, IN_ORDER);

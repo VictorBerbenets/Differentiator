@@ -4,7 +4,8 @@
 const int NUMBER        = -1;
 const int OPER          = -2;
 const int VAR           = -3;
-const int NotAType      = -4;
+const int FUNC          = -4;
+const int NotAType      = -5;
 const int MaxVarSize    = 100;
 
 enum Operations {
@@ -13,6 +14,10 @@ enum Operations {
     OP_SUB  = '-',
     OP_MUL  = '*',
     OP_DIV  = '/',
+
+};
+
+enum Functions {
     OP_POW  = '^',
     OP_SQRT,
     NUM,

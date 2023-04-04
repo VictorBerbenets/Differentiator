@@ -73,6 +73,6 @@ size_t GetFileSize (const char *file);
 
 int IsEqual(elem_t value1, elem_t value2);
 
-void CopyTree(Node* node_to_copy, Node** duplic_tree);
+static Node* CopyTree(Node* tree_to_copy, Node* duplic_tree);
 
 #endif
