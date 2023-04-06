@@ -32,18 +32,18 @@ enum Position {
 };
 
 enum TreeErrors {
-    INVALID_STRING_POINTER,
-    ERROR_IN_READING_FILE, 
-    INVALID_TREE_POINTER,
-    INVALID_STRING_DATA,
-    CLOSING_FILE_ERROR,
-    READING_FILE_ERROR,
-    FREAD_READING_ERROR,   
-    INVALID_PRINT_TYPE,
-    MEMORY_ALLOC_ERR,
-    INVALID_OPERATOR,
-    INVALID_NODE,
-    DIVIDE_ERROR,
+    INVALID_STRING_DATA     = -10,
+    INVALID_STRING_POINTER  = 1,
+    ERROR_IN_READING_FILE   = 2, 
+    INVALID_TREE_POINTER    = 3,
+    CLOSING_FILE_ERROR      = 4,
+    READING_FILE_ERROR      = 5,
+    FREAD_READING_ERROR     = 6,   
+    INVALID_PRINT_TYPE      = 7,
+    MEMORY_ALLOC_ERR        = 8,
+    INVALID_OPERATOR        = 9,
+    INVALID_NODE            = 10,
+    DIVIDE_ERROR            = 11,
 }; 
 
 Buffer ReadFile(const char* file_name);
@@ -73,7 +73,7 @@ size_t GetFileSize (const char *file);
 
 int IsEqual(elem_t value1, elem_t value2);
 
-static Node* CopyTree(Node* tree_to_copy, Node* duplic_tree);
+Node* CopyTree(Node* tree_to_copy, Node* duplic_tree);
 
 void PrintTree(Node* tree);
 

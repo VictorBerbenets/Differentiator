@@ -132,17 +132,35 @@ void PreOrder(Node* tree,  FILE* Tree_file) {
     }
 
     fprintf(Tree_file, "(");
-    if (tree->type == NUMBER) {
-        fprintf(Tree_file, "%lg", tree->value.number);
+    if (tree->type == VAR) {
+        fprintf(Tree_file, "%s ", tree->value.var);
     }
-    else if (tree->type == VAR) {
-        fprintf(Tree_file, "%s", tree->value.var);
+    else if (tree->type == FUNC) {
+        fprintf(Tree_file, "%s ", _Diff_Functions_[tree->value.func].func_name);
     }
     else if (tree->type == OPER) {
-        fprintf(Tree_file, "%c", tree->value.oper);
+        fprintf(Tree_file, "%c ", tree->value.oper);
+    }
+    else if (tree->type == NUMBER) {
+        fprintf(Tree_file, "%lg ", tree->value.number);
     }
     else {
         fprintf(Tree_file, "Nuchai bebru, invalid tree type: %d\n", tree->type);
+    }
+        if (tree->type == VAR) {
+        fprintf(stderr, "%s ", tree->value.var);
+    }
+    else if (tree->type == FUNC) {
+        fprintf(stderr, "%s ", _Diff_Functions_[tree->value.func].func_name);
+    }
+    else if (tree->type == OPER) {
+        fprintf(stderr, "%c ", tree->value.oper);
+    }
+    else if (tree->type == NUMBER) {
+        fprintf(stderr, "%lg ", tree->value.number);
+    }
+    else {
+        fprintf(stderr, "Nuchai bebru, invalid tree type: %d\n", tree->type);
     }
 
     PreOrder(tree->left_branch, Tree_file);
@@ -162,20 +180,21 @@ void InOrder(Node* tree, FILE* Tree_file) {
 
     fprintf(Tree_file, "(");
     InOrder(tree->left_branch, Tree_file);
-
-    if (tree->type == NUMBER) {
-        fprintf(Tree_file, "%lg", tree->value.number);
+    if (tree->type == VAR) {
+        fprintf(Tree_file, "%s ", tree->value.var);
     }
-    else if (tree->type == VAR) {
-        fprintf(Tree_file, "%s", tree->value.var);
+    else if (tree->type == FUNC) {
+        fprintf(Tree_file, "%s ", _Diff_Functions_[tree->value.func].func_name);
     }
     else if (tree->type == OPER) {
-        fprintf(Tree_file, "%c", tree->value.oper);
+        fprintf(Tree_file, "%c ", tree->value.oper);
+    }
+    else if (tree->type == NUMBER) {
+        fprintf(Tree_file, "%lg ", tree->value.number);
     }
     else {
         fprintf(Tree_file, "Nuchai bebru, invalid tree type: %d\n", tree->type);
     }
-
     InOrder(tree->right_branch, Tree_file);
     fprintf(Tree_file, ")"); 
 
@@ -192,14 +211,17 @@ void PostOrder(Node* tree, FILE* Tree_file) {
     fprintf(Tree_file, "(");
     PostOrder(tree->left_branch, Tree_file);
     PostOrder(tree->right_branch, Tree_file);
-    if (tree->type == NUMBER) {
-        fprintf(Tree_file, "%lg", tree->value.number);
+    if (tree->type == VAR) {
+        fprintf(Tree_file, "%s ", tree->value.var);
     }
-    else if (tree->type == VAR) {
-        fprintf(Tree_file, "%s", tree->value.var);
+    else if (tree->type == FUNC) {
+        fprintf(Tree_file, "%s ", _Diff_Functions_[tree->value.func].func_name);
     }
     else if (tree->type == OPER) {
-        fprintf(Tree_file, "%c", tree->value.oper);
+        fprintf(Tree_file, "%c ", tree->value.oper);
+    }
+    else if (tree->type == NUMBER) {
+        fprintf(Tree_file, "%lg ", tree->value.number);
     }
     else {
         fprintf(Tree_file, "Nuchai bebru, invalid tree type: %d\n", tree->type);

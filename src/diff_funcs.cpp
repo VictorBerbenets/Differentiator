@@ -22,7 +22,7 @@ static Node* DiffCth(Node* node);
 
 //Operators
 static const int Sub  = OP_SUB;
-static const int Plus = OP_ADD;
+static const int Add = OP_ADD;
 static const int Mul  = OP_MUL;
 static const int Div  = OP_DIV;
 static const int Pow  = POW;
@@ -46,6 +46,8 @@ Node* Diff(Node* node) {
         return nullptr;
     }
     switch(node->type) {
+        case NUMBER: return CreateNewNode(NUMBER, &const_deriv); 
+        case VAR:    return CreateNewNode(NUMBER, &var_deriv);
         case OPER:
             switch(node->value.oper) {
                 case OP_ADD: 
@@ -53,14 +55,10 @@ Node* Diff(Node* node) {
                 case OP_MUL: return MulDerivative(node);
                 case OP_DIV: return DivDerivative(node);           
                 case POW:    return PowDerivative(node);     
-                default:
-                    break;   
+                default:     break;   
             }
-        case NUMBER: return CreateNewNode(NUMBER, &const_deriv); 
-        case VAR:    return CreateNewNode(NUMBER, &var_deriv);
         case FUNC:
-            switch (node->value.func)
-            {
+            switch (node->value.func) {
                 case SIN: return DiffSin(node);
                 case COS: return DiffCos(node);
                 case TG:  return DiffTg(node);
@@ -71,18 +69,16 @@ Node* Diff(Node* node) {
                 case SH:  return DiffSh(node);
                 case CH:  return DiffCh(node);
                 case CTH: return DiffCth(node);
-                case TH: printf("fucker!\n");
-                default:
-                    break;
-            }   
-
+                case TH:  printf("fucker!\n");
+                default:  break;
+            }  
     }
     return nullptr;
 }
 
 //==========================================================================================================================================//
 
-static Node* CopyTree(Node* tree_to_copy, Node* duplic_tree) {
+ Node* CopyTree(Node* tree_to_copy, Node* duplic_tree) {
 
 	if (tree_to_copy == nullptr){
 		duplic_tree = nullptr;
@@ -111,7 +107,7 @@ static Node* CopyNode(Node* node_to_copy) {
 
 static Node* MulDerivative(Node* node) {
 
-    Node* new_node = CreateNewNode(OPER, &Mul);
+    Node* new_node = CreateNewNode(OPER, &Add);
     Node* duplicate_tree = nullptr;
     new_node->left_branch  = CreateNewNode(OPER, &Mul);
     new_node->right_branch = CreateNewNode(OPER, &Mul);  
@@ -185,9 +181,9 @@ static Node* AddDerivative(Node* node) {
 
 static Node* DiffSin(Node* node) {
 
-    Node* new_node = CreateNewNode(OPER, &Mul);
     Node* duplicate_tree = nullptr;
 
+    Node* new_node = CreateNewNode(OPER, &Mul);
     new_node->left_branch = CreateNewNode(FUNC, &Cos);
     new_node->left_branch->left_branch = CopyTree(node->left_branch, duplicate_tree);
     new_node->right_branch = Diff(node->left_branch);
@@ -195,10 +191,10 @@ static Node* DiffSin(Node* node) {
 }
 
 static Node* DiffCos(Node* node) {
-    Node* new_node = CreateNewNode(OPER, &Mul);
     Node* duplicate_tree = nullptr;
-    register elem_t multiplier = -1;
+    elem_t multiplier = -1;
 
+    Node* new_node = CreateNewNode(OPER, &Mul);
     new_node->left_branch = CreateNewNode(OPER, &Mul);
     new_node->left_branch->left_branch  = CreateNewNode(FUNC, &Sin);
     new_node->left_branch->right_branch = CreateNewNode(NUMBER, &multiplier);
@@ -207,32 +203,61 @@ static Node* DiffCos(Node* node) {
     return new_node;
 }
 static Node* DiffTg (Node* node) {
-    Node* new_node = CreateNewNode(OPER, &Mul);
     Node* duplicate_tree = nullptr;
-    register elem_t delim   = 1;
-    register elem_t pow_val = 2;
+    elem_t delim   = 1;
+    elem_t pow_val = 2;
 
+    Node* new_node = CreateNewNode(OPER, &Mul);
+    new_node->left_branch = CreateNewNode(OPER, &Div);
+    new_node->left_branch->left_branch  = CreateNewNode(NUMBER, &delim);
+    new_node->left_branch->right_branch = CreateNewNode(OPER, &Pow);
+    new_node->left_branch->right_branch->left_branch  = CreateNewNode(FUNC, &Cos);
+    new_node->left_branch->right_branch->right_branch = CreateNewNode(NUMBER, &pow_val);
+    new_node->left_branch->right_branch->left_branch->left_branch = CopyTree(node->left_branch, duplicate_tree);
+    new_node->right_branch = Diff(node->left_branch);
+
+    return new_node;
+}
+static Node* DiffCtg(Node* node) {
+    Node* duplicate_tree = nullptr;
+    elem_t delim   = -1;
+    elem_t pow_val =  2;
+
+    Node* new_node = CreateNewNode(OPER, &Mul);
     new_node->left_branch = CreateNewNode(OPER, &Div);
     new_node->left_branch->left_branch  = CreateNewNode(NUMBER, &delim);
     new_node->left_branch->right_branch = CreateNewNode(OPER, &Pow);
     new_node->left_branch->right_branch->left_branch  = CreateNewNode(FUNC, &Sin);
     new_node->left_branch->right_branch->right_branch = CreateNewNode(NUMBER, &pow_val);
-    new_node->left_branch->right_branch->left_branch->left_branch = CopyTree(node->right_branch, duplicate_tree);
-    new_node->right_branch = Diff(node->right_branch);
+    new_node->left_branch->right_branch->left_branch->left_branch = CopyTree(node->left_branch, duplicate_tree);
+    new_node->right_branch = Diff(node->left_branch);
 
     return new_node;
-}
-static Node* DiffCtg(Node* node) {
-
 }
 static Node* DiffLog(Node* node) {
 
 }
 static Node* DiffLn (Node* node) {
+    Node* duplicate_tree = nullptr;
+    elem_t delim   = 1;
 
+    Node* new_node = CreateNewNode(OPER, &Mul);
+    new_node->left_branch = CreateNewNode(OPER, &Div);
+    new_node->left_branch->left_branch  = CreateNewNode(NUMBER, &delim);
+    new_node->left_branch->right_branch = CopyTree(node->left_branch, duplicate_tree);
+    new_node->right_branch = Diff(node->left_branch);
+
+    return new_node;
 }
 static Node* DiffExp(Node* node) {
+    Node* duplicate_tree = nullptr;
+    elem_t delim   = 1;
 
+    Node* new_node = CreateNewNode(OPER, &Mul);
+    new_node->left_branch = CopyTree(node, duplicate_tree);
+    new_node->right_branch = Diff(node->left_branch);
+
+    return new_node;
 }
 static Node* DiffSh (Node* node) {
 

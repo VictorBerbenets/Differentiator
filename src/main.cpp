@@ -8,8 +8,7 @@
 
 int main(int argc, char** argv) {
 
-    Function_info f[] = {{"sin", 1}, {"cos", 2}};
-    printf("%s   %d\n", f[1].func_name, f[1].func_id);
+    printf("%zd\n", sizeof(Node));
     if (argc > 2) {
         printf("Too many arguments of the command line\n");
         return -1;
@@ -22,7 +21,7 @@ int main(int argc, char** argv) {
 
     // printf("%lg\n", Ebal(tree));
     Node* diff_tree = Diff(tree);
-    PrintTree(diff_tree);
+    // PrintTree(diff_tree);
     // for (int i = 0; i < 10; i++) {
     // DeleteTree(diff_tree);
 

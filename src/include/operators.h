@@ -18,7 +18,7 @@ enum Operations {
 };
 
 enum Functions {
-    POW  = '^',
+    POW     = '^',
     NUM     = -10,
     SQRT    = 0,
     SIN     = 1,

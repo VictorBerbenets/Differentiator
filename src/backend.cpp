@@ -57,7 +57,6 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
 
     static char result_string[Max_variable_size] = {};
     static const char Operators[] = "+ - * / ^";
-    static const char Functions[] = "sqrt sin cos tg ctg ln log ch sh th cth";
     static elem_t value       = 0;
     static char readed_symbol = 0;
     static int counter        = 0;
@@ -78,10 +77,9 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
         tree->left_branch  = CreateNewNode(OPER, &value);
         tree->right_branch = CreateNewNode(OPER, &value);
     }
-    else if (strstr(Functions, result_string)){
+    else if ((tree->value.func = RetFuncName(result_string)) != INVALID_STRING_DATA){
 
         tree->type = FUNC;
-        tree->value.func  = RetFuncName(result_string);
         tree->left_branch = CreateNewNode(FUNC, &tree->value.func);
     }
     else if (IsDigit(result_string)) {
@@ -127,7 +125,7 @@ static int RetFuncName(char* result_string) {
 
     Validator(result_string == nullptr, invalid string pointer, exit(INVALID_STRING_POINTER));
 
-    for (int struct_number = 0; struct_number < sizeof(_Diff_Functions_)/sizeof(_Diff_Functions_[0]); struct_number++) {
+    for (size_t struct_number = 0; struct_number < sizeof(_Diff_Functions_)/sizeof(_Diff_Functions_[0]); struct_number++) {
         if (!strcmp(_Diff_Functions_[struct_number].func_name, result_string)) {
             return _Diff_Functions_[struct_number].func_id;
         }
