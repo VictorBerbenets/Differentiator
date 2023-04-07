@@ -88,7 +88,7 @@ void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter) {
             *node_counter,  ptr, ptr->value.var, ptr->left_branch, ptr->right_branch);
     }
     else if (ptr->type == FUNC) {
-        DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#EEAAF1\", label ="
+        DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#B91FAF\", label ="
             "\"{address: %p|function: %s()| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
             *node_counter,  ptr, _Diff_Functions_[ptr->value.func].func_name, ptr->left_branch, ptr->right_branch);
     }
@@ -148,21 +148,6 @@ void PreOrder(Node* tree,  FILE* Tree_file) {
     }
     else {
         fprintf(Tree_file, "Nuchai bebru, invalid tree type: %d\n", tree->type);
-    }
-        if (tree->type == VAR) {
-        fprintf(stderr, "%s ", tree->value.var);
-    }
-    else if (tree->type == FUNC) {
-        fprintf(stderr, "%s ", _Diff_Functions_[tree->value.func].func_name);
-    }
-    else if (tree->type == OPER) {
-        fprintf(stderr, "%c ", tree->value.oper);
-    }
-    else if (tree->type == NUMBER) {
-        fprintf(stderr, "%lg ", tree->value.number);
-    }
-    else {
-        fprintf(stderr, "Nuchai bebru, invalid tree type: %d\n", tree->type);
     }
 
     PreOrder(tree->left_branch, Tree_file);

@@ -208,6 +208,8 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
         if (value) { 
             new_node->value.oper = *(int*)value; 
         }
+    //         new_node->left_branch  = left_node;
+    // new_node->right_branch = right_node;
     }
     else if (TYPE_NUM == VAR) {
         new_node->type = VAR;
@@ -220,6 +222,8 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
     else if (TYPE_NUM == FUNC) {
         new_node->type = FUNC;
         new_node->value.func = *(int*)value;
+    //         new_node->left_branch  = left_node;
+    // new_node->right_branch = right_node;
     }
     else {
         printf("Error: invalid value type: %d\n", TYPE_NUM);
