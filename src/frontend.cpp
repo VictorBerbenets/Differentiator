@@ -68,6 +68,8 @@ void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_ne
     (*node_next)++;
 }
 
+//==========================================================================================================================================//
+
 void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter) {
 
     if (ptr->type == NUMBER) {
@@ -133,7 +135,7 @@ void PreOrder(Node* tree,  FILE* Tree_file) {
 
     fprintf(Tree_file, "(");
     if (tree->type == VAR) {
-        fprintf(Tree_file, "%s ", tree->value.var);
+        fprintf(Tree_file, "%s ", tree->value.var);         //
     }
     else if (tree->type == FUNC) {
         fprintf(Tree_file, "%s ", _Diff_Functions_[tree->value.func].func_name);

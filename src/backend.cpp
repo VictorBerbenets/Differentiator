@@ -56,7 +56,7 @@ Buffer ReadFile(const char* file_name) {
 Node* BuildTree(Node* tree, Buffer* tree_buffer) {
 
     static char result_string[Max_variable_size] = {};
-    static const char Operators[] = "+ - * / ^";
+    static const char Operators[] = "+ - * / ^";        // const
     static elem_t value       = 0;
     static char readed_symbol = 0;
     static int counter        = 0;
@@ -208,8 +208,6 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
         if (value) { 
             new_node->value.oper = *(int*)value; 
         }
-        new_node->left_branch  = left_node;
-        new_node->right_branch = right_node;
     }
     else if (TYPE_NUM == VAR) {
         new_node->type = VAR;
@@ -220,16 +218,16 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
         new_node->right_branch = right_node;
     }
     else if (TYPE_NUM == FUNC) {
-        printf("value = %d\n", *(int*)value);
         new_node->type = FUNC;
         new_node->value.func = *(int*)value;
     }
     else {
         printf("Error: invalid value type: %d\n", TYPE_NUM);
         new_node->type = NotAType;
-        // return nullptr;
     }
-    
+    new_node->left_branch  = left_node;
+    new_node->right_branch = right_node;
+
     return new_node;
 }
 
@@ -247,7 +245,7 @@ elem_t Ebal(Node* node_ptr) {
         case OP_SUB : return Ebal(node_ptr->left_branch) - Ebal(node_ptr->right_branch);
         case OP_MUL : return Ebal(node_ptr->left_branch) * Ebal(node_ptr->right_branch);
         case OP_DIV : return GetDiv(node_ptr->left_branch, node_ptr->right_branch);
-        case POW    : return GetPower(node_ptr->left_branch, node_ptr->right_branch); 
+        case OP_POW : return GetPower(node_ptr->left_branch, node_ptr->right_branch); 
         case SQRT:
         default: PrintWarningInvalidOper(); return INVALID_OPERATOR;
     }
