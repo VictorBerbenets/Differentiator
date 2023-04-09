@@ -1,10 +1,10 @@
 #ifndef DSL_H
 #define DSL_H
 
-#define PrintWarningForDivisor() fprintf(stderr, "" Purple "" White"Warning:" Grey "" White "%s:%d:" Grey "\n\t|Trying to divide by 0\n",\
+#define PrintWarningForDivisor() fprintf(stderr, "" Purple "" White"Warning:" Gray "" White "%s:%d:" Gray "\n\t|Trying to divide by 0\n",\
                                 __PRETTY_FUNCTION__, __LINE__);
 
-#define PrintWarningInvalidOper() fprintf(stderr, "" Purple "" White"Warning:" Grey "" White "%s:%d:" Grey "\n\t|Invalid operator: %c\n",\
+#define PrintWarningInvalidOper() fprintf(stderr, "" Purple "" White"Warning:" Gray "" White "%s:%d:" Gray "\n\t|Invalid operator: %c\n",\
                                 __PRETTY_FUNCTION__, __LINE__, node_ptr->value.oper); 
 #define L  node->left_branch
 #define R  node->right_branch

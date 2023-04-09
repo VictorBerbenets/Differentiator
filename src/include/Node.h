@@ -20,11 +20,12 @@ typedef union {
     int oper;
 } Params;
 
-struct Node{
+struct Node {
     int type;  
     Params value;
-    Node* left_branch ;
+    Node* left_branch;
     Node* right_branch;
+    Node* parent;
 };
 typedef struct Node Node;
 

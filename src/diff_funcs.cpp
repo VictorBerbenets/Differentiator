@@ -75,8 +75,16 @@ Node* Diff(Node* node) {
 		return nullptr;
 	}
     duplic_tree = CopyNode(tree_to_copy);
-	duplic_tree->left_branch  = CopyTree(tree_to_copy->left_branch,  duplic_tree->left_branch);
+
+	duplic_tree->left_branch  = CopyTree(tree_to_copy->left_branch, duplic_tree->left_branch);
+    if (duplic_tree->left_branch) {
+        duplic_tree->left_branch->parent = duplic_tree;
+    }
+
 	duplic_tree->right_branch = CopyTree(tree_to_copy->right_branch, duplic_tree->right_branch);
+    if (duplic_tree->right_branch) {
+        duplic_tree->right_branch->parent = duplic_tree;
+    }
 
     return duplic_tree;
 }

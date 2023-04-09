@@ -74,23 +74,23 @@ void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter) {
 
     if (ptr->type == NUMBER) {
         DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#FFD0D0\", label ="
-                 "\"{address: %p|value: %lg| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
-                *node_counter,  ptr, ptr->value.number, ptr->left_branch, ptr->right_branch);
+                 "\"{address: %p|value: %lg| { <ptr1> left: %p| <ptr2> right: %p|parent: %p}}\"]\n",
+                *node_counter,  ptr, ptr->value.number, ptr->left_branch, ptr->right_branch, ptr->parent);
     }
     else if(ptr->type == OPER) {
         DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#ABFFF1\", label ="
-                 "\"{address: %p|operator: '%c'| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
-                *node_counter,  ptr, ptr->value.oper, ptr->left_branch, ptr->right_branch); 
+                 "\"{address: %p|operator: '%c'| { <ptr1> left: %p| <ptr2> right: %p|parent: %p}}\"]\n",
+                *node_counter,  ptr, ptr->value.oper, ptr->left_branch, ptr->right_branch, ptr->parent); 
     }
     else if (ptr->type == VAR) {
         DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#EEAAF1\", label ="
-            "\"{address: %p|variable: %s| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
-            *node_counter,  ptr, ptr->value.var, ptr->left_branch, ptr->right_branch);
+            "\"{address: %p|variable: %s| { <ptr1> left: %p| <ptr2> right: %p |parent: %p}}\"]\n",
+            *node_counter,  ptr, ptr->value.var, ptr->left_branch, ptr->right_branch, ptr->parent);
     }
     else if (ptr->type == FUNC) {
         DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#B91FAF\", label ="
-            "\"{address: %p|function: %s()| { <ptr1> left: %p| <ptr2> right: %p}}\"]\n",
-            *node_counter,  ptr, _Diff_Functions_[ptr->value.func].func_name, ptr->left_branch, ptr->right_branch);
+            "\"{address: %p|function: %s()| { <ptr1> left: %p| <ptr2> right: %p|parent: %p}}\"]\n",
+            *node_counter,  ptr, _Diff_Functions_[ptr->value.func].func_name, ptr->left_branch, ptr->right_branch, ptr->parent);
     }
 
     else {
@@ -135,7 +135,7 @@ void PreOrder(Node* tree,  FILE* Tree_file) {
 
     fprintf(Tree_file, "(");
     if (tree->type == VAR) {
-        fprintf(Tree_file, "%s ", tree->value.var);         //
+        fprintf(Tree_file, "%s ", tree->value.var);         
     }
     else if (tree->type == FUNC) {
         fprintf(Tree_file, "%s ", _Diff_Functions_[tree->value.func].func_name);

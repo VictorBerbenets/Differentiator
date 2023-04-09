@@ -12,19 +12,20 @@ static int  IsVariable(char* string);
 static int  IsDigit(char* string);
 static int  ERROR_FLAG = 0;
 //==========================================================================================================================================//
+
 Node* ConstructTree(const char* file_name) {
 
     Buffer tree_buffer   = ReadFile(file_name);
     char* save_buff_addr = tree_buffer.buffer;
     Node* tree = CreateNewNode(NUMBER, nullptr);
     tree = BuildTree(tree, &tree_buffer);
+
     if (ERROR_FLAG) {
         DeleteTree(tree);
         tree = nullptr;
-        printf("" Grin "Tree was not created! " Grey "\n");
-
+        printf("" Green "Tree was not created! " Gray "\n");
+        exit(EXIT_FAILURE);
     }
-
     free(save_buff_addr);
     return tree;
 }
@@ -161,7 +162,7 @@ static void ReadBuffer(char** buffer, char* result_string, char* readed_symbol, 
             *buffer += counter;
             break;
         case STRING:
-            sscanf(*buffer, " %[^ ()]%n", result_string, &counter);
+            sscanf(*buffer, " %25[^ ()]%n", result_string, &counter); //make string size
             *buffer += counter;
             break;
         default: printf("Invalid type: %d\n", type);
@@ -171,7 +172,7 @@ static void ReadBuffer(char** buffer, char* result_string, char* readed_symbol, 
 //==========================================================================================================================================//
 
 static int IsDigit(char* string) {
-    char* string_ptr         = string;
+    char* string_ptr  = string;
     int point_counter = 0;
     if (!strlen(string)) {
         return 0;
@@ -208,8 +209,6 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
         if (value) { 
             new_node->value.oper = *(int*)value; 
         }
-    //         new_node->left_branch  = left_node;
-    // new_node->right_branch = right_node;
     }
     else if (TYPE_NUM == VAR) {
         new_node->type = VAR;
@@ -222,8 +221,6 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
     else if (TYPE_NUM == FUNC) {
         new_node->type = FUNC;
         new_node->value.func = *(int*)value;
-    //         new_node->left_branch  = left_node;
-    // new_node->right_branch = right_node;
     }
     else {
         printf("Error: invalid value type: %d\n", TYPE_NUM);
@@ -231,6 +228,13 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
     }
     new_node->left_branch  = left_node;
     new_node->right_branch = right_node;
+
+    if (new_node->left_branch) {
+        new_node->left_branch->parent = new_node;
+    }
+    if (new_node->right_branch) {
+        new_node->right_branch->parent = new_node;
+    }
 
     return new_node;
 }
@@ -294,7 +298,11 @@ void DeleteTree(Node* tree) {
     // fprintf(stderr, "right address = <%p>\n", tree->right_branch);
     // fprintf(stderr, "left  address = <%p>\n", tree->left_branch);
  
+    tree->parent       = nullptr;
+    tree->left_branch  = nullptr;
+    tree->right_branch = nullptr;
     free(tree);
+    tree = nullptr;
     return ;
 }
 //==========================================================================================================================================//
@@ -321,4 +329,55 @@ void PrintTree(Node* tree) {
     if (tree->type == FUNC) {
         printf("%s ", _Diff_Functions_[tree->value.func].func_name );
     }
+    printf("parent = <%p>\n", tree->parent);
 }
+
+Node* SimplifyTree(Node* tree) {
+
+    if (!tree) {
+        return nullptr;
+    }
+    tree->left_branch  = SimplifyTree(tree->left_branch);
+    tree->right_branch = SimplifyTree(tree->right_branch);
+
+    if (tree->type != OPER) {
+        return tree;
+    }
+    switch(tree->value.oper) {
+
+        case OP_ADD:
+            if (tree->left_branch->type == NUMBER) {
+                if (IsEqual(tree->left_branch->value.number, 0)) {
+                    free(tree->left_branch);
+                    if (!tree->parent) {
+                        Node* ret_val = tree->right_branch;
+                        free(tree);
+                        return ret_val;
+                    }
+                    tree->parent->left_branch = tree->right_branch;
+                    free(tree);
+                }
+            }
+            else if (tree->right_branch->type == NUMBER) {
+
+                if (IsEqual(tree->right_branch->value.number, 0)) {
+                    free(tree->right_branch);
+                    tree->parent->left_branch = tree->left_branch;
+                    free(tree);
+                }
+            }
+        case OP_SUB:
+
+        case OP_MUL:
+
+        case OP_DIV:
+
+        case OP_POW:
+        default: break;
+    }
+
+    return tree;
+}
+
+//simple
+//pdflatex

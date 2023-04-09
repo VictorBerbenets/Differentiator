@@ -38,6 +38,11 @@ int main(int argc, char** argv) {
     PrintTreeToFile(diff_tree, POST_ORDER);
     TreeDump(diff_tree);
 
+    Node* simple_tree = SimplifyTree(diff_tree);
+    TreeDump(simple_tree);
+    int x = 0;
+    printf("%d\n", IsEqual(x, 0));
+    PrintTree(diff_tree);
     DeleteTree(tree);
     DeleteTree(diff_tree);
     // // PrintTreeToFile(tree, IN_ORDER);

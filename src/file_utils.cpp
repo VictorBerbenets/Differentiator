@@ -10,7 +10,7 @@ size_t GetFileSize (const char *file) {
     struct stat buf = {};
     if (stat(file, &buf)) {
 
-        fprintf(stderr, "\n" Red "error" Grey "!!!\nFile <%s>: in function <%s>,  in line '%d' - error in function \"stat\"\n\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
+        fprintf(stderr, "\n" Red "error" Gray "!!!\nFile <%s>: in function <%s>,  in line '%d' - error in function \"stat\"\n\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
         return ERROR_IN_READING_FILE;
     }
     return buf.st_size;
