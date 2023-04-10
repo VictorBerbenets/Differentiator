@@ -294,9 +294,9 @@ void DeleteTree(Node* tree) {
     DeleteTree(tree->left_branch);
     DeleteTree(tree->right_branch);
 
-    fprintf(stderr, "tree address = <%p>\n", tree);
-    fprintf(stderr, "right address = <%p>\n", tree->right_branch);
-    fprintf(stderr, "left  address = <%p>\n", tree->left_branch);
+    // fprintf(stderr, "tree address = <%p>\n", tree);
+    // fprintf(stderr, "right address = <%p>\n", tree->right_branch);
+    // fprintf(stderr, "left  address = <%p>\n", tree->left_branch);
  
     // tree->parent       = nullptr;
     // tree->left_branch  = nullptr;
@@ -372,55 +372,65 @@ Node* SimplifyTree(Node* tree, int* flag_) {
     //     printf("address[%d] = %p\n",i, node_ptrs[i]);
     // }
     for (int node_counter = 0; node_counter < node_ptrs_size; ++node_counter) {
+        printf("address[%d] = %p\n",node_counter, node_ptrs[node_counter]);
+
         switch(node_ptrs[node_counter]->value.oper) {
             case OP_SUB:
             case OP_ADD:
-                printf("address[%d] = %p\n",node_counter, node_ptrs[node_counter]);
 
                 if (node_ptrs[node_counter]->left_branch->type == NUMBER) {
-                printf("address in left[%d] = %p\n",node_counter, node_ptrs[node_counter]);
 
                     if (IsEqual(node_ptrs[node_counter]->left_branch->value.number, 0)) {
+                printf("address in left[%d] = %p\n",node_counter, node_ptrs[node_counter]);
 
-                    if (!node_ptrs[node_counter]->parent) {
-                        break;
-                    }
-                    node_ptrs[node_counter]->right_branch->parent = node_ptrs[node_counter]->parent;
-                    if (node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]) {
-                        node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->right_branch;
-                        // free(tree->left_branch);
-                        // free(tree);
-                        tree->left_branch = nullptr;
-                        tree = nullptr;
-                    }
-                    else if (tree->parent->right_branch = tree) {
-                        tree->parent->right_branch = tree->right_branch;
-                        // free(tree->left_branch);
-                        // free(tree);
-                        tree->left_branch = nullptr;
-                        tree = nullptr;
-                    }
-                    
+                        if (!node_ptrs[node_counter]->parent) {
+                            free(node_ptrs[node_counter]->left_branch);
+                            tree = node_ptrs[node_counter]->right_branch;
+                            free(node_ptrs[node_counter]);
+
+                        }
+                        node_ptrs[node_counter]->right_branch->parent = node_ptrs[node_counter]->parent;
+                        // printf("fuckin")
+                        if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
+                            printf("AAAAAAAAAAAAAAAAAAAAA\n");
+                            node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->right_branch;
+                            free(node_ptrs[node_counter]->left_branch);
+                            node_ptrs[node_counter]->left_branch = nullptr;
+                            free(node_ptrs[node_counter]);
+                            node_ptrs[node_counter] = nullptr;
+                        }
+                        else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
+                            printf("BBBBBBBBBBBBBBBBBBBBBBBBBBb\n");
+
+                            node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]->right_branch;
+                            free(node_ptrs[node_counter]->left_branch);
+                            node_ptrs[node_counter]->left_branch = nullptr;
+                            free(node_ptrs[node_counter]);
+                            node_ptrs[node_counter] = nullptr;
+                        }
+
+                    break;                   
                     }
                 }
-                else if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
-                // node_ptrs[node_counter]Dump(node_ptrs[node_counter]);
-                printf("address in right[%d] = %p\n",node_counter, node_ptrs[node_counter]);
+                if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
 
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 0)) {
 
                         if (!node_ptrs[node_counter]->parent) {
-                            break;
+                            free(node_ptrs[node_counter]->right_branch);
+                            tree = node_ptrs[node_counter]->left_branch;
+                            free(node_ptrs[node_counter]);
+                            return tree;
                         }
                         node_ptrs[node_counter]->left_branch->parent = node_ptrs[node_counter]->parent;
-                        if (node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]) {
+                        if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
                             node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->left_branch;
                             free(node_ptrs[node_counter]->right_branch);
                             node_ptrs[node_counter]->left_branch = nullptr;
                             free(node_ptrs[node_counter]);
                             node_ptrs[node_counter] = nullptr;
                         }
-                        else if (node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]) {
+                        else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
                             node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]->left_branch;
                             free(node_ptrs[node_counter]->right_branch);
                             node_ptrs[node_counter]->left_branch = nullptr;
@@ -428,10 +438,49 @@ Node* SimplifyTree(Node* tree, int* flag_) {
                             node_ptrs[node_counter] = nullptr;
                         }
 
+                    break;
                     }
                 }
+                break;
             case OP_MUL:
+                // if (node_ptrs[node_counter]->left_branch->type == NUMBER) {
+                //     if (IsEqual(node_ptrs[node_counter]->left_branch->value.number, 0)) {
+                //         if (!node_ptrs[node_counter]->parent) {
+                //             free(node_ptrs[node_counter]->left_branch);
+                //             tree = node_ptrs[node_counter]->left_branch;
+                //             free(node_ptrs[node_counter]);
+                //             return tree;
+                //         }
+                //          node_ptrs[node_counter]->right_branch->parent = node_ptrs[node_counter]->parent;
 
+                //         if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
+                //             node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->left_branch;
+                //         }
+                //         else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
+                //             node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]->left_branch;
+                //         }
+                //         free(node_ptrs[node_counter]->right_branch);
+                //         node_ptrs[node_counter]->right_branch = nullptr;
+                //         free(node_ptrs[node_counter]);
+                //         node_ptrs[node_counter] = nullptr;
+
+                //     break;                   
+                //     }
+                        
+                //     }
+                
+                // if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
+                //     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 0)) {
+                //         if (!node_ptrs[node_counter]->parent) {
+                //             free(node_ptrs[node_counter]->left_branch);
+                //             tree = node_ptrs[node_counter]->right_branch;
+                //             free(node_ptrs[node_counter]);
+                //             return tree;
+                //         }
+                        
+                //     }
+                    
+                // }
             case OP_DIV:
 
             case OP_POW:
