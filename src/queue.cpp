@@ -7,7 +7,7 @@ void QueueInit(Queue* queue, int queue_size) {
         queue->capacity       = queue_size;
         queue->tail_max_value = queue_size - 1;
         queue->elem_address   = (Data_*) calloc(queue->capacity, sizeof(Data_));
-        Validator(!queue->elem_address, in calloc: could not get memory, exit(MEMORY_ALLOC_ERROR));
+        Validator(!queue->elem_address, "in calloc: could not get memory", exit(MEMORY_ALLOC_ERROR));
 }
 
 void QueuePush(Queue* queue, Data_ value) {
@@ -24,8 +24,7 @@ void QueuePush(Queue* queue, Data_ value) {
 
 Data_ QueuePop(Queue* queue) {
 
-    Validator(!queue->size, fprintf(stderr, "\t| " Blue " \tQueue is empty: you can't pop elements from queue." Grey "\n\t|\n"
-    ""); return -111;);
+    Validator(!queue->size, "queue is empty: you can't pop elements from queue", return nullptr;);
 
     Data_ ret_value = queue->elem_address[queue->head];
     queue->head++;
@@ -41,7 +40,7 @@ int QueueResize(Queue* queue) {
     queue->capacity = queue->capacity*2;
     queue->tail_max_value = queue->capacity - 1;
     Data_* data_ptr  = (Data_*) realloc(queue->elem_address, sizeof(Data_)*queue->capacity);
-    Validator(!data_ptr, in realloc: could not get memory, return MEMORY_ALLOC_ERROR);
+    Validator(!data_ptr, "in realloc: could not get memory", return MEMORY_ALLOC_ERROR);
 
     queue->elem_address = data_ptr;
     return 0;
@@ -50,7 +49,7 @@ int QueueResize(Queue* queue) {
 void _QueueLog(Queue* queue, int line, const char* func_name) {
 
     FILE* Log_Queue = fopen("data//log_queue.txt", "a");
-    Validator(!Log_Queue, in opening file, exit(EXIT_FAILURE););
+    Validator(!Log_Queue, "in opening file", exit(EXIT_FAILURE););
 
     fprintf(Log_Queue, "\n*****************************************************Queue_Info********************************************"
     "*****************************************\n");
@@ -69,7 +68,7 @@ void _QueueLog(Queue* queue, int line, const char* func_name) {
     fprintf(Log_Queue, "**************************************************************************************************************"
     "**************************************\n\n");
     int is_file_close = fclose(Log_Queue);
-    Validator(is_file_close, in closing file, exit(EXIT_FAILURE););
+    Validator(is_file_close, "in closing file", exit(EXIT_FAILURE););
 }
 
 void QueueDtor (Queue* queue) {

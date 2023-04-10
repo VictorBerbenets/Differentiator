@@ -5,7 +5,7 @@
 
 size_t GetFileSize (const char *file) { 
     
-    Validator(!file, invalid file name, exit(ERROR_IN_READING_FILE););
+    Validator(!file, "invalid file name", exit(ERROR_IN_READING_FILE););
 
     struct stat buf = {};
     if (stat(file, &buf)) {

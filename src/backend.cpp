@@ -7,10 +7,18 @@
 
 //******************************************************************************************************************************************//
 static void ReadBuffer(char** buffer, char* result_string, char* readed_symbol, ReadType type);
+static void DeleteParentAndChild(Node** parent, Node** child);
+static void LeaveOnlyLeftNode(Node** parent, Node** tree);
+static void LeaveOnlyRightNode(Node** parent, Node** tree);
 static int  RetFuncName(char* result_string);
 static int  IsVariable(char* string);
 static int  IsDigit(char* string);
+
+// Node* CalculateChildes(Node** parent);
+Node* CalculateChildes(Node* parent);
+
 static int  ERROR_FLAG = 0;
+
 //==========================================================================================================================================//
 
 Node* ConstructTree(const char* file_name) {
@@ -36,18 +44,18 @@ Buffer ReadFile(const char* file_name) {
 
     Buffer buff    = {};
     FILE* TreeFile = fopen(file_name, "r");
-    Validator(TreeFile == nullptr, reading file error, exit(READING_FILE_ERROR));
+    Validator(TreeFile == nullptr, "reading file error", exit(READING_FILE_ERROR));
 
     buff.buffer_size = GetFileSize(file_name);
     buff.buffer      = (char*) calloc(buff.buffer_size + 1, sizeof(char));
-    Validator(!buff.buffer, memory giving error, exit(MEMORY_ALLOC_ERR));
+    Validator(!buff.buffer, "memory giving error", exit(MEMORY_ALLOC_ERR));
 
     size_t fread_ret_value = fread(buff.buffer, sizeof(char), buff.buffer_size, TreeFile);
-    Validator(fread_ret_value != buff.buffer_size, fread reading error, exit(FREAD_READING_ERROR));
+    Validator(fread_ret_value != buff.buffer_size, "fread reading error", exit(FREAD_READING_ERROR));
     buff.buffer[buff.buffer_size] = '\0';
 
     int is_file_closed = fclose(TreeFile);
-    Validator(is_file_closed != 0, closing file error, exit(CLOSING_FILE_ERROR));
+    Validator(is_file_closed != 0, "closing file error", exit(CLOSING_FILE_ERROR));
 
     return buff;
 }
@@ -68,7 +76,7 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
     }
 
     ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, SYMBOL);
-    Validator(readed_symbol != OPEN_BRACKET, expected open bracket, return nullptr);
+    Validator(readed_symbol != OPEN_BRACKET, "expected open bracket", return nullptr);
 
     ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, STRING);
     if (strstr(Operators, result_string)) { // && (strlen(result_string) == 1)
@@ -124,7 +132,7 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
 
 static int RetFuncName(char* result_string) {
 
-    Validator(result_string == nullptr, invalid string pointer, exit(INVALID_STRING_POINTER));
+    Validator(result_string == nullptr, "invalid string pointer", exit(INVALID_STRING_POINTER));
 
     for (size_t struct_number = 0; struct_number < sizeof(_Diff_Functions_)/sizeof(_Diff_Functions_[0]); struct_number++) {
         if (!strcmp(_Diff_Functions_[struct_number].func_name, result_string)) {
@@ -196,7 +204,7 @@ static int IsDigit(char* string) {
 Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* right_node) {
 
     Node* new_node = (Node*) calloc(ONE_NODE, sizeof(Node));
-    Validator(new_node == nullptr, link error: calloc could not give memory, exit(EXIT_FAILURE));
+    Validator(new_node == nullptr, "link error: calloc could not give memory", exit(EXIT_FAILURE));
 
     if (TYPE_NUM == NUMBER) {
         new_node->type = NUMBER;
@@ -244,8 +252,6 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
 elem_t Ebal(Node* node_ptr) { 
 
     if (node_ptr->type == NUMBER) {
-        Validator(node_ptr->left_branch,  invalid node address, return INVALID_NODE;);
-        Validator(node_ptr->right_branch, invalid node address, return INVALID_NODE;);
         return node_ptr->value.number;
     }
     switch(node_ptr->value.oper) {
@@ -364,6 +370,7 @@ Node* SimplifyTree(Node* tree, int* flag_) {
 
     int node_ptrs_size = queue_save.size;
     Node** node_ptrs   = (Node**) calloc(node_ptrs_size, sizeof(Node*));
+
     for (int node_counter = node_ptrs_size; node_counter > 0; --node_counter) {
         node_ptrs[node_counter - 1] = QueuePop(&queue_save);
 
@@ -372,115 +379,86 @@ Node* SimplifyTree(Node* tree, int* flag_) {
     //     printf("address[%d] = %p\n",i, node_ptrs[i]);
     // }
     for (int node_counter = 0; node_counter < node_ptrs_size; ++node_counter) {
-        printf("address[%d] = %p\n",node_counter, node_ptrs[node_counter]);
+        // printf("address[%d] = %p\n",node_counter, node_ptrs[node_counter]);
 
         switch(node_ptrs[node_counter]->value.oper) {
             case OP_SUB:
             case OP_ADD:
-
+                if (node_ptrs[node_counter]->left_branch->type == NUMBER && node_ptrs[node_counter]->right_branch->type == NUMBER) {
+                    node_ptrs[node_counter] = CalculateChildes((node_ptrs[node_counter]));
+                    break;
+                }
                 if (node_ptrs[node_counter]->left_branch->type == NUMBER) {
-
                     if (IsEqual(node_ptrs[node_counter]->left_branch->value.number, 0)) {
-                printf("address in left[%d] = %p\n",node_counter, node_ptrs[node_counter]);
-
-                        if (!node_ptrs[node_counter]->parent) {
-                            free(node_ptrs[node_counter]->left_branch);
-                            tree = node_ptrs[node_counter]->right_branch;
-                            free(node_ptrs[node_counter]);
-
-                        }
-                        node_ptrs[node_counter]->right_branch->parent = node_ptrs[node_counter]->parent;
-                        // printf("fuckin")
-                        if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
-                            printf("AAAAAAAAAAAAAAAAAAAAA\n");
-                            node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->right_branch;
-                            free(node_ptrs[node_counter]->left_branch);
-                            node_ptrs[node_counter]->left_branch = nullptr;
-                            free(node_ptrs[node_counter]);
-                            node_ptrs[node_counter] = nullptr;
-                        }
-                        else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
-                            printf("BBBBBBBBBBBBBBBBBBBBBBBBBBb\n");
-
-                            node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]->right_branch;
-                            free(node_ptrs[node_counter]->left_branch);
-                            node_ptrs[node_counter]->left_branch = nullptr;
-                            free(node_ptrs[node_counter]);
-                            node_ptrs[node_counter] = nullptr;
-                        }
-
-                    break;                   
+                        LeaveOnlyRightNode(&(node_ptrs[node_counter]), &tree);
+                        break;                   
                     }
                 }
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
-
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 0)) {
-
-                        if (!node_ptrs[node_counter]->parent) {
-                            free(node_ptrs[node_counter]->right_branch);
-                            tree = node_ptrs[node_counter]->left_branch;
-                            free(node_ptrs[node_counter]);
-                            return tree;
-                        }
-                        node_ptrs[node_counter]->left_branch->parent = node_ptrs[node_counter]->parent;
-                        if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
-                            node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->left_branch;
-                            free(node_ptrs[node_counter]->right_branch);
-                            node_ptrs[node_counter]->left_branch = nullptr;
-                            free(node_ptrs[node_counter]);
-                            node_ptrs[node_counter] = nullptr;
-                        }
-                        else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
-                            node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]->left_branch;
-                            free(node_ptrs[node_counter]->right_branch);
-                            node_ptrs[node_counter]->left_branch = nullptr;
-                            free(node_ptrs[node_counter]);
-                            node_ptrs[node_counter] = nullptr;
-                        }
-
-                    break;
+                        LeaveOnlyLeftNode(&(node_ptrs[node_counter]), &tree);
+                        break;
                     }
                 }
                 break;
             case OP_MUL:
-                // if (node_ptrs[node_counter]->left_branch->type == NUMBER) {
-                //     if (IsEqual(node_ptrs[node_counter]->left_branch->value.number, 0)) {
-                //         if (!node_ptrs[node_counter]->parent) {
-                //             free(node_ptrs[node_counter]->left_branch);
-                //             tree = node_ptrs[node_counter]->left_branch;
-                //             free(node_ptrs[node_counter]);
-                //             return tree;
-                //         }
-                //          node_ptrs[node_counter]->right_branch->parent = node_ptrs[node_counter]->parent;
+                if (node_ptrs[node_counter]->left_branch->type == NUMBER && node_ptrs[node_counter]->right_branch->type == NUMBER) {
+                    node_ptrs[node_counter] = CalculateChildes((node_ptrs[node_counter]));
+                    break;
+                }
+                if (node_ptrs[node_counter]->left_branch->type == NUMBER) {
+                    if (IsEqual(node_ptrs[node_counter]->left_branch->value.number, 0)) {
+                        if (!node_ptrs[node_counter]->parent) {
+                            tree = node_ptrs[node_counter]->left_branch;
+                            DeleteParentAndChild(&(node_ptrs[node_counter]), &(node_ptrs[node_counter]->right_branch));
+                            return tree;
+                        }
+                        node_ptrs[node_counter]->left_branch->parent = node_ptrs[node_counter]->parent;
 
-                //         if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
-                //             node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->left_branch;
-                //         }
-                //         else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
-                //             node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]->left_branch;
-                //         }
-                //         free(node_ptrs[node_counter]->right_branch);
-                //         node_ptrs[node_counter]->right_branch = nullptr;
-                //         free(node_ptrs[node_counter]);
-                //         node_ptrs[node_counter] = nullptr;
+                        if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
+                            node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->left_branch;
+                        }
+                        else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
+                            node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]->left_branch;
+                        }
+                        DeleteParentAndChild(&(node_ptrs[node_counter]), &(node_ptrs[node_counter]->right_branch));
+                        break;                   
+                    }                       
+                }
+                if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
+                    if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 0)) {
+                        if (!node_ptrs[node_counter]->parent) {
+                            tree = node_ptrs[node_counter]->right_branch;
+                            DeleteParentAndChild(&(node_ptrs[node_counter]), &(node_ptrs[node_counter]->left_branch));
+                            return tree;
+                        }
+                        node_ptrs[node_counter]->right_branch->parent = node_ptrs[node_counter]->parent;
 
-                //     break;                   
-                //     }
-                        
-                //     }
-                
-                // if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
-                //     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 0)) {
-                //         if (!node_ptrs[node_counter]->parent) {
-                //             free(node_ptrs[node_counter]->left_branch);
-                //             tree = node_ptrs[node_counter]->right_branch;
-                //             free(node_ptrs[node_counter]);
-                //             return tree;
-                //         }
-                        
-                //     }
-                    
-                // }
+                        if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
+                            node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->right_branch;
+                        }
+                        else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
+                            node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]->right_branch;
+                        }
+                        DeleteParentAndChild(&(node_ptrs[node_counter]), &(node_ptrs[node_counter]->left_branch));
+                        break;                   
+                    }
+                }
+                 if (node_ptrs[node_counter]->left_branch->type == NUMBER) {
+
+                    if (IsEqual(node_ptrs[node_counter]->left_branch->value.number, 1)) {
+                        LeaveOnlyRightNode(&(node_ptrs[node_counter]), &tree);
+                    break;                   
+                    }
+                }
+                if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
+                    if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 1)) {
+                        LeaveOnlyLeftNode(&(node_ptrs[node_counter]), &tree);
+                    break;
+                    }
+                }
+                break;
+
             case OP_DIV:
 
             case OP_POW:
@@ -495,10 +473,69 @@ Node* SimplifyTree(Node* tree, int* flag_) {
    
 
     return tree;
+}
+
+Node* CalculateChildes(Node* parent) {
+
+    elem_t calculated_value = Ebal(parent);
+    fprintf(stderr, "VALUEEEEEEEEEE = %lg\n", calculated_value);
+    free(parent->left_branch);
+    free(parent->right_branch);
+    // free(parent);
+
+
+    return CreateNewNode(NUMBER, &calculated_value);
+}
+
+static void LeaveOnlyRightNode(Node** parent, Node** tree) {
+
+    if (!(*parent)->parent) {
+        *tree = (*parent)->right_branch;
+        DeleteParentAndChild(parent, &((*parent)->left_branch));
+        return ;
+
     }
+    (*parent)->right_branch->parent = (*parent)->parent;
+    if ((*parent)->parent->left_branch == (*parent)) {
+        (*parent)->parent->left_branch = (*parent)->right_branch;
+    }
+    else if ((*parent)->parent->right_branch == (*parent)) {
+        (*parent)->parent->right_branch = (*parent)->right_branch;
+    }
+    DeleteParentAndChild(&((*parent)), &((*parent)->left_branch));
 
-    
+}
 
+static void LeaveOnlyLeftNode(Node** parent, Node** tree) {
+
+    if (!(*parent)->parent) {
+        *tree = (*parent)->left_branch;
+        DeleteParentAndChild(parent, &((*parent)->right_branch));
+        return ;
+
+    }
+    (*parent)->left_branch->parent = (*parent)->parent;
+    if ((*parent)->parent->left_branch == (*parent)) {
+        (*parent)->parent->left_branch = (*parent)->left_branch;
+    }
+    else if ((*parent)->parent->right_branch == (*parent)) {
+        (*parent)->parent->right_branch = (*parent)->left_branch;
+    }
+    DeleteParentAndChild(&((*parent)), &((*parent)->right_branch));
+
+}
+
+static void DeleteParentAndChild(Node** parent, Node** child) {
+
+    if (*child) {
+        free(*child);
+        *child = nullptr;
+    }
+    if (*parent) {
+        free(*parent);
+        *parent = nullptr;
+    }
+}
 
 
 //simple

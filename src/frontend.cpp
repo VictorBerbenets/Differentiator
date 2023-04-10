@@ -13,7 +13,7 @@ int TreeDump(Node* tree) {
         return INVALID_TREE_POINTER;
     }
     DotStartGraph("data//list.dot");
-    Validator(dot_file == nullptr, in opening file:'data//list.dot', return ERROR_IN_READING_FILE;);
+    Validator(dot_file == nullptr, "in opening file:'data//list.dot'", return ERROR_IN_READING_FILE;);
 
     const char dot_header[] = "digraph List {\n"
                               "\tdpi = 100;\n"
@@ -112,7 +112,7 @@ int PrintTreeToFile(Node* tree, PrintType type) {
     }
 
     FILE* TreeFile = fopen(file_name, "w");
-    Validator(TreeFile == nullptr, in opening file, return READING_FILE_ERROR;);
+    Validator(TreeFile == nullptr, "in opening file", return READING_FILE_ERROR;);
 
     switch(type) {
         case IN_ORDER  : InOrder(tree, TreeFile);         break;
@@ -121,7 +121,7 @@ int PrintTreeToFile(Node* tree, PrintType type) {
         default: fprintf(stderr,"What the fuck???\n");    break;
     }
     int is_file_closed = fclose(TreeFile);
-    Validator(TreeFile == nullptr, in closing file, return CLOSING_FILE_ERROR;);
+    Validator(TreeFile == nullptr, "in closing file", return CLOSING_FILE_ERROR;);
     return ALL_RIGHT;
 }
 
