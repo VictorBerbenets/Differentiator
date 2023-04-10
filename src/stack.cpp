@@ -122,7 +122,7 @@ Data StackPop (stack* st){
             return res;
         }
     }
-    return StackIsEmpty;   
+    return nullptr;   
 }
 
 void StackResize(stack* st, int Push_or_Pop){
@@ -325,43 +325,43 @@ void DoPoison(stack*st){
     difference   ++;
 #endif
     for ( ; stack_number < difference; stack_number++) {
-        st->data[st->size + stack_number] = POISON;
+        st->data[st->size + stack_number] = nullptr;
     }
 }
 
-int IsDataValid(stack* st){
+// int IsDataValid(stack* st){
 
-    int stack_number       = 0;
-    int max_st_number_size = st -> size;
-#ifdef STACK_DATA_CANARY_PROTECT
-    stack_number      ++;
-    max_st_number_size ++;
-#endif
-    for ( ;stack_number < max_st_number_size; stack_number++){
-        if (st->data[stack_number] == POISON){
-            return ElemIsPoison;
-        }
-    }
-    return NoPoison;
-}
+//     int stack_number       = 0;
+//     int max_st_number_size = st -> size;
+// #ifdef STACK_DATA_CANARY_PROTECT
+//     stack_number      ++;
+//     max_st_number_size ++;
+// #endif
+//     for ( ;stack_number < max_st_number_size; stack_number++){
+//         if (st->data[stack_number] == POISON){
+//             return ElemIsPoison;
+//         }
+//     }
+//     return NoPoison;
+// }
 
-Ull hash_data(stack* st) {
+// Ull hash_data(stack* st) {
 
-    double mult    = 0.5;
-    double hash    = 0;
+//     double mult    = 0.5;
+//     double hash    = 0;
 
-    for (int st_number = 1; st_number <= st -> size; st_number++) {
+//     for (int st_number = 1; st_number <= st -> size; st_number++) {
 
-        hash *= mult;
-        hash += st -> data[st_number];
-    }
-    return hash;
-}
+//         hash *= mult;
+//         hash += st -> data[st_number];
+//     }
+//     return hash;
+// }
 
-int is_equal(Data value1, Data value2) {
+// int is_equal(Data value1, Data value2) {
 
-    return (fabs(value1 - value2) < Epsilon);
-}
+//     return (fabs(value1 - value2) < Epsilon);
+// }
 
 #ifdef STACK_HASH
 Ull hash_stack(stack* st) {
@@ -416,7 +416,7 @@ void StackDump (stack* st, int line, const char func[], const char* stack_name)
 #endif
     for ( ; stack_number < max_counter; stack_number++){
 
-        if (st->data[stack_number] != POISON){
+        if (st->data[stack_number] != nullptr){
             fprintf(log_txt, "*[%d] = " spec_form "\n", stack_number, st->data[stack_number]);
         }
         else {

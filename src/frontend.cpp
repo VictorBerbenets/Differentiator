@@ -9,7 +9,7 @@
 int TreeDump(Node* tree) {
     static int graph_number = 0;
     if (!tree) {
-        printf("Cant create Graph_Dump: tree pointer = %p\n", tree);
+        fprintf(stderr, "Cant create Graph_Dump: tree pointer = %p\n", tree);
         return INVALID_TREE_POINTER;
     }
     DotStartGraph("data//list.dot");

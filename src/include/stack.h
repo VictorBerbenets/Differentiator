@@ -26,7 +26,7 @@
 #endif
 
 #ifdef CharFormat
-    typedef Node Data;
+    typedef Node* Data;
     const char Epsilon = 0;
     const char POISON  = 64;
     #define spec_form "%c"

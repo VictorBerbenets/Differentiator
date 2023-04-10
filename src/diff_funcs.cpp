@@ -41,7 +41,7 @@ Node* Diff(Node* node) {
                 case OP_POW: 
                     if (R->type == NUMBER) {
                         return MUL(MUL(POW(cL, Digit(R->value.number - 1)), cR), dL);  
-                }
+                    }
                 default:  printf("No such operator: %d\n", node->value.oper);  return nullptr;
             }
         case FUNC:
