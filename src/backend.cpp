@@ -8,13 +8,14 @@
 
 //******************************************************************************************************************************************//
 static void ReadBuffer(char** buffer, char* result_string, char* readed_symbol, ReadType type);
+static void DeleteInsignificantTreePart(Node* parent, Node* tree_part);
 static void DeleteParentAndChild(Node** parent, Node** child);
+static void SetParentConnection(Node** parent, Node** child);
 static void LeaveOnlyLeftNode(Node** parent);
 static void LeaveOnlyRightNode(Node** parent);
 static int RetFuncName(char* result_string);
 static int IsVariable(char* string);
 static int IsDigit(char* string);
-static void DeleteInsignificantTreePart(Node* parent, Node* tree_part);
 // Node* CalculateChildes(Node** parent);
 void CalculateChildes(Node** parent);
 
@@ -366,24 +367,12 @@ Node* SimplifyTree(Node* tree, int* flag_) {
 
     int node_counter = 0;
     for (; node_counter < node_ptrs_size; ++node_counter) {
-        // printf("address[%d] = %p\n",node_counter, node_ptrs[node_counter]);
-        printf("address left  = %p\n", node_ptrs[node_counter]->left_branch);
-        printf("address       = %p\n", node_ptrs[node_counter]);
-        printf("address right = %p\n", node_ptrs[node_counter]->right_branch);
-        printf("counter = %d\n", node_counter);
-
         switch (node_ptrs[node_counter]->value.oper) {
             case OP_SUB:
             case OP_ADD:
                 if (node_ptrs[node_counter]->left_branch->type == NUMBER &&
                     node_ptrs[node_counter]->right_branch->type == NUMBER) {
-                    printf("ADRESS ADD  = %p\n", node_ptrs[node_counter]);
-                    printf("ADRESS ADDL = %p\n",
-                           node_ptrs[node_counter]->left_branch);
-                    printf("ADRESS ADDR = %p\n",
-                           node_ptrs[node_counter]->right_branch);
                     CalculateChildes(&(node_ptrs[node_counter]));
-                    printf("ADRESS&&&&& = %p\n", node_ptrs[node_counter]);
                     break;
                 }
                 if (node_ptrs[node_counter]->left_branch->type == NUMBER) {
@@ -415,15 +404,8 @@ Node* SimplifyTree(Node* tree, int* flag_) {
                             DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->right_branch);
                             return tree;
                         }
-                        node_ptrs[node_counter]->left_branch->parent = node_ptrs[node_counter]->parent;
-
-                        if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
-                            node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->left_branch;
-                        } else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
-                            node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]->left_branch;
-                        }
+                        SetParentConnection(&node_ptrs[node_counter], &(node_ptrs[node_counter]->left_branch));
                         DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->right_branch);
-
                         break;
                     }
                 }
@@ -435,22 +417,14 @@ Node* SimplifyTree(Node* tree, int* flag_) {
 
                             return tree;
                         }
-                        node_ptrs[node_counter]->right_branch->parent = node_ptrs[node_counter]->parent;
-
-                        if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
-                            node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->right_branch;
-                        } else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
-                            node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]->right_branch;
-                        }
-                            DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->left_branch);
-
+                        SetParentConnection(&node_ptrs[node_counter], &(node_ptrs[node_counter]->right_branch));
+                        DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->left_branch);
                         break;
                     }
                 }
                 if (node_ptrs[node_counter]->left_branch->type == NUMBER) {
                     if (IsEqual(node_ptrs[node_counter]->left_branch->value.number, 1)) {
                         LeaveOnlyRightNode(&(node_ptrs[node_counter]));
-                        printf("MUL address = %p\n", node_ptrs[node_counter]);
                         break;
                     }
                 }
@@ -470,13 +444,7 @@ Node* SimplifyTree(Node* tree, int* flag_) {
                             LeaveOnlyLeftNode(&(node_ptrs[node_counter]));
                             return tree;
                         }
-                        node_ptrs[node_counter]->right_branch->parent = node_ptrs[node_counter]->parent;
-
-                        if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
-                            node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->right_branch;
-                        } else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
-                            node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]->right_branch;
-                        }
+                        SetParentConnection(&node_ptrs[node_counter], &(node_ptrs[node_counter]->right_branch));
                         LeaveOnlyLeftNode(&(node_ptrs[node_counter]));
                         break;
                     }
@@ -490,13 +458,7 @@ Node* SimplifyTree(Node* tree, int* flag_) {
                             LeaveOnlyLeftNode(&(node_ptrs[node_counter]));
                             return tree;
                         }
-                        node_ptrs[node_counter]->left_branch->parent = node_ptrs[node_counter]->parent;
-
-                        if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
-                            node_ptrs[node_counter]->parent->left_branch = node_ptrs[node_counter]->left_branch;
-                        } else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
-                            node_ptrs[node_counter]->parent->right_branch = node_ptrs[node_counter]->left_branch;
-                        }
+                        SetParentConnection(&node_ptrs[node_counter], &(node_ptrs[node_counter]->left_branch));
                         Node* save_left_node = node_ptrs[node_counter]->left_branch;
                         LeaveOnlyLeftNode(&(node_ptrs[node_counter]));
                         node_ptrs[node_counter] = save_left_node;
@@ -505,25 +467,15 @@ Node* SimplifyTree(Node* tree, int* flag_) {
                 }
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 0)) {
-                        printf("POWW ADDRESs = %p\n", node_ptrs[node_counter]);
                         elem_t finish_value = 1;
                         Node* final_node    = CreateNewNode(NUMBER, &finish_value);
                         if (!node_ptrs[node_counter]->parent) {
                             DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->left_branch);
                             return final_node;
                         }
-                        printf("POWW ADDRESs = %p\n", node_ptrs[node_counter]);
-
-                        final_node->parent = node_ptrs[node_counter]->parent;
-                        if (node_ptrs[node_counter]->parent->left_branch == node_ptrs[node_counter]) {
-                            node_ptrs[node_counter]->parent->left_branch = final_node;
-                        }
-                        else if (node_ptrs[node_counter]->parent->right_branch == node_ptrs[node_counter]) {
-                            node_ptrs[node_counter]->parent->right_branch = final_node;
-                        }
+                        SetParentConnection(&node_ptrs[node_counter], &final_node);
                         DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->left_branch);
                         node_ptrs[node_counter] = final_node;
-                        printf("POWW ADDRESs = %p\n", node_ptrs[node_counter]);
 
                     }
                 }
@@ -536,9 +488,6 @@ Node* SimplifyTree(Node* tree, int* flag_) {
     QueueDtor(&queue_save);
 
     tree = node_ptrs[node_counter - 1];
-        printf("TREEE      = %p\n", tree);
-    printf("TREEE left = %p\n", tree->left_branch);
-    printf("TREEE righ = %p\n", tree->right_branch);
     free(node_ptrs);
 
     return tree;
@@ -620,7 +569,16 @@ static void DeleteParentAndChild(Node** parent, Node** child) {
     }
 }
 
+static void SetParentConnection(Node** parent, Node** child) {
 
+    (*child)->parent = (*parent)->parent;
+    if ((*parent)->parent->left_branch == (*parent)) {
+        (*parent)->parent->left_branch = *child;
+    }
+    else if ((*parent)->parent->right_branch == (*parent)) {
+        (*parent)->parent->right_branch = *child;
+    }
+}
 // static void SimplifyMul()
 // simple
 // pdflatex
