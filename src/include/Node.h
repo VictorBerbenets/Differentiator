@@ -10,8 +10,8 @@ typedef struct {
     int func_id;
 }Function_info;
 
-const Function_info _Diff_Functions_[] = { {"sqrt", SQRT}, {"sin", SIN}, {"cos", COS}, {"tg", TG}, {"ctg", CTG}, {"log", LOG},
-                                           {"ln", LN}, {"exp", EXP}, {"sh", SH}, {"ch", CH}, {"cth", CTH}, {"th", TH} };      // можна КОдеген
+const Function_info _Diff_Functions_[] = { {"sqrt", _SQRT}, {"sin", _SIN}, {"cos", _COS}, {"tg", _TG}, {"ctg", _CTG}, 
+                                           {"ln", _LN}, {"exp", _EXP}, {"sh", _SH}, {"ch", _CH}, {"cth", _CTH}, {"th", _TH} };      // можна КОдеген
 
 typedef union {
     double number;

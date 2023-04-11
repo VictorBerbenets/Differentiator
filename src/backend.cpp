@@ -13,11 +13,10 @@ static void DeleteParentAndChild(Node** parent, Node** child);
 static void SetParentConnection(Node** parent, Node** child);
 static void LeaveOnlyLeftNode(Node** parent);
 static void LeaveOnlyRightNode(Node** parent);
+static void CalculateChildes(Node** parent);
 static int RetFuncName(char* result_string);
 static int IsVariable(char* string);
 static int IsDigit(char* string);
-// Node* CalculateChildes(Node** parent);
-void CalculateChildes(Node** parent);
 
 static int ERROR_FLAG = 0;
 
@@ -81,8 +80,8 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
     if (strstr(Operators, result_string)) {
         value = result_string[0];
         tree->type = OPER;
-        tree->value.oper = (int)value;
-        tree->left_branch = CreateNewNode(OPER, &value);
+        tree->value.oper   = (int)value;
+        tree->left_branch  = CreateNewNode(OPER, &value);
         tree->right_branch = CreateNewNode(OPER, &value);
     } else if ((tree->value.func = RetFuncName(result_string)) != INVALID_STRING_DATA) {
         tree->type = FUNC;
@@ -125,18 +124,19 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
 
 //==========================================================================================================================================//
 
+#define CMP(func_id, func_name, body, ...)  if(!strcmp(result_string, func_name)){  \
+                                                return _##func_id;                   \
+                                            }                                         \
+                                            else
+
 static int RetFuncName(char* result_string) {
-    Validator(result_string == nullptr, "invalid string pointer",
-              exit(INVALID_STRING_POINTER));
 
-    for (size_t struct_number = 0; struct_number < sizeof(_Diff_Functions_) / sizeof(_Diff_Functions_[0]); struct_number++) {
-        if (!strcmp(_Diff_Functions_[struct_number].func_name, result_string)) {
-            return _Diff_Functions_[struct_number].func_id;
-        }
-    }
-    return INVALID_STRING_DATA;
+    Validator(result_string == nullptr, "invalid string pointer", exit(INVALID_STRING_POINTER));
+                                     
+    #include "codegeneration.h"
+        return INVALID_STRING_DATA;
 }
-
+#undef CMP
 //==========================================================================================================================================//
 
 static int IsVariable(char* string) {
@@ -156,8 +156,7 @@ static int IsVariable(char* string) {
 
 //==========================================================================================================================================//
 
-static void ReadBuffer(char** buffer, char* result_string, char* readed_symbol,
-                       ReadType type) {
+static void ReadBuffer(char** buffer, char* result_string, char* readed_symbol, ReadType type) {
     int counter = 0;
     switch (type) {
         case SYMBOL:
@@ -195,8 +194,7 @@ static int IsDigit(char* string) {
 
 //==========================================================================================================================================//
 
-Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node,
-                    Node* right_node) {
+Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* right_node) {
     Node* new_node = (Node*)calloc(ONE_NODE, sizeof(Node));
     Validator(new_node == nullptr, "link error: calloc could not give memory", exit(EXIT_FAILURE));
 
@@ -254,7 +252,7 @@ elem_t Ebal(Node* node_ptr) {
             return GetDiv(node_ptr->left_branch, node_ptr->right_branch);
         case OP_POW:
             return GetPower(node_ptr->left_branch, node_ptr->right_branch);
-        case SQRT:
+        // case _SQRT:
         default:
             PrintWarningInvalidOper();
             return INVALID_OPERATOR;
@@ -302,9 +300,9 @@ void DeleteTree(Node* tree) {
     free(tree);
     return;
 }
-//==========================================================================================================================================//
 
 //==========================================================================================================================================//
+
 void PrintTree(Node* tree) {
     if (!tree) {
         return;
@@ -327,6 +325,8 @@ void PrintTree(Node* tree) {
     }
     // printf("parent = <%p>\n", tree->parent);
 }
+
+//==========================================================================================================================================//
 
 Node* SimplifyTree(Node* tree, int* flag_) {
     if (!tree) {
@@ -370,15 +370,12 @@ Node* SimplifyTree(Node* tree, int* flag_) {
         switch (node_ptrs[node_counter]->value.oper) {
             case OP_SUB:
             case OP_ADD:
-                if (node_ptrs[node_counter]->left_branch->type == NUMBER &&
-                    node_ptrs[node_counter]->right_branch->type == NUMBER) {
+                if (node_ptrs[node_counter]->left_branch->type == NUMBER && node_ptrs[node_counter]->right_branch->type == NUMBER) {
                     CalculateChildes(&(node_ptrs[node_counter]));
                     break;
                 }
                 if (node_ptrs[node_counter]->left_branch->type == NUMBER) {
-                    if (IsEqual(
-                            node_ptrs[node_counter]->left_branch->value.number,
-                            0)) {
+                    if (IsEqual(node_ptrs[node_counter]->left_branch->value.number, 0)) {
                         LeaveOnlyRightNode(&(node_ptrs[node_counter]));
                         break;
                     }
@@ -435,8 +432,11 @@ Node* SimplifyTree(Node* tree, int* flag_) {
                     }
                 }
                 break;
-
             case OP_DIV:
+                if (node_ptrs[node_counter]->left_branch->type == NUMBER && node_ptrs[node_counter]->right_branch->type == NUMBER) {
+                    CalculateChildes(&(node_ptrs[node_counter]));
+                    break;
+                }
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 1)) {
                         if (!node_ptrs[node_counter]->parent) {
@@ -451,6 +451,10 @@ Node* SimplifyTree(Node* tree, int* flag_) {
                 }
                 break;
             case OP_POW:
+                if (node_ptrs[node_counter]->left_branch->type == NUMBER && node_ptrs[node_counter]->right_branch->type == NUMBER) {
+                    CalculateChildes(&(node_ptrs[node_counter]));
+                    break;
+                }
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 1)) {
                         if (!node_ptrs[node_counter]->parent) {
@@ -476,7 +480,6 @@ Node* SimplifyTree(Node* tree, int* flag_) {
                         SetParentConnection(&node_ptrs[node_counter], &final_node);
                         DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->left_branch);
                         node_ptrs[node_counter] = final_node;
-
                     }
                 }
                 break;
@@ -494,15 +497,18 @@ Node* SimplifyTree(Node* tree, int* flag_) {
 
 }
 
+//==========================================================================================================================================//
+
 static void DeleteInsignificantTreePart(Node* parent, Node* tree_part) {
     DeleteTree(tree_part);
     free(parent);
 }
 
-void CalculateChildes(Node** parent) {
+//==========================================================================================================================================//
+
+static void CalculateChildes(Node** parent) {
 
     elem_t calculated_value = Ebal(*parent);
-
     Node* grand_parent = (*parent)->parent;
     Node* new_parent = CreateNewNode(NUMBER, &calculated_value);
     if (!grand_parent) {
@@ -510,9 +516,7 @@ void CalculateChildes(Node** parent) {
         *parent = new_parent;
         return;
     }
-
     new_parent->parent = grand_parent;
-
     if (grand_parent->left_branch == *parent) {
         grand_parent->left_branch = new_parent;
     } else if (grand_parent->right_branch == *parent) {
@@ -525,6 +529,8 @@ void CalculateChildes(Node** parent) {
 
     *parent = new_parent;
 }
+
+//==========================================================================================================================================//
 
 static void LeaveOnlyRightNode(Node** parent) {
     if (!(*parent)->parent) {
@@ -542,6 +548,8 @@ static void LeaveOnlyRightNode(Node** parent) {
     DeleteParentAndChild(&((*parent)), &((*parent)->left_branch));
 }
 
+//==========================================================================================================================================//
+
 static void LeaveOnlyLeftNode(Node** parent) {
     if (!(*parent)->parent) {
         Node* save_child = (*parent)->left_branch;
@@ -558,6 +566,8 @@ static void LeaveOnlyLeftNode(Node** parent) {
     DeleteParentAndChild(&((*parent)), &((*parent)->right_branch));
 }
 
+//==========================================================================================================================================//
+
 static void DeleteParentAndChild(Node** parent, Node** child) {
     if (*child) {
         free(*child);
@@ -569,6 +579,8 @@ static void DeleteParentAndChild(Node** parent, Node** child) {
     }
 }
 
+//==========================================================================================================================================//
+
 static void SetParentConnection(Node** parent, Node** child) {
 
     (*child)->parent = (*parent)->parent;
@@ -578,6 +590,11 @@ static void SetParentConnection(Node** parent, Node** child) {
     else if ((*parent)->parent->right_branch == (*parent)) {
         (*parent)->parent->right_branch = *child;
     }
+}
+//==========================================================================================================================================//
+
+Node* CalculateDerivative(Node* diff_tree, const char* var_name, elem_t arg) {
+
 }
 // static void SimplifyMul()
 // simple

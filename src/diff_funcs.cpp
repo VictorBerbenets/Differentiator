@@ -15,18 +15,25 @@ static const int Div  = OP_DIV;
 static const int Pow  = OP_POW;
 
 //Functions
-static const int Sin  = SIN;
-static const int Cos  = COS;
-static const int Tg   = TG;
-static const int Ctg  = CTG;
-static const int Sh   = SH;
-static const int Ch   = CH;
-static const int Th   = TH;
-static const int Cth  = CTH;
+#define CMP(func_id, func_name, body, address_name) static const int address_name = _##func_id;
+
+// static const int Sin  = _SIN;
+// static const int Cos  = _COS;
+// static const int Tg   = _TG;
+// static const int Ctg  = _CTG;
+// static const int Sh   = _SH;
+// static const int Ch   = _CH;
+// static const int Th   = _TH;
+// static const int Cth  = _CTH;
+#include "codegeneration.h"
+#undef CMP
 //******************************************************************************************************************************************//
 //---------------------------------------------------Function   bodies----------------------------------------------------------------------//
 
-Node* Diff(Node* node) {
+
+#define CMP(func_id, func_name, body, ...) case _##func_id: return body;
+
+Node* Diff(Node* node, const char* var_name) {
 
     if (!node) {
         return nullptr;
@@ -45,27 +52,18 @@ Node* Diff(Node* node) {
                 default:  printf("No such operator: %d\n", node->value.oper);  return nullptr;
             }
         case FUNC:
-            switch (node->value.func) {
-                case SIN: return MUL(COS_(cL, nullptr), dL);
-                case COS: return MUL(MUL(SIN_(cL, nullptr), dL), Digit(-1));
-                case TG:  return MUL(DIV(Digit(1), POW(COS_(cL, nullptr), Digit(2))), dL);
-                case CTG: return MUL(DIV(Digit(-1), POW(SIN_(cL, nullptr), Digit(2))), dL);
-                case LN:  return MUL(DIV(Digit(1), cL), dL);
-                case SH:  return MUL(CH_(cL, nullptr), dL);
-                case CH:  return MUL(SH_(cL, nullptr), dL);
-                case TH:  return MUL(DIV(Digit(1), POW(CH_(cL, nullptr), Digit(2))), dL);
-                case CTH: return MUL(DIV(Digit(-1), POW(SH_(cL, nullptr), Digit(2))), dL);
-                case EXP: return MUL(node, dL);
+            switch (node->value.func) {               
+                #include "codegeneration.h"
                 default:  break;
             } 
         case NUMBER: return CONST_(); 
-        case VAR:    return VAR_(); 
+        case VAR:    VAR_(); 
         default:
             printf ("No such node\n");
             return nullptr;
     }
 }
-
+#undef CMP
 //==========================================================================================================================================//
 
  Node* CopyTree(Node* tree_to_copy, Node* duplic_tree) {

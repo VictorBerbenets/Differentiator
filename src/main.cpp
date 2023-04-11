@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     TreeDump(tree);
 
     // printf("%lg\n", Ebal(tree));
-    Node* diff_tree = Diff(tree);
+    Node* diff_tree = Diff(tree, "x");
     // PrintTree(diff_tree);
     // for (int i = 0; i < 10; i++) {
     // DeleteTree(diff_tree);

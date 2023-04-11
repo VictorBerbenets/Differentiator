@@ -9,8 +9,8 @@
 #define L  node->left_branch
 #define R  node->right_branch
 
-#define dL Diff(L)
-#define dR Diff(R)
+#define dL Diff(L, var_name)
+#define dR Diff(R, var_name)
 #define cL CopyTree(node->left_branch, duplic_tree)
 #define cR CopyTree(node->right_branch, duplic_tree)
 
@@ -30,6 +30,9 @@
 #define TH_(L, R)  CreateNewNode(FUNC,  &Th,  L, R)
 #define CTH_(L, R) CreateNewNode(FUNC, &Cth, L, R)
 #define CONST_()   Digit(0)
-#define VAR_()     Digit(1)
+#define VAR_()     if (!strcmp(node->value.var, var_name)) { \
+                       return Digit(1);                       \
+                   }                                           \
+                   return Digit(0);
 
 #endif

@@ -19,18 +19,9 @@ enum Operations {
 
 enum Functions {
     NUM     = -10,
-    SQRT    = 0,
-    SIN     = 1,
-    COS     = 2,
-    TG      = 3,
-    CTG     = 4,
-    LOG     = 5,
-    LN      = 6,
-    EXP     = 7,
-    SH      = 8,
-    CH      = 9,
-    CTH     = 10,
-    TH      = 11,
+    #define CMP(func_id, ...) _##func_id,
+    #include "codegeneration.h"
+    #undef CMP
 };
 
 enum Brackets {
