@@ -15,7 +15,7 @@ static int  IsVariable(char* string);
 static int  IsDigit(char* string);
 
 // Node* CalculateChildes(Node** parent);
-Node* CalculateChildes(Node* parent);
+void CalculateChildes(Node** parent);
 
 static int  ERROR_FLAG = 0;
 
@@ -355,14 +355,17 @@ Node* SimplifyTree(Node* tree, int* flag_) {
 
         Node* ptr = QueuePop(&queue);
         if (ptr->left_branch) {
-            if (ptr->left_branch->type == OPER) {
                 QueuePush(&queue, ptr->left_branch);
+            if (ptr->left_branch->type == OPER) {
+                printf("PUSH ADDRESS = %p\n", ptr->left_branch);
+
                 QueuePush(&queue_save, ptr->left_branch);
             }
         }
         if (ptr->right_branch) {
-            if (ptr->right_branch->type == OPER) {
                 QueuePush(&queue, ptr->right_branch);
+            if (ptr->right_branch->type == OPER) {
+                printf("PUSH ADDRESS = %p\n", ptr->right_branch);
                 QueuePush(&queue_save, ptr->right_branch);
             }
         }
@@ -380,12 +383,17 @@ Node* SimplifyTree(Node* tree, int* flag_) {
     // }
     for (int node_counter = 0; node_counter < node_ptrs_size; ++node_counter) {
         // printf("address[%d] = %p\n",node_counter, node_ptrs[node_counter]);
-
+        printf("address left  = %p\n", node_ptrs[node_counter]->left_branch);
+        printf("address       = %p\n", node_ptrs[node_counter]);
+        printf("address right = %p\n", node_ptrs[node_counter]->right_branch);
+        printf("counter = %d\n", node_counter);
         switch(node_ptrs[node_counter]->value.oper) {
             case OP_SUB:
             case OP_ADD:
                 if (node_ptrs[node_counter]->left_branch->type == NUMBER && node_ptrs[node_counter]->right_branch->type == NUMBER) {
-                    node_ptrs[node_counter] = CalculateChildes((node_ptrs[node_counter]));
+                    printf("ADRESS = %p\n", node_ptrs[node_counter]);
+                    CalculateChildes(&(node_ptrs[node_counter]));
+                    printf("ADRESS&&&&& = %p\n", node_ptrs[node_counter]);
                     break;
                 }
                 if (node_ptrs[node_counter]->left_branch->type == NUMBER) {
@@ -403,7 +411,8 @@ Node* SimplifyTree(Node* tree, int* flag_) {
                 break;
             case OP_MUL:
                 if (node_ptrs[node_counter]->left_branch->type == NUMBER && node_ptrs[node_counter]->right_branch->type == NUMBER) {
-                    node_ptrs[node_counter] = CalculateChildes((node_ptrs[node_counter]));
+                    printf("ADRESS = %p\n", node_ptrs[node_counter]);
+                    // node_ptrs[node_counter] = CalculateChildes((node_ptrs[node_counter]));
                     break;
                 }
                 if (node_ptrs[node_counter]->left_branch->type == NUMBER) {
@@ -475,16 +484,26 @@ Node* SimplifyTree(Node* tree, int* flag_) {
     return tree;
 }
 
-Node* CalculateChildes(Node* parent) {
+void CalculateChildes(Node** parent) {
 
-    elem_t calculated_value = Ebal(parent);
-    fprintf(stderr, "VALUEEEEEEEEEE = %lg\n", calculated_value);
-    free(parent->left_branch);
-    free(parent->right_branch);
-    // free(parent);
+    elem_t calculated_value = Ebal(*parent);
 
+    Node* grand_parent = (*parent)->parent;
+    Node* new_parent   = CreateNewNode(NUMBER, &calculated_value);
+    new_parent->parent = grand_parent;
 
-    return CreateNewNode(NUMBER, &calculated_value);
+    if (grand_parent->left_branch == *parent) {
+        grand_parent->left_branch = new_parent;
+    }
+    else if (grand_parent->right_branch == *parent) {
+        grand_parent->right_branch = new_parent;
+    }
+
+    free((*parent)->left_branch);
+    free((*parent)->right_branch);
+    free(*parent);
+
+    *parent = new_parent;
 }
 
 static void LeaveOnlyRightNode(Node** parent, Node** tree) {
