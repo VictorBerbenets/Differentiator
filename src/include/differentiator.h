@@ -58,7 +58,7 @@ Node* Diff(Node* node, const char* var_name);
 elem_t Ebal(Node* node_ptr);
 elem_t GetPower(Node* base, Node* degree);
 elem_t GetDiv(Node* dividend, Node* divisor);
-Node* SimplifyTree(Node* tree, int* flag_);
+Node* SimplifyTree(Node* tree);
 
 void PreOrder(Node* tree, FILE* file_name);
 void InOrder(Node* tree, FILE* file_name);

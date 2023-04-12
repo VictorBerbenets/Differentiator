@@ -74,7 +74,7 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
     }
 
     ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, SYMBOL);
-    Validator(readed_symbol != OPEN_BRACKET, "expected open bracket", return nullptr);
+    Validator(readed_symbol != OPEN_BRACKET, "expected open bracket", ERROR_FLAG = 1);
 
     ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, STRING);
     if (strstr(Operators, result_string)) {
@@ -239,9 +239,16 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
 //==========================================================================================================================================//
 // calculate tree
 elem_t Ebal(Node* node_ptr) {
+                            fprintf(stderr, "LINE = %d\n", __LINE__);
+    printf("EBAL adress       = %p\n", node_ptr);
+    printf("EBAL adress left  = %p\n", node_ptr->left_branch);
+    printf("EBAL adress right = %p\n", node_ptr->right_branch);
+
     if (node_ptr->type == NUMBER) {
         return node_ptr->value.number;
     }
+                            fprintf(stderr, "LINE = %d\n", __LINE__);
+
     switch (node_ptr->value.oper) {
         case OP_ADD:
             return Ebal(node_ptr->left_branch) + Ebal(node_ptr->right_branch);
@@ -269,12 +276,17 @@ elem_t GetPower(Node* base, Node* degree) {
 //==========================================================================================================================================//
 
 elem_t GetDiv(Node* dividend, Node* divisor) {
-    elem_t div = Ebal(divisor->right_branch);
+    printf("ADDDDDDRESSSS dividend = %p\n", dividend);
+    printf("ADDDDDDRESSSS divisor  = %p\n", divisor);
+
+    elem_t div = Ebal(divisor);
+
+    printf("DIV = %lg\n", div);
     if (IsEqual(div, 0)) {
         PrintWarningForDivisor();
-        return DIVIDE_ERROR;
+        exit(DIVIDE_ERROR);
     }
-    return Ebal(dividend->left_branch) / div;
+    return Ebal(dividend) / div;
 }
 
 //==========================================================================================================================================//
@@ -331,7 +343,7 @@ void PrintTree(Node* tree) {
 
 //==========================================================================================================================================//
 
-Node* SimplifyTree(Node* tree, int* flag_) {
+Node* SimplifyTree(Node* tree) {
     if (!tree) {
         return nullptr;
     }
@@ -460,12 +472,17 @@ Node* SimplifyTree(Node* tree, int* flag_) {
                     break;
                 }
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
+                            fprintf(stderr, "LINE = %d\n", __LINE__);
+
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 1)) {
                         if (!node_ptrs[node_counter]->parent) {
+                            fprintf(stderr, "LINE = %d\n", __LINE__);
                             tree = node_ptrs[node_counter]->left_branch;
                             LeaveOnlyLeftNode(&(node_ptrs[node_counter]));
                             return tree;
                         }
+                            fprintf(stderr, "LINE = %d\n", __LINE__);
+
                         SetParentConnection(&node_ptrs[node_counter], &(node_ptrs[node_counter]->left_branch));
                         Node* save_left_node = node_ptrs[node_counter]->left_branch;
                         LeaveOnlyLeftNode(&(node_ptrs[node_counter]));
@@ -474,13 +491,21 @@ Node* SimplifyTree(Node* tree, int* flag_) {
                     }
                 }
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
+                            fprintf(stderr, "LINE = %d\n", __LINE__);
+
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 0)) {
+                            fprintf(stderr, "LINE = %d\n", __LINE__);
+
                         elem_t finish_value = 1;
                         Node* final_node    = CreateNewNode(NUMBER, &finish_value);
                         if (!node_ptrs[node_counter]->parent) {
+                            fprintf(stderr, "LINE = %d\n", __LINE__);
+
                             DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->left_branch);
                             return final_node;
                         }
+                            fprintf(stderr, "LINE = %d\n", __LINE__);
+
                         SetParentConnection(&node_ptrs[node_counter], &final_node);
                         DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->left_branch);
                         node_ptrs[node_counter] = final_node;
@@ -512,6 +537,7 @@ static void DeleteInsignificantTreePart(Node* parent, Node* tree_part) {
 
 static void CalculateChildes(Node** parent) {
     elem_t calculated_value = Ebal(*parent);
+    printf("Value = %lg\n", calculated_value);
     Node* grand_parent = (*parent)->parent;
     Node* new_parent = CreateNewNode(NUMBER, &calculated_value);
     if (!grand_parent) {
