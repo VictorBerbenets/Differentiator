@@ -13,7 +13,7 @@
 #define dR Diff(R, var_name)
 #define cL CopyTree(node->left_branch, duplic_tree)
 #define cR CopyTree(node->right_branch, duplic_tree)
-
+// #define Cn
 
 #define ADD(L, R) CreateNewNode(OPER, &Add, L, R)
 #define SUB(L, R) CreateNewNode(OPER, &Sub, L, R)
@@ -21,14 +21,15 @@
 #define DIV(L, R) CreateNewNode(OPER, &Div, L, R)
 #define POW(L, R) CreateNewNode(OPER, &Pow, L, R)
 
-#define SIN_(L, R) CreateNewNode(FUNC, &Sin, L, R)
-#define COS_(L, R) CreateNewNode(FUNC, &Cos, L, R)
+#define SIN_(L, R) CreateNewNode(FUNC,  &Sin, L, R)
+#define COS_(L, R) CreateNewNode(FUNC,  &Cos, L, R)
 #define TG_(L, R)  CreateNewNode(FUNC,  &Tg,  L, R)
-#define CTG_(L, R) CreateNewNode(FUNC, &Ctg, L, R)
+#define CTG_(L, R) CreateNewNode(FUNC,  &Ctg, L, R)
 #define CH_(L, R)  CreateNewNode(FUNC,  &Ch,  L, R)
 #define SH_(L, R)  CreateNewNode(FUNC,  &Sh,  L, R)
 #define TH_(L, R)  CreateNewNode(FUNC,  &Th,  L, R)
-#define CTH_(L, R) CreateNewNode(FUNC, &Cth, L, R)
+#define CTH_(L, R) CreateNewNode(FUNC,  &Cth, L, R)
+#define EXP_(L, R) CreateNewNode(FUNC,  &Exp, L, R)
 #define CONST_()   Digit(0)
 #define VAR_()     if (!strcmp(node->value.var, var_name)) { \
                        return Digit(1);                       \

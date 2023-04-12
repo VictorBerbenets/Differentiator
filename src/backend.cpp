@@ -62,7 +62,7 @@ Buffer ReadFile(const char* file_name) {
 //==========================================================================================================================================//
 
 Node* BuildTree(Node* tree, Buffer* tree_buffer) {
-    static char result_string[Max_variable_size] = {};
+    static char result_string[MAX_VARIABLE_SIZE] = {};
     static const char Operators[] = "+ - * / ^";  // const
     static elem_t value = 0;
     static char readed_symbol = 0;
@@ -84,6 +84,7 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
         tree->left_branch  = CreateNewNode(OPER, &value);
         tree->right_branch = CreateNewNode(OPER, &value);
     } else if ((tree->value.func = RetFuncName(result_string)) != INVALID_STRING_DATA) {
+        printf("TREE value func = %d\n", tree->value.func);
         tree->type = FUNC;
         tree->left_branch = CreateNewNode(FUNC, &tree->value.func);
     } else if (IsDigit(result_string)) {
@@ -91,12 +92,12 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
         tree->type = NUMBER;
     } else if (IsVariable(result_string)) {
         string_len = strlen(result_string);
-        if (string_len < Max_variable_size) {
+        if (string_len < MAX_VARIABLE_SIZE) {
             memcpy((void*)tree->value.var, (const void*)result_string, sizeof(char) * string_len);
             tree->value.var[string_len] = '\0';
             tree->type = VAR;
         } else {
-            fprintf(stderr, "Name of the variable '%s' is to long:%d. It have to < %d", result_string, string_len, Max_variable_size);
+            fprintf(stderr, "Name of the variable '%s' is to long:%d. It have to < %d", result_string, string_len, MAX_VARIABLE_SIZE);
             ERROR_FLAG = 1;
             return nullptr;
         }
@@ -289,9 +290,11 @@ void DeleteTree(Node* tree) {
     if (!tree) {
         return;
     }
-
+    fprintf(stderr, "ADDRESS = %p\n", tree);
     DeleteTree(tree->left_branch);
     DeleteTree(tree->right_branch);
+    fprintf(stderr, "ADDRESS AFTER = %p\n", tree);
+    
 
     tree->parent = nullptr;
     tree->left_branch = nullptr;

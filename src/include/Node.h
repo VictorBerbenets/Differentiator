@@ -1,21 +1,29 @@
 #ifndef Node_h
 #define Node_h
 #include "operators.h"
+#include "stdlib.h"
 
-const static int Max_variable_size = 25;
-const static int Max_function_size = 25;
+const int MAX_FUNCTION_ARRAY_SIZE = 100;
+const int MAX_VARIABLE_SIZE       = 25;
+const int MAX_FUNC_SIZE           = 45;
+const int _SQRT = -435;
 
 typedef struct {
-    char func_name[Max_function_size];
+    const char func_name[MAX_FUNC_SIZE];
     int func_id;
-}Function_info;
+} Function_info;
 
-const Function_info _Diff_Functions_[] = { {"sqrt", _SQRT}, {"sin", _SIN}, {"cos", _COS}, {"tg", _TG}, {"ctg", _CTG}, 
-                                           {"ln", _LN}, {"exp", _EXP}, {"sh", _SH}, {"ch", _CH}, {"cth", _CTH}, {"th", _TH} };      // можна КОдеген
+
+#define CMP(func_id, func, body, address) {func, _##func_id},
+const Function_info _Diff_Functions_[] = {
+    #include "codegeneration.h"
+    {"I am not a function, baby:)", 0}
+};
+#undef CMP
 
 typedef union {
     double number;
-    char var[Max_variable_size];
+    char var[MAX_VARIABLE_SIZE];
     int func;
     int oper;
 } Params;

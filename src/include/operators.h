@@ -16,9 +16,8 @@ enum Operations {
     OP_POW  = '^',
 
 };
-
+const int NUM = -10;
 enum Functions {
-    NUM     = -10,
     #define CMP(func_id, ...) _##func_id,
     #include "codegeneration.h"
     #undef CMP
@@ -28,5 +27,4 @@ enum Brackets {
     OPEN_BRACKET   = '(',
     CLOSE_BRACKET  = ')',
 };
-
 #endif

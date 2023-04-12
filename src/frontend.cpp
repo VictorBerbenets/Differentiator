@@ -69,9 +69,7 @@ void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_ne
 }
 
 //==========================================================================================================================================//
-
 void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter) {
-
     if (ptr->type == NUMBER) {
         DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#FFD0D0\", label ="
                  "\"{address: %p|value: %lg| { <ptr1> left: %p| <ptr2> right: %p|parent: %p}}\"]\n",
