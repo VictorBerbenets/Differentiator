@@ -511,7 +511,6 @@ static void DeleteInsignificantTreePart(Node* parent, Node* tree_part) {
 //==========================================================================================================================================//
 
 static void CalculateChildes(Node** parent) {
-
     elem_t calculated_value = Ebal(*parent);
     Node* grand_parent = (*parent)->parent;
     Node* new_parent = CreateNewNode(NUMBER, &calculated_value);
@@ -543,12 +542,7 @@ static void LeaveOnlyRightNode(Node** parent) {
         *parent = save_child;
         return;
     }
-    (*parent)->right_branch->parent = (*parent)->parent;
-    if ((*parent)->parent->left_branch == (*parent)) {
-        (*parent)->parent->left_branch = (*parent)->right_branch;
-    } else if ((*parent)->parent->right_branch == (*parent)) {
-        (*parent)->parent->right_branch = (*parent)->right_branch;
-    }
+    SetParentConnection(parent, &(*parent)->right_branch);
     DeleteParentAndChild(&((*parent)), &((*parent)->left_branch));
 }
 
@@ -561,12 +555,7 @@ static void LeaveOnlyLeftNode(Node** parent) {
         *parent = save_child;
         return;
     }
-    (*parent)->left_branch->parent = (*parent)->parent;
-    if ((*parent)->parent->left_branch == (*parent)) {
-        (*parent)->parent->left_branch = (*parent)->left_branch;
-    } else if ((*parent)->parent->right_branch == (*parent)) {
-        (*parent)->parent->right_branch = (*parent)->left_branch;
-    }
+    SetParentConnection(parent, &(*parent)->left_branch);
     DeleteParentAndChild(&((*parent)), &((*parent)->right_branch));
 }
 
@@ -586,7 +575,6 @@ static void DeleteParentAndChild(Node** parent, Node** child) {
 //==========================================================================================================================================//
 
 static void SetParentConnection(Node** parent, Node** child) {
-
     (*child)->parent = (*parent)->parent;
     if ((*parent)->parent->left_branch == (*parent)) {
         (*parent)->parent->left_branch = *child;
