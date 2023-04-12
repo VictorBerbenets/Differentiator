@@ -409,6 +409,7 @@ Node* SimplifyTree(Node* tree, int* flag_) {
                         break;
                     }
                 }
+                printf("ADDRESS = %p\n", node_ptrs[node_counter]);
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 0)) {
                         if (!node_ptrs[node_counter]->parent) {

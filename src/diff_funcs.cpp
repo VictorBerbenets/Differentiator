@@ -17,16 +17,16 @@ static const int Pow  = OP_POW;
 //Functions
 #define CMP(func_id, func_name, body, address_name) static const int address_name = _##func_id;
 
-static const int Sin  = _SIN;
-static const int Cos  = _COS;
-static const int Tg   = _TG;
-static const int Ctg  = _CTG;
-static const int Sh   = _SH;
-static const int Ch   = _CH;
-static const int Th   = _TH;
-static const int Cth  = _CTH;
-static const int Exp  = _EXP;
-// #include "codegeneration.h"
+// static const int Sin  = _SIN;
+// static const int Cos  = _COS;
+// static const int Tg   = _TG;
+// static const int Ctg  = _CTG;
+// static const int Sh   = _SH;
+// static const int Ch   = _CH;
+// static const int Th   = _TH;
+// static const int Cth  = _CTH;
+// static const int Exp  = _EXP;
+#include "codegeneration.h"
 #undef CMP
 //******************************************************************************************************************************************//
 //---------------------------------------------------Function   bodies----------------------------------------------------------------------//

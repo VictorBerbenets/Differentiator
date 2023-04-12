@@ -6,7 +6,6 @@
 const int MAX_FUNCTION_ARRAY_SIZE = 100;
 const int MAX_VARIABLE_SIZE       = 25;
 const int MAX_FUNC_SIZE           = 45;
-const int _SQRT = -435;
 
 typedef struct {
     const char func_name[MAX_FUNC_SIZE];
