@@ -15,6 +15,7 @@ static void LeaveOnlyLeftNode(Node** parent);
 static void LeaveOnlyRightNode(Node** parent);
 static void CalculateChildes(Node** parent);
 static int RetFuncName(char* result_string);
+static Node** CollectTreeOperators(Node* tree, int* opers_size);
 static int IsVariable(char* string);
 static int IsDigit(char* string);
 
@@ -347,41 +348,11 @@ Node* SimplifyTree(Node* tree) {
     if (!tree) {
         return nullptr;
     }
-
-    Queue queue = {};
-    Queue queue_save = {};
-    QueueInit(&queue, QueueInitSize);
-    QueueInit(&queue_save, QueueInitSize);
-    QueuePush(&queue, tree);
-    QueuePush(&queue_save, tree);
-
-    while (queue.size) {
-        Node* ptr = QueuePop(&queue);
-        if (ptr->left_branch) {
-            QueuePush(&queue, ptr->left_branch);
-            if (ptr->left_branch->type == OPER) {
-                // printf("PUSH ADDRESS = %p\n", ptr->left_branch);
-                QueuePush(&queue_save, ptr->left_branch);
-            }
-        }
-        if (ptr->right_branch) {
-            QueuePush(&queue, ptr->right_branch);
-            if (ptr->right_branch->type == OPER) {
-                // printf("PUSH ADDRESS = %p\n", ptr->right_branch);
-                QueuePush(&queue_save, ptr->right_branch);
-            }
-        }
-    }
-
-    int node_ptrs_size = queue_save.size;
-    Node** node_ptrs = (Node**)calloc(node_ptrs_size, sizeof(Node*));
-
-    for (int node_counter = node_ptrs_size; node_counter > 0; --node_counter) {
-        node_ptrs[node_counter - 1] = QueuePop(&queue_save);
-    }
+    int opers_size   = 0;
+    Node** node_ptrs = CollectTreeOperators(tree, &opers_size);
 
     int node_counter = 0;
-    for (; node_counter < node_ptrs_size; ++node_counter) {
+    for (; node_counter < opers_size; ++node_counter) {
         switch (node_ptrs[node_counter]->value.oper) {
             case OP_SUB:
             case OP_ADD:
@@ -516,14 +487,49 @@ Node* SimplifyTree(Node* tree) {
                 break;
         }
     }
-    QueueDtor(&queue);
-    QueueDtor(&queue_save);
 
     tree = node_ptrs[node_counter - 1];
     free(node_ptrs);
 
     return tree;
 
+}
+
+//==========================================================================================================================================//
+
+static Node** CollectTreeOperators(Node* tree, int* opers_size) {
+    Queue queue = {};
+    Queue queue_save = {};
+    QueueInit(&queue, QueueInitSize);
+    QueueInit(&queue_save, QueueInitSize);
+    QueuePush(&queue, tree);
+    QueuePush(&queue_save, tree);
+
+    while (queue.size) {
+        Node* ptr = QueuePop(&queue);
+        if (ptr->left_branch) {
+            QueuePush(&queue, ptr->left_branch);
+            if (ptr->left_branch->type == OPER) {
+                QueuePush(&queue_save, ptr->left_branch);
+            }
+        }
+        if (ptr->right_branch) {
+            QueuePush(&queue, ptr->right_branch);
+            if (ptr->right_branch->type == OPER) {
+                QueuePush(&queue_save, ptr->right_branch);
+            }
+        }
+    }
+    *opers_size      = queue_save.size;
+    Node** node_ptrs = (Node**)calloc(*opers_size, sizeof(Node*));
+
+    for (int node_counter = *opers_size; node_counter > 0; --node_counter) {
+        node_ptrs[node_counter - 1] = QueuePop(&queue_save);
+    }
+    QueueDtor(&queue);
+    QueueDtor(&queue_save);
+
+    return node_ptrs;
 }
 
 //==========================================================================================================================================//
