@@ -5,75 +5,114 @@ digraph List {
 	rankdir  = TB;
 graph [fillcolor = lightgreen, ranksep = 1.3, nodesep = 0.5, style = "rounded", color = green, penwidth = 2];
 edge [color = black, arrowhead = diamond, arrowsize = 1, penwidth = 1.2];
-node1 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82cd0|operator: '*'| { <ptr1> left: 0x4b82c20| <ptr2> right: 0x4b825b0}}"]
-node2 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82cd0|operator: '*'| { <ptr1> left: 0x4b82c20| <ptr2> right: 0x4b825b0}}"]
-node1: <ptr1> -> node2; node3 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82cd0|operator: '*'| { <ptr1> left: 0x4b82c20| <ptr2> right: 0x4b825b0}}"]
+node1 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b839d0|operator: '*'| { <ptr1> left: 0x4b83910| <ptr2> right: 0x4b834d0|parent: (nil)}}"]
+node2 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b839d0|operator: '*'| { <ptr1> left: 0x4b83910| <ptr2> right: 0x4b834d0|parent: (nil)}}"]
+node1: <ptr1> -> node2; node3 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b839d0|operator: '*'| { <ptr1> left: 0x4b83910| <ptr2> right: 0x4b834d0|parent: (nil)}}"]
 node1: <ptr2> -> node3; 
-node2 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82c20|operator: '/'| { <ptr1> left: 0x4b82b70| <ptr2> right: 0x4b82ac0}}"]
-node4 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82c20|operator: '/'| { <ptr1> left: 0x4b82b70| <ptr2> right: 0x4b82ac0}}"]
-node2: <ptr1> -> node4; node5 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82c20|operator: '/'| { <ptr1> left: 0x4b82b70| <ptr2> right: 0x4b82ac0}}"]
+node2 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83910|operator: '^'| { <ptr1> left: 0x4b83690| <ptr2> right: 0x4b83590|parent: 0x4b839d0}}"]
+node4 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83910|operator: '^'| { <ptr1> left: 0x4b83690| <ptr2> right: 0x4b83590|parent: 0x4b839d0}}"]
+node2: <ptr1> -> node4; node5 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83910|operator: '^'| { <ptr1> left: 0x4b83690| <ptr2> right: 0x4b83590|parent: 0x4b839d0}}"]
 node2: <ptr2> -> node5; 
-node3 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b825b0|operator: '+'| { <ptr1> left: 0x4b82500| <ptr2> right: 0x4b82090}}"]
-node6 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b825b0|operator: '+'| { <ptr1> left: 0x4b82500| <ptr2> right: 0x4b82090}}"]
-node3: <ptr1> -> node6; node7 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b825b0|operator: '+'| { <ptr1> left: 0x4b82500| <ptr2> right: 0x4b82090}}"]
+node3 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b834d0|operator: '+'| { <ptr1> left: 0x4b83410| <ptr2> right: 0x4b82550|parent: 0x4b839d0}}"]
+node6 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b834d0|operator: '+'| { <ptr1> left: 0x4b83410| <ptr2> right: 0x4b82550|parent: 0x4b839d0}}"]
+node3: <ptr1> -> node6; node7 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b834d0|operator: '+'| { <ptr1> left: 0x4b83410| <ptr2> right: 0x4b82550|parent: 0x4b839d0}}"]
 node3: <ptr2> -> node7; 
-node4 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label ="{address: 0x4b82b70|value: 1| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
-
-node5 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82ac0|operator: '^'| { <ptr1> left: 0x4b82a10| <ptr2> right: 0x4b82660}}"]
-node8 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82ac0|operator: '^'| { <ptr1> left: 0x4b82a10| <ptr2> right: 0x4b82660}}"]
-node5: <ptr1> -> node8; node9 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82ac0|operator: '^'| { <ptr1> left: 0x4b82a10| <ptr2> right: 0x4b82660}}"]
-node5: <ptr2> -> node9; 
-node6 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82500|operator: '*'| { <ptr1> left: 0x4b82450| <ptr2> right: 0x4b82140}}"]
-node10 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82500|operator: '*'| { <ptr1> left: 0x4b82450| <ptr2> right: 0x4b82140}}"]
-node6: <ptr1> -> node10; node11 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82500|operator: '*'| { <ptr1> left: 0x4b82450| <ptr2> right: 0x4b82140}}"]
+node4 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b83690|function: cos()| { <ptr1> left: 0x4b83710| <ptr2> right: (nil)|parent: 0x4b83910}}"]
+node8 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b83690|function: cos()| { <ptr1> left: 0x4b83710| <ptr2> right: (nil)|parent: 0x4b83910}}"]
+node4: <ptr1> -> node8; 
+node5 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b83590|function: sin()| { <ptr1> left: 0x4b83610| <ptr2> right: (nil)|parent: 0x4b83910}}"]
+node9 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b83590|function: sin()| { <ptr1> left: 0x4b83610| <ptr2> right: (nil)|parent: 0x4b83910}}"]
+node5: <ptr1> -> node9; 
+node6 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83410|operator: '*'| { <ptr1> left: 0x4b83350| <ptr2> right: 0x4b82610|parent: 0x4b834d0}}"]
+node10 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83410|operator: '*'| { <ptr1> left: 0x4b83350| <ptr2> right: 0x4b82610|parent: 0x4b834d0}}"]
+node6: <ptr1> -> node10; node11 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83410|operator: '*'| { <ptr1> left: 0x4b83350| <ptr2> right: 0x4b82610|parent: 0x4b834d0}}"]
 node6: <ptr2> -> node11; 
-node7 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82090|operator: '*'| { <ptr1> left: 0x4b81fe0| <ptr2> right: 0x4b81eb0}}"]
-node12 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82090|operator: '*'| { <ptr1> left: 0x4b81fe0| <ptr2> right: 0x4b81eb0}}"]
-node7: <ptr1> -> node12; node13 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82090|operator: '*'| { <ptr1> left: 0x4b81fe0| <ptr2> right: 0x4b81eb0}}"]
+node7 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82550|operator: '*'| { <ptr1> left: 0x4b822d0| <ptr2> right: 0x4b82150|parent: 0x4b834d0}}"]
+node12 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82550|operator: '*'| { <ptr1> left: 0x4b822d0| <ptr2> right: 0x4b82150|parent: 0x4b834d0}}"]
+node7: <ptr1> -> node12; node13 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82550|operator: '*'| { <ptr1> left: 0x4b822d0| <ptr2> right: 0x4b82150|parent: 0x4b834d0}}"]
 node7: <ptr2> -> node13; 
-node8 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b82a10|function: ch()| { <ptr1> left: 0x4b82710| <ptr2> right: (nil)}}"]
-node14 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b82a10|function: ch()| { <ptr1> left: 0x4b82710| <ptr2> right: (nil)}}"]
-node8: <ptr1> -> node14; 
-node9 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label ="{address: 0x4b82660|value: 2| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node8 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83710|operator: '*'| { <ptr1> left: 0x4b83790| <ptr2> right: 0x4b83810|parent: 0x4b83690}}"]
+node14 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83710|operator: '*'| { <ptr1> left: 0x4b83790| <ptr2> right: 0x4b83810|parent: 0x4b83690}}"]
+node8: <ptr1> -> node14; node15 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83710|operator: '*'| { <ptr1> left: 0x4b83790| <ptr2> right: 0x4b83810|parent: 0x4b83690}}"]
+node8: <ptr2> -> node15; 
+node9 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b83610|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil) |parent: 0x4b83590}}"]
 
-node10 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82450|operator: '*'| { <ptr1> left: 0x4b823a0| <ptr2> right: 0x4b821f0}}"]
-node15 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82450|operator: '*'| { <ptr1> left: 0x4b823a0| <ptr2> right: 0x4b821f0}}"]
-node10: <ptr1> -> node15; node16 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82450|operator: '*'| { <ptr1> left: 0x4b823a0| <ptr2> right: 0x4b821f0}}"]
-node10: <ptr2> -> node16; 
-node11 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label ="{address: 0x4b82140|value: 1| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node10 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83350|operator: '*'| { <ptr1> left: 0x4b83290| <ptr2> right: 0x4b82710|parent: 0x4b83410}}"]
+node16 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83350|operator: '*'| { <ptr1> left: 0x4b83290| <ptr2> right: 0x4b82710|parent: 0x4b83410}}"]
+node10: <ptr1> -> node16; node17 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83350|operator: '*'| { <ptr1> left: 0x4b83290| <ptr2> right: 0x4b82710|parent: 0x4b83410}}"]
+node10: <ptr2> -> node17; 
+node11 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b82610|function: sin()| { <ptr1> left: 0x4b82690| <ptr2> right: (nil)|parent: 0x4b83410}}"]
+node18 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b82610|function: sin()| { <ptr1> left: 0x4b82690| <ptr2> right: (nil)|parent: 0x4b83410}}"]
+node11: <ptr1> -> node18; 
+node12 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b822d0|function: cos()| { <ptr1> left: 0x4b82350| <ptr2> right: (nil)|parent: 0x4b82550}}"]
+node19 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b822d0|function: cos()| { <ptr1> left: 0x4b82350| <ptr2> right: (nil)|parent: 0x4b82550}}"]
+node12: <ptr1> -> node19; 
+node13 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b82150|function: cos()| { <ptr1> left: 0x4b820d0| <ptr2> right: (nil)|parent: 0x4b82550}}"]
+node20 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b82150|function: cos()| { <ptr1> left: 0x4b820d0| <ptr2> right: (nil)|parent: 0x4b82550}}"]
+node13: <ptr1> -> node20; 
+node14 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b83790|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil) |parent: 0x4b83710}}"]
 
-node12 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b81fe0|function: sh()| { <ptr1> left: 0x4b81f60| <ptr2> right: (nil)}}"]
-node17 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b81fe0|function: sh()| { <ptr1> left: 0x4b81f60| <ptr2> right: (nil)}}"]
-node12: <ptr1> -> node17; 
-node13 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label ="{address: 0x4b81eb0|value: 1| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node15 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b83810|function: ln()| { <ptr1> left: 0x4b83890| <ptr2> right: (nil)|parent: 0x4b83710}}"]
+node21 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b83810|function: ln()| { <ptr1> left: 0x4b83890| <ptr2> right: (nil)|parent: 0x4b83710}}"]
+node15: <ptr1> -> node21; 
+node16 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83290|operator: '*'| { <ptr1> left: 0x4b831d0| <ptr2> right: 0x4b82f10|parent: 0x4b83350}}"]
+node22 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83290|operator: '*'| { <ptr1> left: 0x4b831d0| <ptr2> right: 0x4b82f10|parent: 0x4b83350}}"]
+node16: <ptr1> -> node22; node23 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b83290|operator: '*'| { <ptr1> left: 0x4b831d0| <ptr2> right: 0x4b82f10|parent: 0x4b83350}}"]
+node16: <ptr2> -> node23; 
+node17 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label ="{address: 0x4b82710|value: -1| { <ptr1> left: (nil)| <ptr2> right: (nil)|parent: 0x4b83350}}"]
 
-node14 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82710|operator: '+'| { <ptr1> left: 0x4b82790| <ptr2> right: 0x4b82910}}"]
-node18 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82710|operator: '+'| { <ptr1> left: 0x4b82790| <ptr2> right: 0x4b82910}}"]
-node14: <ptr1> -> node18; node19 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82710|operator: '+'| { <ptr1> left: 0x4b82790| <ptr2> right: 0x4b82910}}"]
-node14: <ptr2> -> node19; 
-node15 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b823a0|operator: '^'| { <ptr1> left: 0x4b82320| <ptr2> right: 0x4b82270}}"]
-node20 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b823a0|operator: '^'| { <ptr1> left: 0x4b82320| <ptr2> right: 0x4b82270}}"]
-node15: <ptr1> -> node20; node21 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b823a0|operator: '^'| { <ptr1> left: 0x4b82320| <ptr2> right: 0x4b82270}}"]
-node15: <ptr2> -> node21; 
-node16 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label ="{address: 0x4b821f0|value: 2| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node18 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b82690|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil) |parent: 0x4b82610}}"]
 
-node17 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b81f60|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node19 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82350|operator: '*'| { <ptr1> left: 0x4b823d0| <ptr2> right: 0x4b82450|parent: 0x4b822d0}}"]
+node24 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82350|operator: '*'| { <ptr1> left: 0x4b823d0| <ptr2> right: 0x4b82450|parent: 0x4b822d0}}"]
+node19: <ptr1> -> node24; node25 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82350|operator: '*'| { <ptr1> left: 0x4b823d0| <ptr2> right: 0x4b82450|parent: 0x4b822d0}}"]
+node19: <ptr2> -> node25; 
+node20 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b820d0|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil) |parent: 0x4b82150}}"]
 
-node18 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82790|operator: '^'| { <ptr1> left: 0x4b82810| <ptr2> right: 0x4b82890}}"]
-node22 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82790|operator: '^'| { <ptr1> left: 0x4b82810| <ptr2> right: 0x4b82890}}"]
-node18: <ptr1> -> node22; node23 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82790|operator: '^'| { <ptr1> left: 0x4b82810| <ptr2> right: 0x4b82890}}"]
-node18: <ptr2> -> node23; 
-node19 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b82910|function: ch()| { <ptr1> left: 0x4b82990| <ptr2> right: (nil)}}"]
-node24 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b82910|function: ch()| { <ptr1> left: 0x4b82990| <ptr2> right: (nil)}}"]
-node19: <ptr1> -> node24; 
-node20 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b82320|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node21 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b83890|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil) |parent: 0x4b83810}}"]
 
-node21 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label ="{address: 0x4b82270|value: 1| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node22 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b831d0|function: sin()| { <ptr1> left: 0x4b82fd0| <ptr2> right: (nil)|parent: 0x4b83290}}"]
+node26 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b831d0|function: sin()| { <ptr1> left: 0x4b82fd0| <ptr2> right: (nil)|parent: 0x4b83290}}"]
+node22: <ptr1> -> node26; 
+node23 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82f10|operator: '+'| { <ptr1> left: 0x4b82c90| <ptr2> right: 0x4b82bd0|parent: 0x4b83290}}"]
+node27 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82f10|operator: '+'| { <ptr1> left: 0x4b82c90| <ptr2> right: 0x4b82bd0|parent: 0x4b83290}}"]
+node23: <ptr1> -> node27; node28 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82f10|operator: '+'| { <ptr1> left: 0x4b82c90| <ptr2> right: 0x4b82bd0|parent: 0x4b83290}}"]
+node23: <ptr2> -> node28; 
+node24 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b823d0|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil) |parent: 0x4b82350}}"]
 
-node22 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b82810|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node25 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b82450|function: ln()| { <ptr1> left: 0x4b824d0| <ptr2> right: (nil)|parent: 0x4b82350}}"]
+node29 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b82450|function: ln()| { <ptr1> left: 0x4b824d0| <ptr2> right: (nil)|parent: 0x4b82350}}"]
+node25: <ptr1> -> node29; 
+node26 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82fd0|operator: '*'| { <ptr1> left: 0x4b83050| <ptr2> right: 0x4b830d0|parent: 0x4b831d0}}"]
+node30 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82fd0|operator: '*'| { <ptr1> left: 0x4b83050| <ptr2> right: 0x4b830d0|parent: 0x4b831d0}}"]
+node26: <ptr1> -> node30; node31 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82fd0|operator: '*'| { <ptr1> left: 0x4b83050| <ptr2> right: 0x4b830d0|parent: 0x4b831d0}}"]
+node26: <ptr2> -> node31; 
+node27 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b82c90|function: ln()| { <ptr1> left: 0x4b82d10| <ptr2> right: (nil)|parent: 0x4b82f10}}"]
+node32 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b82c90|function: ln()| { <ptr1> left: 0x4b82d10| <ptr2> right: (nil)|parent: 0x4b82f10}}"]
+node27: <ptr1> -> node32; 
+node28 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82bd0|operator: '*'| { <ptr1> left: 0x4b82b50| <ptr2> right: 0x4b829d0|parent: 0x4b82f10}}"]
+node33 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82bd0|operator: '*'| { <ptr1> left: 0x4b82b50| <ptr2> right: 0x4b829d0|parent: 0x4b82f10}}"]
+node28: <ptr1> -> node33; node34 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b82bd0|operator: '*'| { <ptr1> left: 0x4b82b50| <ptr2> right: 0x4b829d0|parent: 0x4b82f10}}"]
+node28: <ptr2> -> node34; 
+node29 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b824d0|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil) |parent: 0x4b82450}}"]
 
-node23 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label ="{address: 0x4b82890|value: 2| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node30 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b83050|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil) |parent: 0x4b82fd0}}"]
 
-node24 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b82990|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil)}}"]
+node31 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b830d0|function: ln()| { <ptr1> left: 0x4b83150| <ptr2> right: (nil)|parent: 0x4b82fd0}}"]
+node35 [shape = Mrecord, style = filled, fillcolor = "#B91FAF", label ="{address: 0x4b830d0|function: ln()| { <ptr1> left: 0x4b83150| <ptr2> right: (nil)|parent: 0x4b82fd0}}"]
+node31: <ptr1> -> node35; 
+node32 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b82d10|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil) |parent: 0x4b82c90}}"]
+
+node33 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b82b50|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil) |parent: 0x4b82bd0}}"]
+
+node34 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b829d0|operator: '/'| { <ptr1> left: 0x4b82910| <ptr2> right: 0x4b82890|parent: 0x4b82bd0}}"]
+node36 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b829d0|operator: '/'| { <ptr1> left: 0x4b82910| <ptr2> right: 0x4b82890|parent: 0x4b82bd0}}"]
+node34: <ptr1> -> node36; node37 [shape = Mrecord, style = filled, fillcolor = "#ABFFF1", label ="{address: 0x4b829d0|operator: '/'| { <ptr1> left: 0x4b82910| <ptr2> right: 0x4b82890|parent: 0x4b82bd0}}"]
+node34: <ptr2> -> node37; 
+node35 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b83150|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil) |parent: 0x4b830d0}}"]
+
+node36 [shape = Mrecord, style = filled, fillcolor = "#FFD0D0", label ="{address: 0x4b82910|value: 1| { <ptr1> left: (nil)| <ptr2> right: (nil)|parent: 0x4b829d0}}"]
+
+node37 [shape = Mrecord, style = filled, fillcolor = "#EEAAF1", label ="{address: 0x4b82890|variable: x| { <ptr1> left: (nil)| <ptr2> right: (nil) |parent: 0x4b829d0}}"]
 
 }

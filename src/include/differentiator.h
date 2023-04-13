@@ -51,6 +51,9 @@ Node* ConstructTree(const char* file_name);
 Node* BuildTree(Node* tree, Buffer* tree_buffer);
 Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node = nullptr, Node* right_node = nullptr);
 
+void ConverteTreeToPdf(Node** tree);
+void WriteDerivativeToPdf(Node** tree, FILE* tree_pdf);
+
 void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter);
 void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_next, Position position);
 
