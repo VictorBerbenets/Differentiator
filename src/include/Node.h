@@ -14,10 +14,10 @@ typedef struct {
 
 
 #define CMP(func_id, func, body, address) {func, _##func_id},
-const Function_info _Diff_Functions_[] = {
-    #include "codegeneration.h"
-    {"I am not a function, baby:)", 0}
-};
+    const Function_info _Diff_Functions_[] = {
+        #include "codegeneration.h"
+        {"I am not a function, baby:)", 0}
+    };
 #undef CMP
 
 typedef union {

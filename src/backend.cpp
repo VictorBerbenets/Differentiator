@@ -117,28 +117,25 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
     } else {
         ERROR_FLAG = 1;
         printf(
-            "ERROR BLYAT: EBANIY V ROT GDE CLOSE BRACKET NAXUI, "
-            "MUDILA???\nGet: %c, expecter: %c\n",
-            readed_symbol, CLOSE_BRACKET);
+            "ERROR BLYAT: EBANIY V ROT GDE CLOSE BRACKET NAXUI, ""MUDILA???\nGet: %c, expecter: %c\n", readed_symbol, CLOSE_BRACKET);
         return nullptr;
     }
 }
 
 //==========================================================================================================================================//
 
-#define CMP(func_id, func_name, body, ...)  if(!strcmp(result_string, func_name)){  \
-                                                return _##func_id;                   \
-                                            }                                         \
-                                            else
-
 static int RetFuncName(char* result_string) {
 
     Validator(result_string == nullptr, "invalid string pointer", exit(INVALID_STRING_POINTER));
-                                     
-    #include "codegeneration.h"
-        return INVALID_STRING_DATA;
+    for (int node_counter = 0; node_counter < sizeof(_Diff_Functions_)/sizeof(_Diff_Functions_[0]); node_counter++) {
+
+        if (!strcmp(_Diff_Functions_[node_counter].func_name, result_string)) {
+            return _Diff_Functions_[node_counter].func_id;
+        }
+    }                                
+    return INVALID_STRING_DATA;
 }
-#undef CMP
+
 //==========================================================================================================================================//
 
 static int IsVariable(char* string) {
@@ -240,15 +237,9 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
 //==========================================================================================================================================//
 // calculate tree
 elem_t Ebal(Node* node_ptr) {
-                            fprintf(stderr, "LINE = %d\n", __LINE__);
-    printf("EBAL adress       = %p\n", node_ptr);
-    printf("EBAL adress left  = %p\n", node_ptr->left_branch);
-    printf("EBAL adress right = %p\n", node_ptr->right_branch);
-
     if (node_ptr->type == NUMBER) {
         return node_ptr->value.number;
     }
-                            fprintf(stderr, "LINE = %d\n", __LINE__);
 
     switch (node_ptr->value.oper) {
         case OP_ADD:
@@ -261,7 +252,6 @@ elem_t Ebal(Node* node_ptr) {
             return GetDiv(node_ptr->left_branch, node_ptr->right_branch);
         case OP_POW:
             return GetPower(node_ptr->left_branch, node_ptr->right_branch);
-        // case _SQRT:
         default:
             PrintWarningInvalidOper();
             return INVALID_OPERATOR;
@@ -277,12 +267,7 @@ elem_t GetPower(Node* base, Node* degree) {
 //==========================================================================================================================================//
 
 elem_t GetDiv(Node* dividend, Node* divisor) {
-    printf("ADDDDDDRESSSS dividend = %p\n", dividend);
-    printf("ADDDDDDRESSSS divisor  = %p\n", divisor);
-
     elem_t div = Ebal(divisor);
-
-    printf("DIV = %lg\n", div);
     if (IsEqual(div, 0)) {
         PrintWarningForDivisor();
         exit(DIVIDE_ERROR);
@@ -303,12 +288,9 @@ void DeleteTree(Node* tree) {
     if (!tree) {
         return;
     }
-    fprintf(stderr, "ADDRESS = %p\n", tree);
     DeleteTree(tree->left_branch);
     DeleteTree(tree->right_branch);
-    fprintf(stderr, "ADDRESS AFTER = %p\n", tree);
     
-
     tree->parent = nullptr;
     tree->left_branch = nullptr;
     tree->right_branch = nullptr;
@@ -392,7 +374,6 @@ Node* SimplifyTree(Node* tree) {
                         break;
                     }
                 }
-                printf("ADDRESS = %p\n", node_ptrs[node_counter]);
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 0)) {
                         if (!node_ptrs[node_counter]->parent) {
@@ -443,16 +424,13 @@ Node* SimplifyTree(Node* tree) {
                     break;
                 }
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
-                            fprintf(stderr, "LINE = %d\n", __LINE__);
 
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 1)) {
                         if (!node_ptrs[node_counter]->parent) {
-                            fprintf(stderr, "LINE = %d\n", __LINE__);
                             tree = node_ptrs[node_counter]->left_branch;
                             LeaveOnlyLeftNode(&(node_ptrs[node_counter]));
                             return tree;
                         }
-                            fprintf(stderr, "LINE = %d\n", __LINE__);
 
                         SetParentConnection(&node_ptrs[node_counter], &(node_ptrs[node_counter]->left_branch));
                         Node* save_left_node = node_ptrs[node_counter]->left_branch;
@@ -462,20 +440,16 @@ Node* SimplifyTree(Node* tree) {
                     }
                 }
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
-                            fprintf(stderr, "LINE = %d\n", __LINE__);
 
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 0)) {
-                            fprintf(stderr, "LINE = %d\n", __LINE__);
 
                         elem_t finish_value = 1;
                         Node* final_node    = CreateNewNode(NUMBER, &finish_value);
                         if (!node_ptrs[node_counter]->parent) {
-                            fprintf(stderr, "LINE = %d\n", __LINE__);
 
                             DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->left_branch);
                             return final_node;
                         }
-                            fprintf(stderr, "LINE = %d\n", __LINE__);
 
                         SetParentConnection(&node_ptrs[node_counter], &final_node);
                         DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->left_branch);
@@ -543,7 +517,6 @@ static void DeleteInsignificantTreePart(Node* parent, Node* tree_part) {
 
 static void CalculateChildes(Node** parent) {
     elem_t calculated_value = Ebal(*parent);
-    printf("Value = %lg\n", calculated_value);
     Node* grand_parent = (*parent)->parent;
     Node* new_parent = CreateNewNode(NUMBER, &calculated_value);
     if (!grand_parent) {

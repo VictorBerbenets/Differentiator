@@ -9,6 +9,8 @@ static Node* CopyNode(Node* node_to_copy);
 static Node* Digit(elem_t number);
 static Node* duplic_tree = nullptr;
 
+#define POW_FUNCTION(node, var_name) PowFunction(node, var_name);
+
 //Operators
 static const int Sub  = OP_SUB;
 static const int Add  = OP_ADD;
@@ -22,7 +24,6 @@ static const int Pow  = OP_POW;
 #undef CMP
 //******************************************************************************************************************************************//
 //---------------------------------------------------Function   bodies----------------------------------------------------------------------//
-
 
 #define CMP(func_id, func_name, body, ...) case _##func_id: return body;
 
@@ -38,7 +39,7 @@ Node* Diff(Node* node, const char* var_name) {
                 case OP_SUB: return SUB(dL, dR);
                 case OP_MUL: return ADD(MUL(dL, cR), MUL(cL, dR));
                 case OP_DIV: return DIV(SUB(MUL(dL, cR), MUL(cL, dR)),POW(cR, Digit(2)));  
-                case OP_POW: return PowFunction(node, var_name);
+                case OP_POW: return POW_FUNCTION(node, var_name);
                 default: printf("no such operator = %d\n", node->value.oper); return nullptr;
             }
         case FUNC:
