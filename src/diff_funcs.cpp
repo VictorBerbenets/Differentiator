@@ -2,12 +2,12 @@
 //------------------------------------------------------------------------------------------------------------------------------------------//
 //-----------------------------------------------Constants and functions-------------------------------------------------- -----------------//
 //functions
+static Node* PowFunction(Node* node, const char* var_name);
 static Node* FindVariable(Node* tree, int* is_function);
 static int IsFunction(Node* tree);
 static Node* CopyNode(Node* node_to_copy);
 static Node* Digit(elem_t number);
 static Node* duplic_tree = nullptr;
-
 
 //Operators
 static const int Sub  = OP_SUB;
@@ -38,17 +38,8 @@ Node* Diff(Node* node, const char* var_name) {
                 case OP_SUB: return SUB(dL, dR);
                 case OP_MUL: return ADD(MUL(dL, cR), MUL(cL, dR));
                 case OP_DIV: return DIV(SUB(MUL(dL, cR), MUL(cL, dR)),POW(cR, Digit(2)));  
-                case OP_POW: 
-                    if (R->type == NUMBER) {
-                        return MUL(MUL(POW(cL, Digit(R->value.number - 1)), cR), dL);  
-                    }
-                    else if (IsFunction(R) && !IsFunction(L)) {
-                        return MUL(MUL( LN_(cL, nullptr), POW(cL, cR) ), dR);
-                    }
-                    else if (IsFunction(R) && IsFunction(L)) {
-                        return MUL( POW(cL, cR), ADD(MUL(dL, cR), MUL(cL, dR)) );
-                    }
-                default:  printf("No such operator: %d\n", node->value.oper);  return nullptr;
+                case OP_POW: return PowFunction(node, var_name);
+                default: printf("no such operator = %d\n", node->value.oper); return nullptr;
             }
         case FUNC:
             switch (node->value.func) {               
@@ -104,14 +95,16 @@ static Node* Digit(elem_t number) {
 
     return CreateNewNode(NUMBER, &number);
 }
-//==========================================================================================================================================//
 
+//==========================================================================================================================================//
 
 static int IsFunction(Node* tree) {
     int is_function = 0;
     FindVariable(tree, &is_function);
     return is_function;
 }
+
+//==========================================================================================================================================//
 
 static Node* FindVariable(Node* tree, int* is_function) {
     if (!tree) {
@@ -125,3 +118,19 @@ static Node* FindVariable(Node* tree, int* is_function) {
     }
     return tree;
 }
+
+//==========================================================================================================================================//
+
+static Node* PowFunction(Node* node, const char* var_name) {
+    if (R->type == NUMBER) {
+        return MUL(MUL(POW(cL, Digit(R->value.number - 1)), cR), dL);  
+    }
+    else if (IsFunction(R) && !IsFunction(L)) {
+        return MUL(MUL( LN_(cL, nullptr), POW(cL, cR) ), dR);
+    }
+    else if (IsFunction(R) && IsFunction(L)) {
+        return MUL( POW(cL, cR), ADD(MUL(dL, cR), MUL(cL, dR)) );
+    }
+    return nullptr;
+}
+//==========================================================================================================================================//
