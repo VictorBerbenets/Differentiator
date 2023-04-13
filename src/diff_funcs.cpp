@@ -2,6 +2,8 @@
 //------------------------------------------------------------------------------------------------------------------------------------------//
 //-----------------------------------------------Constants and functions-------------------------------------------------- -----------------//
 //functions
+static Node* FindVariable(Node* tree, int* is_function);
+static int IsFunction(Node* tree);
 static Node* CopyNode(Node* node_to_copy);
 static Node* Digit(elem_t number);
 static Node* duplic_tree = nullptr;
@@ -16,17 +18,7 @@ static const int Pow  = OP_POW;
 
 //Functions
 #define CMP(func_id, func_name, body, address_name) static const int address_name = _##func_id;
-
-// static const int Sin  = _SIN;
-// static const int Cos  = _COS;
-// static const int Tg   = _TG;
-// static const int Ctg  = _CTG;
-// static const int Sh   = _SH;
-// static const int Ch   = _CH;
-// static const int Th   = _TH;
-// static const int Cth  = _CTH;
-// static const int Exp  = _EXP;
-#include "codegeneration.h"
+    #include "codegeneration.h"
 #undef CMP
 //******************************************************************************************************************************************//
 //---------------------------------------------------Function   bodies----------------------------------------------------------------------//
@@ -49,6 +41,12 @@ Node* Diff(Node* node, const char* var_name) {
                 case OP_POW: 
                     if (R->type == NUMBER) {
                         return MUL(MUL(POW(cL, Digit(R->value.number - 1)), cR), dL);  
+                    }
+                    else if (IsFunction(R) && !IsFunction(L)) {
+                        return MUL(MUL( LN_(cL, nullptr), POW(cL, cR) ), dR);
+                    }
+                    else if (IsFunction(R) && IsFunction(L)) {
+                        return MUL( POW(cL, cR), ADD(MUL(dL, cR), MUL(cL, dR)) );
                     }
                 default:  printf("No such operator: %d\n", node->value.oper);  return nullptr;
             }
@@ -107,3 +105,23 @@ static Node* Digit(elem_t number) {
     return CreateNewNode(NUMBER, &number);
 }
 //==========================================================================================================================================//
+
+
+static int IsFunction(Node* tree) {
+    int is_function = 0;
+    FindVariable(tree, &is_function);
+    return is_function;
+}
+
+static Node* FindVariable(Node* tree, int* is_function) {
+    if (!tree) {
+        return nullptr;
+    }
+    tree->left_branch  = FindVariable(tree->left_branch, is_function);
+    tree->right_branch = FindVariable(tree->right_branch, is_function);
+
+    if (tree->type == VAR) {
+        *is_function = 1;
+    }
+    return tree;
+}

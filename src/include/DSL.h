@@ -30,7 +30,9 @@
 #define TH_(L, R)   CreateNewNode(FUNC,  &Th,   L, R)
 #define CTH_(L, R)  CreateNewNode(FUNC,  &Cth,  L, R)
 #define EXP_(L, R)  CreateNewNode(FUNC,  &Exp,  L, R)
+#define LN_(L, R)   CreateNewNode(FUNC,  &Ln,   L, R)
 #define SQRT_(L, R) CreateNewNode(FUNC,  &Sqrt, L, R)
+
 #define CONST_()    Digit(0)
 #define VAR_()     if (!strcmp(node->value.var, var_name)) { \
                        return Digit(1);                       \

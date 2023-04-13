@@ -108,7 +108,7 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
         return nullptr;
     }
 
-    tree->left_branch = BuildTree(tree->left_branch, tree_buffer);
+    tree->left_branch  = BuildTree(tree->left_branch, tree_buffer);
     tree->right_branch = BuildTree(tree->right_branch, tree_buffer);
 
     ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, SYMBOL);
