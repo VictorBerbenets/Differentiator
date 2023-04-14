@@ -11,7 +11,7 @@
 #include "print.h"
 #include "Node.h"
 #include "DSL.h"
-#include <cmath>
+#include <math.h>
 
 typedef double elem_t;
 
@@ -21,9 +21,10 @@ typedef struct {
 } Buffer;
 
 enum TreeConsts {
-    ALL_RIGHT   = 0,
-    TREE_INITED = 1,
-    ONE_NODE    = 2
+    ALL_RIGHT     = 0,
+    TREE_INITED   = 1,
+    ONE_NODE      = 2,
+    VAR_IS_FOUND  = 10,
 };
 
 enum Position {
@@ -58,9 +59,10 @@ void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter);
 void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_next, Position position);
 
 Node* Diff(Node* node, const char* var_name);
-elem_t Ebal(Node* node_ptr);
-elem_t GetPower(Node* base, Node* degree);
-elem_t GetDiv(Node* dividend, Node* divisor);
+elem_t Ebal(Node* node_ptr, elem_t value);
+elem_t CalculateNumbers(Node* node_ptr);
+elem_t GetPower(Node* base, Node* degree, elem_t value);
+elem_t GetDiv(Node* dividend, Node* divisor, elem_t value);
 Node* SimplifyTree(Node* tree);
 
 void PreOrder(Node* tree, FILE* file_name);

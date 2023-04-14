@@ -1,9 +1,8 @@
-#include "differentiator.h"
+#include "include/differentiator.h"
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 #include <math.h>
-#include "stack.h"
 
 // Xelatex - из консооли сделать .tex -> .pdf 
 // 1. много срет в консоль можно перенаправить вывод
@@ -24,10 +23,9 @@ int main(int argc, char** argv) {
 
     Node* tree = ConstructTree(file_name);
     TreeDump(tree);
-
+    int x = 0;
 
     Node* diff_tree = Diff(tree, "x");
-
     PrintTreeToFile(diff_tree, PRE_ORDER);
     PrintTreeToFile(diff_tree, IN_ORDER);
     PrintTreeToFile(diff_tree, POST_ORDER);
@@ -35,9 +33,11 @@ int main(int argc, char** argv) {
     
     Node* simple_tree = nullptr;
     simple_tree = SimplifyTree(diff_tree);
-
-
     TreeDump(simple_tree);
+    printf("value = %lg\n", Ebal(simple_tree, 5));
+    TreeDump(simple_tree);
+
+
 
     DeleteTree(tree);
     DeleteTree(simple_tree);

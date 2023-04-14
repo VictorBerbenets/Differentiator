@@ -212,8 +212,8 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
         if (value) {
             memcpy((void*)new_node->value.var, value, sizeof(char) * strlen((char*)value));
         }
-        new_node->left_branch = left_node;
-        new_node->right_branch = right_node;
+        // new_node->left_branch = left_node;
+        // new_node->right_branch = right_node;
     } else if (TYPE_NUM == FUNC) {
         new_node->type = FUNC;
         new_node->value.func = *(int*)value;
@@ -221,7 +221,7 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
         printf("Error: invalid value type: %d\n", TYPE_NUM);
         new_node->type = NotAType;
     }
-    new_node->left_branch = left_node;
+    new_node->left_branch  = left_node;
     new_node->right_branch = right_node;
 
     if (new_node->left_branch) {
@@ -236,43 +236,103 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
 
 //==========================================================================================================================================//
 // calculate tree
-elem_t Ebal(Node* node_ptr) {
+// #define CMP(func_id, func_name, body, func_arress) case _##func_id: si
+elem_t CalculateNumbers(Node* node_ptr) {
+
     if (node_ptr->type == NUMBER) {
         return node_ptr->value.number;
     }
-
     switch (node_ptr->value.oper) {
         case OP_ADD:
-            return Ebal(node_ptr->left_branch) + Ebal(node_ptr->right_branch);
+            return CalculateNumbers(node_ptr->left_branch) + CalculateNumbers(node_ptr->right_branch);
         case OP_SUB:
-            return Ebal(node_ptr->left_branch) - Ebal(node_ptr->right_branch);
+            return CalculateNumbers(node_ptr->left_branch) - CalculateNumbers(node_ptr->right_branch);
         case OP_MUL:
-            return Ebal(node_ptr->left_branch) * Ebal(node_ptr->right_branch);
+            return CalculateNumbers(node_ptr->left_branch) * CalculateNumbers(node_ptr->right_branch);
         case OP_DIV:
-            return GetDiv(node_ptr->left_branch, node_ptr->right_branch);
+            return GetDiv(node_ptr->left_branch, node_ptr->right_branch, 0);
         case OP_POW:
-            return GetPower(node_ptr->left_branch, node_ptr->right_branch);
+            return GetPower(node_ptr->left_branch, node_ptr->right_branch, 0);
         default:
             PrintWarningInvalidOper();
             return INVALID_OPERATOR;
     }
 }
 
-//==========================================================================================================================================//
-
-elem_t GetPower(Node* base, Node* degree) {
-    return pow(Ebal(base), Ebal(degree));
+elem_t Ebal(Node* node_ptr, elem_t value) {
+    if (node_ptr->type == NUMBER) {
+        return node_ptr->value.number;
+    }
+    printf("Line = %d\n", __LINE__);
+    if (node_ptr->left_branch) {
+        if (node_ptr->left_branch->type == VAR) {
+            node_ptr->left_branch->value.number = value;
+            node_ptr->left_branch->type         = NUMBER;
+        }
+    }
+    if (node_ptr->right_branch) {
+        if (node_ptr->right_branch->type == VAR) {
+            node_ptr->right_branch->value.number = value;
+            node_ptr->right_branch->type         = NUMBER;
+        }
+    }
+    
+    switch(node_ptr->type) {
+        case OPER:
+            switch (node_ptr->value.oper) {
+                case OP_ADD:
+                    return Ebal(node_ptr->left_branch, value) + Ebal(node_ptr->right_branch, value);
+                case OP_SUB:
+                    return Ebal(node_ptr->left_branch, value) - Ebal(node_ptr->right_branch, value);
+                case OP_MUL:
+                    return Ebal(node_ptr->left_branch, value) * Ebal(node_ptr->right_branch, value);
+                case OP_DIV:
+                    return GetDiv(node_ptr->left_branch, node_ptr->right_branch, value);
+                case OP_POW:
+                    return GetPower(node_ptr->left_branch, node_ptr->right_branch, value);
+                default:
+                    PrintWarningInvalidOper();
+                    return INVALID_OPERATOR;
+            }
+        case FUNC:
+        printf("Line = %d\n", __LINE__);
+            switch (node_ptr->value.func) {
+                case _SIN:     return  sin    (Ebal(node_ptr->left_branch, value));
+                case _COS:     return  cos    (Ebal(node_ptr->left_branch, value));
+                case _TG:      return  tan    (Ebal(node_ptr->left_branch, value));
+                case _CTG:     return  1/tan  (Ebal(node_ptr->left_branch, value));
+                case _ARCSIN:  return  asin   (Ebal(node_ptr->left_branch, value));
+                case _ARCCOS:  return  acos   (Ebal(node_ptr->left_branch, value));
+                case _ARCTG:   return  atan   (Ebal(node_ptr->left_branch, value));
+                case _ARCCTG:  return  1/atan (Ebal(node_ptr->left_branch, value));
+                case _SH:      return  sinh   (Ebal(node_ptr->left_branch, value));
+                case _CH:      return  cosh   (Ebal(node_ptr->left_branch, value));
+                case _TH:      return  tanh   (Ebal(node_ptr->left_branch, value));
+                case _CTH:     return  1/tanh (Ebal(node_ptr->left_branch, value));
+                case _EXP:     return  exp    (Ebal(node_ptr->left_branch, value));
+                case _LN:      return  log    (Ebal(node_ptr->left_branch, value));
+                case _SQRT:    return  sqrt   (Ebal(node_ptr->left_branch, value));
+            }
+        
+    }
+    return 0;
 }
 
 //==========================================================================================================================================//
 
-elem_t GetDiv(Node* dividend, Node* divisor) {
-    elem_t div = Ebal(divisor);
+elem_t GetPower(Node* base, Node* degree, elem_t value) {
+    return pow(Ebal(base, value), Ebal(degree, value));
+}
+
+//==========================================================================================================================================//
+
+elem_t GetDiv(Node* dividend, Node* divisor, elem_t value) {
+    elem_t div = Ebal(divisor, value);
     if (IsEqual(div, 0)) {
         PrintWarningForDivisor();
         exit(DIVIDE_ERROR);
     }
-    return Ebal(dividend) / div;
+    return Ebal(dividend, value) / div;
 }
 
 //==========================================================================================================================================//
@@ -365,9 +425,13 @@ Node* SimplifyTree(Node* tree) {
                 if (node_ptrs[node_counter]->left_branch->type == NUMBER) {
                     if (IsEqual(node_ptrs[node_counter]->left_branch->value.number, 0)) {
                         if (!node_ptrs[node_counter]->parent) {
-                            tree = node_ptrs[node_counter]->left_branch;
+                            Node* save_node = nullptr;
+                            // tree = node_ptrs[node_counter]->left_branch;
+                            save_node = node_ptrs[node_counter]->left_branch;
                             DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->right_branch);
-                            return tree;
+                            node_ptrs[node_counter] = save_node;
+                            // return tree;
+                            break;
                         }
                         SetParentConnection(&node_ptrs[node_counter], &(node_ptrs[node_counter]->left_branch));
                         DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->right_branch);
@@ -377,10 +441,14 @@ Node* SimplifyTree(Node* tree) {
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 0)) {
                         if (!node_ptrs[node_counter]->parent) {
-                            tree = node_ptrs[node_counter]->right_branch;
+                            Node* save_node = nullptr;
+                            // tree = node_ptrs[node_counter]->right_branch;
+                            save_node = node_ptrs[node_counter]->right_branch;
                             DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->left_branch);
 
-                            return tree;
+                            node_ptrs[node_counter] = save_node;
+                            // return tree;
+                            break;
                         }
                         SetParentConnection(&node_ptrs[node_counter], &(node_ptrs[node_counter]->right_branch));
                         DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->left_branch);
@@ -408,9 +476,13 @@ Node* SimplifyTree(Node* tree) {
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 1)) {
                         if (!node_ptrs[node_counter]->parent) {
-                            tree = node_ptrs[node_counter]->right_branch;
+                            Node* save_node = nullptr;
+                            // tree = node_ptrs[node_counter]->right_branch;
+                            save_node = node_ptrs[node_counter]->left_branch;
                             LeaveOnlyLeftNode(&(node_ptrs[node_counter]));
-                            return tree;
+                            node_ptrs[node_counter] = save_node;
+                            // return tree;
+                            break;
                         }
                         SetParentConnection(&node_ptrs[node_counter], &(node_ptrs[node_counter]->right_branch));
                         LeaveOnlyLeftNode(&(node_ptrs[node_counter]));
@@ -426,16 +498,20 @@ Node* SimplifyTree(Node* tree) {
                 if (node_ptrs[node_counter]->right_branch->type == NUMBER) {
 
                     if (IsEqual(node_ptrs[node_counter]->right_branch->value.number, 1)) {
+                        Node* save_node = nullptr;
                         if (!node_ptrs[node_counter]->parent) {
-                            tree = node_ptrs[node_counter]->left_branch;
+                            // tree = node_ptrs[node_counter]->left_branch;
+                            save_node = node_ptrs[node_counter]->left_branch;
                             LeaveOnlyLeftNode(&(node_ptrs[node_counter]));
-                            return tree;
+                            node_ptrs[node_counter] = save_node;
+                            // return tree;
+                            break;
                         }
 
                         SetParentConnection(&node_ptrs[node_counter], &(node_ptrs[node_counter]->left_branch));
-                        Node* save_left_node = node_ptrs[node_counter]->left_branch;
+                        save_node = node_ptrs[node_counter]->left_branch;
                         LeaveOnlyLeftNode(&(node_ptrs[node_counter]));
-                        node_ptrs[node_counter] = save_left_node;
+                        node_ptrs[node_counter] = save_node;
                         break;
                     }
                 }
@@ -448,7 +524,9 @@ Node* SimplifyTree(Node* tree) {
                         if (!node_ptrs[node_counter]->parent) {
 
                             DeleteInsignificantTreePart(node_ptrs[node_counter], node_ptrs[node_counter]->left_branch);
-                            return final_node;
+                            // return final_node;
+                            node_ptrs[node_counter] = final_node;
+                            break;
                         }
 
                         SetParentConnection(&node_ptrs[node_counter], &final_node);
@@ -516,7 +594,7 @@ static void DeleteInsignificantTreePart(Node* parent, Node* tree_part) {
 //==========================================================================================================================================//
 
 static void CalculateChildes(Node** parent) {
-    elem_t calculated_value = Ebal(*parent);
+    elem_t calculated_value = CalculateNumbers(*parent);
     Node* grand_parent = (*parent)->parent;
     Node* new_parent = CreateNewNode(NUMBER, &calculated_value);
     if (!grand_parent) {
