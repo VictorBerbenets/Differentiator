@@ -130,7 +130,7 @@ static Node* PowFunction(Node* node, const char* var_name) {
         return MUL(MUL( LN_(cL, nullptr), POW(cL, cR) ), dR);
     }
     else if (IsFunction(R) && IsFunction(L)) {
-        return MUL( POW(cL, cR), ADD(MUL(dL, cR), MUL(cL, dR)) );
+        return MUL( POW(cL, cR), ADD(MUL(dL, LN_(cR, nullptr)), MUL(cL, MUL(DIV(Digit(1), cR), dR))));
     }
     return nullptr;
 }

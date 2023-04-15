@@ -16,6 +16,17 @@
 typedef double elem_t;
 
 typedef struct {
+    char var_name[MAX_VARIABLE_SIZE];
+    int  var_id;
+} VarInfo;
+
+typedef struct {
+    Node* tree;
+    int node_counter = 0;
+    VarInfo* variables;
+} Tree;
+
+typedef struct {
     char* buffer;
     size_t buffer_size;
 } Buffer;
@@ -47,6 +58,8 @@ enum TreeErrors {
     DIVIDE_ERROR            = 11,
 }; 
 
+//make tree struct и таблицу имен 
+
 Buffer ReadFile(const char* file_name);
 Node* ConstructTree(const char* file_name);
 Node* BuildTree(Node* tree, Buffer* tree_buffer);
@@ -59,7 +72,7 @@ void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter);
 void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_next, Position position);
 
 Node* Diff(Node* node, const char* var_name);
-elem_t Ebal(Node* node_ptr, elem_t value);
+elem_t Ebal(Node* node_ptr, elem_t value, const char* var_name);
 elem_t CalculateNumbers(Node* node_ptr);
 elem_t GetPower(Node* base, Node* degree, elem_t value);
 elem_t GetDiv(Node* dividend, Node* divisor, elem_t value);

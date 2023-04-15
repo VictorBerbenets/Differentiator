@@ -13,7 +13,6 @@
 #define dR Diff(R, var_name)
 #define cL CopyTree(node->left_branch, duplic_tree)
 #define cR CopyTree(node->right_branch, duplic_tree)
-// #define Cn
 
 #define ADD(L, R) CreateNewNode(OPER, &Add, L, R)
 #define SUB(L, R) CreateNewNode(OPER, &Sub, L, R)
@@ -43,4 +42,5 @@
                    }                                           \
                    return Digit(0);
 
+#define GetValue() Ebal(node_ptr->left_branch, value, var_name)
 #endif
