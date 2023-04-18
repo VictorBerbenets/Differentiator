@@ -73,7 +73,10 @@ Node* BuildTree(Node* tree, Buffer* tree_buffer) {
     static char readed_symbol = 0;
     static int counter = 0;
     static int string_len = 0;
-
+    
+    if (ERROR_FLAG) {
+        return tree;
+    }
     if (!tree) {
         return nullptr;
     }
@@ -285,14 +288,14 @@ elem_t Ebal(Node* node_ptr, elem_t value, const char* var_name) {
             }
         case FUNC:
             switch (node_ptr->value.func) {
-                case _SIN:    return  sin   (GetValue());
-                case _COS:    return  cos   (GetValue());
-                case _TG:     return  tan   (GetValue());
-                case _CTG:    return  1/tan (GetValue());
-                case _ARCSIN: return  asin  (GetValue());
-                case _ARCCOS: return  acos  (GetValue());
-                case _ARCTG:  return  atan  (GetValue());
-                case _ARCCTG: return  1/atan(GetValue());
+                case _SIN:    return  sin  (GetValue());
+                case _COS:    return  cos  (GetValue());
+                case _TG:     return  tan  (GetValue());
+                case _CTG:    return  1/tan(GetValue());
+                case _ARCSIN: return  asin (GetValue());
+                case _ARCCOS: return  acos (GetValue());
+                case _ARCTG:  return  atan (GetValue());
+                case _ARCCTG: return  M_PI/2 + atan(GetValue());
                 case _SH:     return  sinh  (GetValue());
                 case _CH:     return  cosh  (GetValue());
                 case _TH:     return  tanh  (GetValue());
@@ -676,8 +679,3 @@ static void SetParentConnection(Node** parent, Node** child) {
     }
 }
 //==========================================================================================================================================//
-
-
-// static void SimplifyMul()
-// simple
-// pdflatex

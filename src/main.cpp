@@ -34,9 +34,10 @@ int main(int argc, char** argv) {
     Node* simple_tree = nullptr;
     simple_tree = SimplifyTree(diff_tree);
     TreeDump(simple_tree);
+    ConverteTreeToPdf(tree, simple_tree);
+
     printf("value = %lg\n", Ebal(simple_tree, 5, "x"));
     TreeDump(simple_tree);
-
 
 
     DeleteTree(tree);
