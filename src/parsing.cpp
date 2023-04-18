@@ -9,20 +9,15 @@ static const int Div  = OP_DIV;
 static const int Pow  = OP_POW;
 
 static Node* duplic_tree = nullptr;
-
 static int _ERROR_FLAG_ = 0;
 
 static void SkipSpaces(char** string);
 static void PrintError(int err_id, char* string);
-static int GetFuncId(char* func_name);
-
-const static FuncInfo Functions_[] = {{"sin", _SIN}, {"cos", _COS}, {"tg", _TG}, {"ctg", _CTG}, {"sh", _SH}, {"ch", _CH}, {"th", _TH}, {"cth", _CTH},
-                            {"arcsin", _ARCSIN}, {"arccos", _ARCCOS}, {"arctg", _ARCTG}, {"arcctg", _ARCCTG}, {"exp", _EXP}, {"ln", _LN}};
+static int  GetFuncId(char* func_name);
 
 #define CMP(func_id, func_name, body, address_name) static const int address_name = _##func_id;
     #include "codegeneration.h"
 #undef CMP
-
 
 Node* GetG(char** string) {
 
@@ -198,7 +193,7 @@ Node* GetF(char** string) {
     for( ; isalpha(*(*string + symbol_counter)) && symbol_counter < MaxFuncSize; symbol_counter++) {
         function_name[symbol_counter] = *(*string + symbol_counter);
     }
-    
+
     if (symbol_counter == MaxFuncSize) {
        _ERROR_FLAG_ = INVALID_FUNCTION_NAME_SIZE;
     }
@@ -310,9 +305,9 @@ static void SkipSpaces(char** string) {
 
 
 static int GetFuncId(char* func_name) {
-    for (size_t i = 0; i < sizeof(Functions_)/sizeof(Functions_[0]); i++) {
+    for (size_t i = 0; i < sizeof(_Diff_Functions_)/sizeof(_Diff_Functions_[0]); i++) {
         if (!strcmp(func_name, _Diff_Functions_[i].func_name)) {
-            return Functions_[i].func_id;
+            return _Diff_Functions_[i].func_id;
         }
     }
     return NotFunction;
