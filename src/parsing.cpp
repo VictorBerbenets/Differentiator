@@ -30,7 +30,7 @@ Node* GetG(char** string) {
     Node* node = GetE(string);
     if (**string != '\0') {
         printf("Error: didn't get end simbol <%s>\n", *string);
-        DeleteTree(node);
+        // DeleteTree(node);
         exit(EXIT_FAILURE);
     }
     // if (_ERROR_FLAG_) {
@@ -203,6 +203,8 @@ Node* GetF(char** string) {
         (*string) += symbol_counter;
     printf("I am GetF, i return such string to GetE: <%s>\n", *string);
         Node* node_left = GetE(string);
+    printf("I am GetF, i got such string after GetE: <%s>\n", *string);
+    // TreeDump(node_left);
         switch(func_id) {
             case _SIN:    return SIN_    (node_left, nullptr);
             case _COS:    return COS_    (node_left, nullptr);
@@ -219,7 +221,6 @@ Node* GetF(char** string) {
             case _SQRT:   return SQRT_   (node_left, nullptr);
             case _EXP:    return EXP_    (node_left, nullptr);
             case _LN:     return LN_     (node_left, nullptr);
-
             default: break;
         }
     }

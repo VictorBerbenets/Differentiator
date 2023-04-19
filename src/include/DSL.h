@@ -35,6 +35,7 @@
 #define ARCCOS_(L, R) CreateNewNode(FUNC,  &Arccos, L, R)
 #define ARCTG_(L, R)  CreateNewNode(FUNC,  &Arctg,  L, R)
 #define ARCCTG_(L, R) CreateNewNode(FUNC,  &Arcctg, L, R)
+#define SQRT_(L, R)   CreateNewNode(FUNC,  &Sqrt,   L, R)
 
 #define CONST_()    Digit(0)
 #define VAR_()     if (!strcmp(node->value.var, var_name)) { \

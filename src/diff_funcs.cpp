@@ -12,6 +12,7 @@ static Node* duplic_tree = nullptr;
 #define POW_FUNCTION(node, var_name) PowFunction(node, var_name);
 
 //Operators
+
 static const int Sub  = OP_SUB;
 static const int Add  = OP_ADD;
 static const int Mul  = OP_MUL;
@@ -86,6 +87,12 @@ static Node* CopyNode(Node* node_to_copy) {
 
     copied_version->type  = node_to_copy->type;
     copied_version->value = node_to_copy->value;
+
+    if (node_to_copy->type == VAR) {
+        int var_len = strlen(node_to_copy->value.var);
+        copied_version->value.var = (char*) calloc(strlen(node_to_copy->value.var) + 1, sizeof(char));
+        memcpy(copied_version->value.var, node_to_copy->value.var, sizeof(char) * var_len);
+    }
 
     return copied_version;
 }

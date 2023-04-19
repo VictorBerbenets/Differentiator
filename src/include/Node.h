@@ -22,7 +22,8 @@ typedef struct {
 
 typedef union {
     double number;
-    char var[MAX_VARIABLE_SIZE];
+    // char var[MAX_VARIABLE_SIZE];
+    char* var;
     int func;
     int oper;
 } Params;

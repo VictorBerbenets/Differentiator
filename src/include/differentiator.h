@@ -10,6 +10,7 @@
 #include "operators.h"
 #include "print.h"
 #include "Node.h"
+#include "parsing.h"
 #include "DSL.h"
 #include <math.h>
 

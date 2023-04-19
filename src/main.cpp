@@ -20,10 +20,12 @@ int main(int argc, char** argv) {
     }
     char* file_name = argv[1];
     printf("file_name = %s\n", file_name);
-
-    Node* tree = ConstructTree(file_name);
+    Buffer buff = ReadFile(file_name);
+    printf("BUFFER = <%s>\n", buff.buffer);
+    Node* tree = GetG(&buff.buffer);
+    // Node* tree = ConstructTree(file_name);
     TreeDump(tree);
-    int x = 0;
+    // int x = 0;
 
     Node* diff_tree = Diff(tree, "x");
     PrintTreeToFile(diff_tree, PRE_ORDER);
@@ -36,7 +38,7 @@ int main(int argc, char** argv) {
     TreeDump(simple_tree);
     ConverteTreeToPdf(tree, simple_tree);
 
-    printf("value = %lg\n", Ebal(simple_tree, 5, "x"));
+    // printf("value = %lg\n", Ebal(simple_tree, 5, "x"));
     TreeDump(simple_tree);
 
 

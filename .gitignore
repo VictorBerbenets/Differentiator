@@ -4,3 +4,5 @@ Diff
 MakefileOld
 out
 main
+src/stack.cpp
+src/include/stack.h

@@ -16,16 +16,22 @@ void ConverteTreeToPdf(Node* tree, Node* tree_diff) {
     FILE* tree_pdf = fopen("data//derivative.tex", "w+");
     Validator(tree_pdf == nullptr, "in oppening file", exit(READING_FILE_ERROR));
     _print("%s\n", header);
-    _print("Let's do this shit man and after that we'll go to drink beer and play World Of Tanks like normal workers after hard day!\n\n");
+    _print("Let's do this shit man and go to drink beer and play World Of Tanks like normal workers after hard day!\n\n");
     _print("$(");
 
     WriteTreeToPdf(tree, tree_pdf);
     _print(")^\\prime = ");
     WriteTreeToPdf(tree_diff, tree_pdf);
     _print("$\n");
+    _print("\n\tThat's all, I hope your ass is satisfied\n");
     _print("\n\\end{document}");
+
     int is_fclosed = fclose(tree_pdf);
+
+    system("cd data");
     system("pdflatex data//derivative.tex");
+    system("cd ..");
+
     Validator(is_fclosed != 0, "in closing file", exit(CLOSING_FILE_ERROR));    
 }
 
@@ -36,6 +42,9 @@ void WriteTreeToPdf(Node* tree, FILE* tree_pdf) {
     if (tree->type == OPER) {
         if (tree->value.oper == OP_DIV) {
             _print(" \\frac{ ");
+        }
+        else if (tree->value.oper == OP_POW) {
+            _print("(");
         }
         else if (tree->value.oper == OP_ADD || tree->value.oper == OP_SUB) {
             _print("(");
@@ -62,7 +71,10 @@ void WriteTreeToPdf(Node* tree, FILE* tree_pdf) {
             _print("{");
         }
         WriteTreeToPdf(tree->right_branch, tree_pdf);
-        if (tree->value.oper == OP_POW || tree->value.oper == OP_DIV) {
+        if (tree->value.oper == OP_POW) {
+            _print("})");
+        }
+        else if (tree->value.oper == OP_DIV) {
             _print("}");
         }
         else if (tree->value.oper == OP_ADD || tree->value.oper == OP_SUB) {
@@ -70,18 +82,31 @@ void WriteTreeToPdf(Node* tree, FILE* tree_pdf) {
         }
     }
     if (tree->type == FUNC) {
-        if (tree->type == FUNC) {
+        if (!strcmp("sqrt", _Diff_Functions_[tree->value.func].func_name)) {
+            _print("\\sqrt{");
+        }
+        else {
             _print(" %s( ", _Diff_Functions_[tree->value.func].func_name);
         }
         WriteTreeToPdf(tree->left_branch, tree_pdf);
-        _print(")");
+        if (!strcmp("sqrt", _Diff_Functions_[tree->value.func].func_name)) {
+            _print("}");
+        }
+        else {
+            _print(")");
+        }
     }
 
     if (tree->type == VAR) {
         _print("%s", tree->value.var);
     }
     if (tree->type == NUMBER) {
-        _print("%lg", tree->value.number);
+        if (tree->value.number < 0) {
+            _print("(%lg)\n", tree->value.number);
+        }
+        else {
+            _print("%lg", tree->value.number);
+        }
     }
 
 }

@@ -51,6 +51,7 @@ Buffer ReadFile(const char* file_name) {
     Validator(TreeFile == nullptr, "reading file error", exit(READING_FILE_ERROR));
 
     buff.buffer_size = GetFileSize(file_name);
+    printf("FILE SIZE = %d\n", buff.buffer_size);
     buff.buffer = (char*)calloc(buff.buffer_size + 1, sizeof(char));
     Validator(!buff.buffer, "memory giving error", exit(MEMORY_ALLOC_ERR));
 
@@ -215,8 +216,10 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
         }
     } else if (TYPE_NUM == VAR) {
         new_node->type = VAR;
+        printf("(char*)value = %s\n", (char*)value);
         if (value) {
-            memcpy((void*)new_node->value.var, value, sizeof(char) * strlen((char*)value));
+            // memcpy((void*)new_node->value.var, value, sizeof(char) * strlen((char*)value));
+            new_node->value.var = (char*)value;
         }
     } else if (TYPE_NUM == FUNC) {
         new_node->type = FUNC;
@@ -240,7 +243,6 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
 
 //==========================================================================================================================================//
 // calculate tree
-// #define CMP(func_id, func_name, body, func_arress) case _##func_id: si
 elem_t CalculateNumbers(Node* node_ptr) {
 
     if (node_ptr->type == NUMBER) {
@@ -356,6 +358,12 @@ void DeleteTree(Node* tree) {
     DeleteTree(tree->left_branch);
     DeleteTree(tree->right_branch);
     
+    if (tree->type == VAR) {
+        if (tree->value.var) {
+            free(tree->value.var);
+            tree->value.var = nullptr;
+        }
+    }
     tree->parent = nullptr;
     tree->left_branch = nullptr;
     tree->right_branch = nullptr;
