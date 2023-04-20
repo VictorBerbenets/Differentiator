@@ -15,11 +15,45 @@ static void SkipSpaces(char** string);
 static void PrintError(int err_id, char* string);
 static int  GetFuncId(char* func_name);
 
+
+//==========================================================================================================================================//
+Node* ConstructTree(const char* file_name) {
+    Buffer tree_buffer = ReadFile(file_name);
+    char* save_buff_addr = tree_buffer.buffer;
+    Node* tree = CreateNewNode(NUMBER, nullptr);
+    tree = BuildTree(&tree_buffer.buffer);
+
+    free(save_buff_addr);
+    return tree;
+}
+
+//==========================================================================================================================================//
+
+Buffer ReadFile(const char* file_name) {
+    Buffer buff = {};
+    FILE* TreeFile = fopen(file_name, "r");
+    Validator(TreeFile == nullptr, "reading file error", exit(READING_FILE_ERROR));
+
+    buff.buffer_size = GetStringSize(TreeFile);
+    buff.buffer = (char*)calloc(buff.buffer_size + 1, sizeof(char));
+    Validator(!buff.buffer, "memory giving error", exit(MEMORY_ALLOC_ERR));
+
+    fgets(buff.buffer, buff.buffer_size, TreeFile);
+    buff.buffer[buff.buffer_size] = '\0';
+
+    int is_file_closed = fclose(TreeFile);
+    Validator(is_file_closed != 0, "closing file error", exit(CLOSING_FILE_ERROR));
+
+    return buff;
+}
+
+//==========================================================================================================================================//
+
 #define CMP(func_id, func_name, body, address_name) static const int address_name = _##func_id;
     #include "codegeneration.h"
 #undef CMP
 
-Node* GetG(char** string) {
+Node* BuildTree(char** string) {
 
     SkipSpaces(string);
     printf("I am GetG, i got such string: <%s>\n", *string);
@@ -27,7 +61,8 @@ Node* GetG(char** string) {
         printf("String is empty\n");
         exit(EXIT_FAILURE);
     }
-    Node* node = GetE(string);
+    Node* node = GetExp(string);
+    SkipSpaces(string);
     if (**string != '\0') {
         printf("Error: didn't get end simbol <%s>\n", *string);
         // DeleteTree(node);
@@ -40,18 +75,17 @@ Node* GetG(char** string) {
     return node;
 }
 
-Node* GetE(char** string) {
+//==========================================================================================================================================//
+
+Node* GetExp(char** string) {
 
     SkipSpaces(string);
     printf("I am GetE, i got such string: <%s>\n", *string);
     
     Node* node = GetT(string);
-
     printf("I am GetE, i got such string after GetT in line:%d : <%s>\n", __LINE__, *string);
 
-    // if (_ERROR_FLAG_) {
-    //     return node;
-    // }
+    SkipSpaces(string);
 
     while (**string == OP_ADD || **string == OP_SUB) {
 
@@ -62,11 +96,8 @@ Node* GetE(char** string) {
         Node* node_right = GetT(string);
         Node* node_left  = CopyTree(node, duplic_tree);
 
-    printf("I am GetE, i got such string after GetT in line:%d : <%s>\n", __LINE__, *string);
+        printf("I am GetE, i got such string after GetT in line:%d : <%s>\n", __LINE__, *string);
 
-        // if (_ERROR_FLAG_) {
-        //     return node;
-        // }
         if (save_symb == OP_ADD) {
             node = ADD(node_left, node_right);
         }
@@ -76,10 +107,10 @@ Node* GetE(char** string) {
 
     }
 
-    // printf("I am GetE, RETURN string: <%s>\n", *string);
-
     return node;
 }
+
+//==========================================================================================================================================//
 
 Node* GetT(char** string) {
 
@@ -114,6 +145,7 @@ Node* GetT(char** string) {
         else {
             node = DIV(node_left, node_right);
         }
+        SkipSpaces(string);
 
     }
 
@@ -122,22 +154,19 @@ Node* GetT(char** string) {
     return node;
 }
 
+//==========================================================================================================================================//
+
 Node*  GetS(char** string) {
 
-     SkipSpaces(string);
+    SkipSpaces(string);
     printf("I am GetS, i got such string: <%s>\n", *string);
     
     Node* node = GetP(string);
 
     printf("I am GetS, i got such string after GetP: <%s>\n", *string);
 
-    // if (_ERROR_FLAG_) {
-    //     return node;
-    // }
-
     while (**string == OP_POW) {
 
-        // int save_symb = **string;
         (*string)++;
 
         printf("Calling GetP, current string: <%s>\n", *string);
@@ -146,17 +175,13 @@ Node*  GetS(char** string) {
 
         printf("I am GetS, i got such string after GetP: <%s>\n", *string);
 
-        // if (_ERROR_FLAG_) {
-        //     return node;
-        // }
-
         node = POW(node_left, node_right);
     }
 
-    // printf("I am GetE, RETURN string: <%s>\n", *string);
-
     return node;
 }
+
+//==========================================================================================================================================//
 
 Node* GetP(char** string) {
     
@@ -165,7 +190,7 @@ Node* GetP(char** string) {
     if (**string == OPEN_BRACKET) {
         (*string)++;
         printf("Calling GetE, current string: <%s>\n", *string);
-        Node* data = GetE(string);
+        Node* data = GetExp(string);
         if (**string != CLOSE_BRACKET) {
             printf("Close bracket is missed: %s\n", *string);
             _ERROR_FLAG_ = MISSING_CLOSE_BRACKET;
@@ -180,11 +205,12 @@ Node* GetP(char** string) {
         return data;
     }
 
-    return GetF(string);
+    return GetFunc(string);
 }
-#define SIN_(L, R)    CreateNewNode(FUNC,  &Sin,    L, R)
 
-Node* GetF(char** string) {
+//==========================================================================================================================================//
+
+Node* GetFunc(char** string) {
     printf("I am GetF, i got such string: <%s>\n", *string);
     SkipSpaces(string);
 
@@ -202,9 +228,9 @@ Node* GetF(char** string) {
     if (func_id != NotFunction) {
         (*string) += symbol_counter;
     printf("I am GetF, i return such string to GetE: <%s>\n", *string);
-        Node* node_left = GetE(string);
+        Node* node_left = GetExp(string);
     printf("I am GetF, i got such string after GetE: <%s>\n", *string);
-    // TreeDump(node_left);
+
         switch(func_id) {
             case _SIN:    return SIN_    (node_left, nullptr);
             case _COS:    return COS_    (node_left, nullptr);
@@ -229,28 +255,26 @@ Node* GetF(char** string) {
     return GetVar(string);
 }
 
+//==========================================================================================================================================//
+
 Node* GetVar(char** string) {
     printf("I am GetVar, i got such string: <%s>\n", *string);
     SkipSpaces(string);
 
     if (isalpha(**string)) {
         char* var = (char*) calloc(MAX_VARIABLE_SIZE, sizeof(char));
-        char* save_string = *string;
         for (int i = 0; i < MAX_VARIABLE_SIZE && isalpha(**string); i++) {
             var[i] = **string;
             (*string)++;
         }
-        // if (save_string == *string) {
-        //     _ERROR_FLAG_ = 1;
-        // }
-        printf("VAAAAAAAAAAAAAAAAAr = <%s>\n", var);
         return CreateNewNode(VAR, var);
     }
-    return GetN(string);
+    return GetNumber(string);
 }
-// #undef CMP
 
-Node* GetN(char** string) {
+//==========================================================================================================================================//
+
+Node* GetNumber(char** string) {
 
     SkipSpaces(string);
     printf("I am GetN, i got such string: <%s>\n", *string);
@@ -265,7 +289,11 @@ Node* GetN(char** string) {
         is_nagative = 1;
         (*string)++;
     }
-
+    if (**string == 'p' && *(*string + 1) == 'i') {
+        *string += 2;
+        ret_data->value.number = M_PI;
+        return ret_data;
+    }
     while (isdigit(**string)) { 
         inside_cicle  = 1;
         ret_data->value.number = ret_data->value.number*10 + (**string - '0');
@@ -293,7 +321,6 @@ Node* GetN(char** string) {
     SkipSpaces(string);
 
     printf("I am GetN, i RETURN such string: <%s>\n", *string);
-    // printf("ret value by GetN = %lg\n", ret_data.data);
 
     return ret_data;
 }
@@ -304,6 +331,7 @@ static void SkipSpaces(char** string) {
     }
 }
 
+//==========================================================================================================================================//
 
 static int GetFuncId(char* func_name) {
     for (size_t i = 0; i < sizeof(_Diff_Functions_)/sizeof(_Diff_Functions_[0]); i++) {
@@ -314,6 +342,7 @@ static int GetFuncId(char* func_name) {
     return NotFunction;
 }
 
+//==========================================================================================================================================//
 
 static void PrintError(int err_id, char* string) {
     switch(err_id) {
@@ -325,3 +354,4 @@ static void PrintError(int err_id, char* string) {
         default: printf("invalid err_id: %d\n", err_id);
     }
 }
+//==========================================================================================================================================//

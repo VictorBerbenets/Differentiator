@@ -6,7 +6,6 @@
 #include "include//Queue.h"
 
 //******************************************************************************************************************************************//
-static void ReadBuffer(char** buffer, char* result_string, char* readed_symbol, ReadType type);
 static void ReplaceVarToNumber(Node** node_ptr, elem_t value, const char* var_name);
 static void SimplifyAdd(Node** node_ptrs, int node_counter);
 static void SimplifyMul(Node** node_ptrs, int node_counter);
@@ -19,184 +18,6 @@ static void SetParentConnection(Node** parent, Node** child);
 static void LeaveOnlyLeftNode(Node** parent);
 static void LeaveOnlyRightNode(Node** parent);
 static void CalculateChildes(Node** parent);
-static int RetFuncName(char* result_string);
-static int IsVariable(char* string);
-static int IsDigit(char* string);
-
-static int ERROR_FLAG = 0;
-
-//==========================================================================================================================================//
-
-Node* ConstructTree(const char* file_name) {
-    Buffer tree_buffer = ReadFile(file_name);
-    char* save_buff_addr = tree_buffer.buffer;
-    Node* tree = CreateNewNode(NUMBER, nullptr);
-    tree = BuildTree(tree, &tree_buffer);
-
-    if (ERROR_FLAG) {
-        DeleteTree(tree);
-        tree = nullptr;
-        printf("" Green "Tree was not created! " Gray "\n");
-        exit(EXIT_FAILURE);
-    }
-    free(save_buff_addr);
-    return tree;
-}
-
-//==========================================================================================================================================//
-
-Buffer ReadFile(const char* file_name) {
-    Buffer buff = {};
-    FILE* TreeFile = fopen(file_name, "r");
-    Validator(TreeFile == nullptr, "reading file error", exit(READING_FILE_ERROR));
-
-    buff.buffer_size = GetFileSize(file_name);
-    printf("FILE SIZE = %d\n", buff.buffer_size);
-    buff.buffer = (char*)calloc(buff.buffer_size + 1, sizeof(char));
-    Validator(!buff.buffer, "memory giving error", exit(MEMORY_ALLOC_ERR));
-
-    size_t fread_ret_value = fread(buff.buffer, sizeof(char), buff.buffer_size, TreeFile);
-    Validator(fread_ret_value != buff.buffer_size, "fread reading error",exit(FREAD_READING_ERROR));
-    buff.buffer[buff.buffer_size] = '\0';
-
-    int is_file_closed = fclose(TreeFile);
-    Validator(is_file_closed != 0, "closing file error", exit(CLOSING_FILE_ERROR));
-
-    return buff;
-}
-
-//==========================================================================================================================================//
-
-Node* BuildTree(Node* tree, Buffer* tree_buffer) {
-    static char result_string[MAX_VARIABLE_SIZE] = {};
-    static const char Operators[] = "+ - * / ^";  // const
-    static elem_t value = 0;
-    static char readed_symbol = 0;
-    static int counter = 0;
-    static int string_len = 0;
-    
-    if (ERROR_FLAG) {
-        return tree;
-    }
-    if (!tree) {
-        return nullptr;
-    }
-
-    ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, SYMBOL);
-    Validator(readed_symbol != OPEN_BRACKET, "expected open bracket", ERROR_FLAG = 1);
-
-    ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, STRING);
-    if (strstr(Operators, result_string)) {
-        value = result_string[0];
-        tree->type = OPER;
-        tree->value.oper   = (int)value;
-        tree->left_branch  = CreateNewNode(OPER, &value);
-        tree->right_branch = CreateNewNode(OPER, &value);
-    } else if ((tree->value.func = RetFuncName(result_string)) != INVALID_STRING_DATA) {
-        tree->type = FUNC;
-        tree->left_branch = CreateNewNode(FUNC, &tree->value.func);
-    } else if (IsDigit(result_string)) {
-        tree->value.number = atof(result_string);
-        tree->type = NUMBER;
-    } else if (IsVariable(result_string)) {
-        string_len = strlen(result_string);
-        if (string_len < MAX_VARIABLE_SIZE) {
-            memcpy((void*)tree->value.var, (const void*)result_string, sizeof(char) * string_len);
-            tree->value.var[string_len] = '\0';
-            tree->type = VAR;
-        } else {
-            fprintf(stderr, "Name of the variable '%s' is to long:%d. It have to < %d", result_string, string_len, MAX_VARIABLE_SIZE);
-            ERROR_FLAG = 1;
-            return nullptr;
-        }
-    } else {
-        ERROR_FLAG = 1;
-        printf("error: invalid data: %s\n", result_string);
-        return nullptr;
-    }
-
-    tree->left_branch  = BuildTree(tree->left_branch, tree_buffer);
-    tree->right_branch = BuildTree(tree->right_branch, tree_buffer);
-
-    ReadBuffer(&(tree_buffer->buffer), result_string, &readed_symbol, SYMBOL);
-    if (readed_symbol == ')') {
-        return tree;
-    } else {
-        ERROR_FLAG = 1;
-        printf(
-            "ERROR BLYAT: EBANIY V ROT GDE CLOSE BRACKET NAXUI, ""MUDILA???\nGet: %c, expecter: %c\n", readed_symbol, CLOSE_BRACKET);
-        return nullptr;
-    }
-}
-
-//==========================================================================================================================================//
-
-static int RetFuncName(char* result_string) {
-
-    Validator(result_string == nullptr, "invalid string pointer", exit(INVALID_STRING_POINTER));
-    for (int node_counter = 0; node_counter < sizeof(_Diff_Functions_)/sizeof(_Diff_Functions_[0]); node_counter++) {
-
-        if (!strcmp(_Diff_Functions_[node_counter].func_name, result_string)) {
-            return _Diff_Functions_[node_counter].func_id;
-        }
-    }                                
-    return INVALID_STRING_DATA;
-}
-
-//==========================================================================================================================================//
-
-static int IsVariable(char* string) {
-    char* string_ptr = string;
-    if (!strlen(string)) {
-        return 0;
-    }
-    for (int symb_id = 0; string_ptr[symb_id] != '\0'; symb_id++) {
-        if (isalpha(string_ptr[symb_id]) || string_ptr[symb_id] == '_') {
-            continue;
-        } else {
-            return 0;
-        }
-    }
-    return 1;
-}
-
-//==========================================================================================================================================//
-
-static void ReadBuffer(char** buffer, char* result_string, char* readed_symbol, ReadType type) {
-    int counter = 0;
-    switch (type) {
-        case SYMBOL:
-            sscanf(*buffer, " %c%n", readed_symbol, &counter);
-            *buffer += counter;
-            break;
-        case STRING:
-            sscanf(*buffer, " %25[^ ()]%n", result_string, &counter);  // make string size
-            *buffer += counter;
-            break;
-        default:
-            printf("Invalid type: %d\n", type);
-    }
-}
-
-//==========================================================================================================================================//
-
-static int IsDigit(char* string) {
-    char* string_ptr = string;
-    int point_counter = 0;
-    if (!strlen(string)) {
-        return 0;
-    }
-    for (int symb_id = 0; string_ptr[symb_id] != '\0'; symb_id++) {
-        if (isdigit(string_ptr[symb_id])) {
-            continue;
-        } else if ((string_ptr[symb_id] == '.' && symb_id && !point_counter)) {
-            point_counter++;
-        } else {
-            return 0;
-        }
-    }
-    return 1;
-}
 
 //==========================================================================================================================================//
 
@@ -216,9 +37,7 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
         }
     } else if (TYPE_NUM == VAR) {
         new_node->type = VAR;
-        printf("(char*)value = %s\n", (char*)value);
         if (value) {
-            // memcpy((void*)new_node->value.var, value, sizeof(char) * strlen((char*)value));
             new_node->value.var = (char*)value;
         }
     } else if (TYPE_NUM == FUNC) {
@@ -312,12 +131,12 @@ elem_t Ebal(Node* node_ptr, elem_t value, const char* var_name) {
 
 static void ReplaceVarToNumber(Node** node_ptr, elem_t value, const char*  var_name) {
     if ((*node_ptr)->left_branch) {
-        if ((*node_ptr)->left_branch->type == VAR  ) {                  //&& !strcmp((*node_ptr)->left_branch->value.var, var_name)) {
+        if ((*node_ptr)->left_branch->type == VAR  ) {                 
             (*node_ptr)->left_branch->value.number = value;
             (*node_ptr)->left_branch->type         = NUMBER;
         }
     }
-    if ((*node_ptr)->right_branch ) {                               //&& !strcmp((*node_ptr)->right_branch->value.var, var_name)) {
+    if ((*node_ptr)->right_branch ) {                               
         if ((*node_ptr)->right_branch->type == VAR) {
             (*node_ptr)->right_branch->value.number = value;
             (*node_ptr)->right_branch->type         = NUMBER;
@@ -686,4 +505,5 @@ static void SetParentConnection(Node** parent, Node** child) {
         (*parent)->parent->right_branch = *child;
     }
 }
+
 //==========================================================================================================================================//

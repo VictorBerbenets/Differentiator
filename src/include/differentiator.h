@@ -17,12 +17,12 @@
 typedef double elem_t;
 
 typedef struct {
-    char var_name[MAX_VARIABLE_SIZE];
+    char* var_name;
     int  var_id;
 } VarInfo;
 
 typedef struct {
-    Node* tree;
+    Node* Root;
     int node_counter = 0;
     VarInfo* variables;
 } Tree;
@@ -59,14 +59,11 @@ enum TreeErrors {
     DIVIDE_ERROR            = 11,
 }; 
 
-//make tree struct и таблицу имен 
-
 Buffer ReadFile(const char* file_name);
 Node* ConstructTree(const char* file_name);
-Node* BuildTree(Node* tree, Buffer* tree_buffer);
 Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node = nullptr, Node* right_node = nullptr);
 
-void ConverteTreeToPdf(Node* tree, Node* tree_diff);
+void ConverteTreeToPdf(Node* tree, Node* tree_diff, char* var_name);
 
 void WriteTreeToPdf(Node* tree, FILE* tree_pdf);
 
@@ -90,14 +87,14 @@ void DeleteTree(Node* tree);
 
 int TreeDump(Node* tree);
 
-size_t GetFileSize (const char *file);
+// size_t GetStringSize (const char *file);
+size_t GetStringSize (FILE* TreeFile);
 
 int IsEqual(elem_t value1, elem_t value2);
 
 Node* CopyTree(Node* tree_to_copy, Node* duplic_tree);
 
 void PrintTree(Node* tree);
-
 
 
 #endif

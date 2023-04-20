@@ -9,7 +9,6 @@ SRC =   src/main.cpp   \
         src/frontend.cpp  \
         src/file_utils.cpp \
         src/diff_funcs.cpp  \
-        src/pdfconverting.cpp\
         src/parsing.cpp
 
 # already compiled objects

@@ -16,13 +16,13 @@ enum Errors {
     INVALID_FUNCTION_NAME_SIZE = 5,
 };
 
-Node*  GetG(char** string);
-Node*  GetE(char** string);
+Node*  BuildTree(char** string);
+Node*  GetExp(char** string);
 Node*  GetT(char** string);
 Node*  GetS(char** string);
 Node*  GetP(char** string);
-Node*  GetF(char** string);
-Node*  GetN(char** string);
-Node* GetVar(char** string);
+Node*  GetFunc(char** string);
+Node*  GetNumber(char** string);
+Node*  GetVar(char** string);
 
 #endif

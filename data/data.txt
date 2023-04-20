@@ -1,1 +1,1 @@
-tg(x^2 + sin(arcsin(x))) * ch(cth(tg(x)))
+ sin(x) 

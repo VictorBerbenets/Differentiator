@@ -22,7 +22,8 @@ int main(int argc, char** argv) {
     printf("file_name = %s\n", file_name);
     Buffer buff = ReadFile(file_name);
     printf("BUFFER = <%s>\n", buff.buffer);
-    Node* tree = GetG(&buff.buffer);
+    Tree tree1 = {};
+    Node* tree = BuildTree(&buff.buffer);
     // Node* tree = ConstructTree(file_name);
     TreeDump(tree);
     // int x = 0;
@@ -36,9 +37,9 @@ int main(int argc, char** argv) {
     Node* simple_tree = nullptr;
     simple_tree = SimplifyTree(diff_tree);
     TreeDump(simple_tree);
-    ConverteTreeToPdf(tree, simple_tree);
+    ConverteTreeToPdf(tree, simple_tree, "x");
 
-    // printf("value = %lg\n", Ebal(simple_tree, 5, "x"));
+    printf("value = %lg\n", Ebal(simple_tree, 0.5, "x"));
     TreeDump(simple_tree);
 
 
