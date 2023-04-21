@@ -142,3 +142,15 @@ static Node* PowFunction(Node* node, const char* var_name) {
     return nullptr;
 }
 //==========================================================================================================================================//
+
+
+void DerivativeOnALLVars(Tree* tree) {
+    Node* diff_tree   = nullptr;
+    for(int tree_number = 0; tree_number < tree->var_counter; tree_number++) {
+        diff_tree = Diff(tree->Root, tree->variables[tree_number].var_name);
+        tree->Diff_trees = (Node**) realloc(tree->Diff_trees, sizeof(Node*) * (tree_number + 1));
+        tree->Diff_trees[tree_number] = SimplifyTree(diff_tree);
+        TreeDump(tree->Diff_trees[tree_number]);
+    }
+}
+//==========================================================================================================================================//

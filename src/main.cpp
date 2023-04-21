@@ -19,33 +19,15 @@ int main(int argc, char** argv) {
         return -1;
     }
     char* file_name = argv[1];
-    printf("file_name = %s\n", file_name);
-    Buffer buff = ReadFile(file_name);
-    printf("BUFFER = <%s>\n", buff.buffer);
-    Tree tree1 = {};
-    Node* tree = BuildTree(&buff.buffer);
-    // Node* tree = ConstructTree(file_name);
-    TreeDump(tree);
-    // int x = 0;
+    Tree tree = {};
 
-    Node* diff_tree = Diff(tree, "x");
-    PrintTreeToFile(diff_tree, PRE_ORDER);
-    PrintTreeToFile(diff_tree, IN_ORDER);
-    PrintTreeToFile(diff_tree, POST_ORDER);
-    TreeDump(diff_tree);
-    
-    Node* simple_tree = nullptr;
-    simple_tree = SimplifyTree(diff_tree);
-    TreeDump(simple_tree);
-    ConverteTreeToPdf(tree, simple_tree, "x");
+    ConstructTree(argv[1], &tree);
+    TreeDump(tree.Root);
 
-    printf("value = %lg\n", Ebal(simple_tree, 0.5, "x"));
-    TreeDump(simple_tree);
+    DerivativeOnALLVars(&tree);
+    ConverteTreeToPdf(&tree);
 
-
-    DeleteTree(tree);
-    DeleteTree(simple_tree);
-
-
+    DeleteAllTrees(&tree);
     return 0;
 }
+

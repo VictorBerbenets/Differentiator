@@ -1,1 +1,2 @@
- sin(x) 
+arcsin(x^2 + 2*y)
+x y

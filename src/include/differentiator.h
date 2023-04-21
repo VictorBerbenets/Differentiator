@@ -22,9 +22,10 @@ typedef struct {
 } VarInfo;
 
 typedef struct {
-    Node* Root;
-    int node_counter = 0;
-    VarInfo* variables;
+    Node* Root = nullptr;
+    int var_counter    = 0;
+    VarInfo* variables = nullptr;
+    Node** Diff_trees  = nullptr;
 } Tree;
 
 typedef struct {
@@ -59,11 +60,15 @@ enum TreeErrors {
     DIVIDE_ERROR            = 11,
 }; 
 
-Buffer ReadFile(const char* file_name);
-Node* ConstructTree(const char* file_name);
+// Buffer ReadFile(const char* file_name);
+Buffer ReadFile(const char* file_name, Tree* tree);
+// Node* ConstructTree(const char* file_name);
+void ConstructTree(const char* file_name, Tree* tree);
+
 Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node = nullptr, Node* right_node = nullptr);
 
-void ConverteTreeToPdf(Node* tree, Node* tree_diff, char* var_name);
+// void ConverteTreeToPdf(Node* simple_tree, Node* tree_diff, VarInfo* variables);
+void ConverteTreeToPdf(Tree* tree);
 
 void WriteTreeToPdf(Node* tree, FILE* tree_pdf);
 
@@ -83,6 +88,7 @@ void PostOrder(Node* tree, FILE* file_name);
 
 int PrintTreeToFile(Node* tree, PrintType type);
 
+void DeleteAllTrees(Tree* tree);
 void DeleteTree(Node* tree);
 
 int TreeDump(Node* tree);
@@ -96,5 +102,7 @@ Node* CopyTree(Node* tree_to_copy, Node* duplic_tree);
 
 void PrintTree(Node* tree);
 
+void  FindVariables(FILE* TreeFile, Tree* tree);
 
+void DerivativeOnALLVars(Tree* tree);
 #endif

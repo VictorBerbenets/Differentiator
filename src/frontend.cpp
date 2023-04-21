@@ -221,7 +221,9 @@ void PostOrder(Node* tree, FILE* Tree_file) {
 
 #define _print(...) fprintf(tree_pdf, __VA_ARGS__)
 
-void ConverteTreeToPdf(Node* tree, Node* tree_diff, char* var_name) {
+void ConverteTreeToPdf(Tree* tree) {
+    static const int MaxSystemCommandLen = 150;
+
     const char header[] = "\\documentclass{article}\n"
                           "\\usepackage[utf8]{inputenc}\n"
                           "\\usepackage{float}\n"
@@ -231,17 +233,21 @@ void ConverteTreeToPdf(Node* tree, Node* tree_diff, char* var_name) {
                           "\\usepackage{comment}\n"
 
     "\\begin{document}\n";
-
+    char file_name[MaxSystemCommandLen] = {0};
+    
     FILE* tree_pdf = fopen("data//derivative.tex", "w+");
     Validator(tree_pdf == nullptr, "in oppening file", exit(READING_FILE_ERROR));
     _print("%s\n", header);
     _print("Let's do this shit man and go to drink beer and play World Of Tanks like normal workers after hard day!\n\n");
-    _print("$f(%s)^\\prime = (", var_name);
 
-    WriteTreeToPdf(tree, tree_pdf);
-    _print(")_{%s}^\\prime = ", var_name);
-    WriteTreeToPdf(tree_diff, tree_pdf);
-    _print("$\n");
+    for (int var_number = 0; var_number < tree->var_counter; var_number++) {
+        _print("\n$f(%s)^\\prime = (", tree->variables[var_number].var_name);
+        WriteTreeToPdf(tree->Root, tree_pdf);
+        _print(")_{%s}^\\prime = ", tree->variables[var_number].var_name);
+        WriteTreeToPdf(tree->Diff_trees[var_number], tree_pdf);
+        _print("$\n\n");
+    }
+
     _print("\n\tThat's all, I hope your ass is satisfied\n");
     _print("\n\\end{document}");
 

@@ -17,34 +17,59 @@ static int  GetFuncId(char* func_name);
 
 
 //==========================================================================================================================================//
-Node* ConstructTree(const char* file_name) {
-    Buffer tree_buffer = ReadFile(file_name);
+void ConstructTree(const char* file_name, Tree* tree) {
+    Buffer tree_buffer = ReadFile(file_name, tree);
     char* save_buff_addr = tree_buffer.buffer;
-    Node* tree = CreateNewNode(NUMBER, nullptr);
-    tree = BuildTree(&tree_buffer.buffer);
+    (*tree).Root = CreateNewNode(NUMBER, nullptr);
+    tree->Root   = BuildTree(&tree_buffer.buffer);
 
     free(save_buff_addr);
-    return tree;
 }
 
 //==========================================================================================================================================//
 
-Buffer ReadFile(const char* file_name) {
+Buffer ReadFile(const char* file_name, Tree* tree) {
     Buffer buff = {};
     FILE* TreeFile = fopen(file_name, "r");
     Validator(TreeFile == nullptr, "reading file error", exit(READING_FILE_ERROR));
 
     buff.buffer_size = GetStringSize(TreeFile);
+    printf("buff.buffer_size = %d\n", buff.buffer_size);
+
     buff.buffer = (char*)calloc(buff.buffer_size + 1, sizeof(char));
     Validator(!buff.buffer, "memory giving error", exit(MEMORY_ALLOC_ERR));
-
-    fgets(buff.buffer, buff.buffer_size, TreeFile);
+    fgets(buff.buffer, buff.buffer_size + 1, TreeFile);
+    printf("STRING = <%s>\n", buff.buffer);
     buff.buffer[buff.buffer_size] = '\0';
-
+    FindVariables(TreeFile, tree);
     int is_file_closed = fclose(TreeFile);
     Validator(is_file_closed != 0, "closing file error", exit(CLOSING_FILE_ERROR));
 
     return buff;
+}
+
+//==========================================================================================================================================//
+
+void  FindVariables(FILE* TreeFile, Tree* tree) {
+
+    char string[MAX_VARIABLE_SIZE + 1] = {0};
+    int var_len = 0;
+    int var_counter = 0;
+    char ch  = 0;
+    while(!feof(TreeFile)) {
+        fscanf(TreeFile, " %25[^ ]%n", string, &var_len);
+        if (strlen(string)) {
+            tree->variables = (VarInfo*) realloc(tree->variables, sizeof(VarInfo)*(var_counter + 1));
+            tree->variables[var_counter].var_name = (char*) calloc(var_len + 1, sizeof(char));
+            memcpy(tree->variables[var_counter].var_name, string, sizeof(char)*var_len);
+            tree->variables[var_counter].var_name[var_len] = '\0';
+            tree->variables[var_counter].var_id = var_counter;
+            var_len = 0;
+            var_counter++;
+        }
+    }
+    tree->var_counter = var_counter;
+
 }
 
 //==========================================================================================================================================//

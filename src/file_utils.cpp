@@ -21,13 +21,12 @@
 size_t GetStringSize (FILE* TreeFile) { 
     
     Validator(!TreeFile, "invalid file name", exit(INVALID_DATA););
-    int char_counter = 0;
+    size_t char_counter = 0;
     char ch = 0;
     while((ch = fgetc(TreeFile)) != '\n' && ch != EOF && ch != '\0') {
         char_counter++;
-        printf("ch = <%c>\n", ch);
     }
-    printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
     rewind(TreeFile);
+    printf("size = %zd\n", char_counter);
     return char_counter;
 }
