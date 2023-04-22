@@ -60,14 +60,12 @@ enum TreeErrors {
     DIVIDE_ERROR            = 11,
 }; 
 
-// Buffer ReadFile(const char* file_name);
 Buffer ReadFile(const char* file_name, Tree* tree);
-// Node* ConstructTree(const char* file_name);
+
 void ConstructTree(const char* file_name, Tree* tree);
 
 Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node = nullptr, Node* right_node = nullptr);
 
-// void ConverteTreeToPdf(Node* simple_tree, Node* tree_diff, VarInfo* variables);
 void ConverteTreeToPdf(Tree* tree);
 
 void WriteTreeToPdf(Node* tree, FILE* tree_pdf);
@@ -93,7 +91,6 @@ void DeleteTree(Node* tree);
 
 int TreeDump(Node* tree);
 
-// size_t GetStringSize (const char *file);
 size_t GetStringSize (FILE* TreeFile);
 
 int IsEqual(elem_t value1, elem_t value2);

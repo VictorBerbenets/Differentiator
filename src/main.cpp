@@ -12,8 +12,19 @@
                                    
 
 int main(int argc, char** argv) {
-
-    printf("%zd\n", sizeof(Node));
+    char string[100] = "     hello world, vitia!\n";
+    char copy[100] = {0};
+    int n = 0;
+    char* string_ptr = string;
+    while(sscanf(string_ptr, " %[^ \n]%n", copy, &n)) {
+        printf("copy = <%s>; n = %d\n", copy, n);
+        string_ptr += n;
+        if (*string_ptr == '\n') {
+            break;
+        }
+        printf("ptr = <%s>\n", string_ptr);
+    }
+    // printf("%zd\n", sizeof(Node));
     if (argc > 2) {
         printf("Too many arguments of the command line\n");
         return -1;

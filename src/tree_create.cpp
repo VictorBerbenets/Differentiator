@@ -34,13 +34,12 @@ Buffer ReadFile(const char* file_name, Tree* tree) {
     Validator(TreeFile == nullptr, "reading file error", exit(READING_FILE_ERROR));
 
     buff.buffer_size = GetStringSize(TreeFile);
-    printf("buff.buffer_size = %d\n", buff.buffer_size);
 
     buff.buffer = (char*)calloc(buff.buffer_size + 1, sizeof(char));
     Validator(!buff.buffer, "memory giving error", exit(MEMORY_ALLOC_ERR));
     fgets(buff.buffer, buff.buffer_size + 1, TreeFile);
-    printf("STRING = <%s>\n", buff.buffer);
     buff.buffer[buff.buffer_size] = '\0';
+
     FindVariables(TreeFile, tree);
     int is_file_closed = fclose(TreeFile);
     Validator(is_file_closed != 0, "closing file error", exit(CLOSING_FILE_ERROR));
@@ -69,7 +68,6 @@ void  FindVariables(FILE* TreeFile, Tree* tree) {
         }
     }
     tree->var_counter = var_counter;
-
 }
 
 //==========================================================================================================================================//

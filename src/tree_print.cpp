@@ -336,4 +336,28 @@ void WriteTreeToPdf(Node* tree, FILE* tree_pdf) {
         }
     }
 }
+
+//==========================================================================================================================================//
+
+void PrintTree(Node* tree) {
+    if (!tree) {
+        return;
+    }
+
+    PrintTree(tree->left_branch);
+    PrintTree(tree->right_branch);
+
+    if (tree->type == OPER) {
+        printf("%d \n", tree->value.oper);
+    }
+    if (tree->type == NUMBER) {
+        printf("%lg \n", tree->value.number);
+    }
+    if (tree->type == VAR) {
+        printf("%s \n", tree->value.var);
+    }
+    if (tree->type == FUNC) {
+        printf("%s \n", _Diff_Functions_[tree->value.func].func_name);
+    }
+}
 //==========================================================================================================================================//
