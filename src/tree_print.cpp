@@ -222,6 +222,10 @@ void PostOrder(Node* tree, FILE* Tree_file) {
 #define _print(...) fprintf(tree_pdf, __VA_ARGS__)
 
 void ConverteTreeToPdf(Tree* tree) {
+    if (!tree->Root) {
+        fprintf(stderr, "Cant create Graph_Dump: tree pointer = %p\n", tree);
+        return ;
+    }
     static const int MaxSystemCommandLen = 150;
 
     const char header[] = "\\documentclass{article}\n"

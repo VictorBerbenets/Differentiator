@@ -11,7 +11,8 @@ size_t GetStringSize (FILE* TreeFile) {
         printf("CH = <%c>\n", ch);
         char_counter++;
     }
-    rewind(TreeFile);
+        printf("CH = <%c>\n", ch);
+    
     printf("size = %zd\n", char_counter);
     return char_counter;
 }

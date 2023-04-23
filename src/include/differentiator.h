@@ -60,7 +60,7 @@ enum TreeErrors {
     DIVIDE_ERROR            = 11,
 }; 
 
-Buffer ReadFile(const char* file_name, Tree* tree);
+char* ReadFile(const char* file_name, Tree* tree);
 
 void ConstructTree(const char* file_name, Tree* tree);
 

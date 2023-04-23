@@ -2,6 +2,7 @@
 #include "include//parsing.h"
 #include "include//DSL.h"
 
+//*****************************************************************************************************************************************//
 static const int Sub  = OP_SUB;
 static const int Add  = OP_ADD;
 static const int Mul  = OP_MUL;
@@ -14,60 +15,96 @@ static int _ERROR_FLAG_ = 0;
 static void SkipSpaces(char** string);
 static void PrintError(int err_id, char* string);
 static int  GetFuncId(char* func_name);
-
-
+static void ReadFileString(FILE* TreeFile, char** string_take);
 //==========================================================================================================================================//
+
 void ConstructTree(const char* file_name, Tree* tree) {
-    Buffer tree_buffer = ReadFile(file_name, tree);
-    char* save_buff_addr = tree_buffer.buffer;
+    char* expression = ReadFile(file_name, tree);
+    Validator(expression == nullptr, "can't read expression from the file", exit(READING_FILE_ERROR));
+
+    char* save_buff_addr = expression;
     (*tree).Root = CreateNewNode(NUMBER, nullptr);
-    tree->Root   = BuildTree(&tree_buffer.buffer);
+    tree->Root   = BuildTree(&expression);
 
     free(save_buff_addr);
 }
 
 //==========================================================================================================================================//
 
-Buffer ReadFile(const char* file_name, Tree* tree) {
-    Buffer buff = {};
-    FILE* TreeFile = fopen(file_name, "r");
+char* ReadFile(const char* file_name, Tree* tree) {
+    FILE* TreeFile   = fopen(file_name, "r");
     Validator(TreeFile == nullptr, "reading file error", exit(READING_FILE_ERROR));
 
-    buff.buffer_size = GetStringSize(TreeFile);
-
-    buff.buffer = (char*)calloc(buff.buffer_size + 1, sizeof(char));
-    Validator(!buff.buffer, "memory giving error", exit(MEMORY_ALLOC_ERR));
-    fgets(buff.buffer, buff.buffer_size + 1, TreeFile);
-    buff.buffer[buff.buffer_size] = '\0';
+    char* expression = nullptr;
+    ReadFileString(TreeFile, &expression);
 
     FindVariables(TreeFile, tree);
     int is_file_closed = fclose(TreeFile);
     Validator(is_file_closed != 0, "closing file error", exit(CLOSING_FILE_ERROR));
 
-    return buff;
+    return expression;
 }
 
 //==========================================================================================================================================//
 
 void  FindVariables(FILE* TreeFile, Tree* tree) {
 
+    char* var_string = nullptr;
+    ReadFileString(TreeFile, &var_string);
+    char* save_address = var_string;
+
     char string[MAX_VARIABLE_SIZE + 1] = {0};
     int var_len = 0;
     int var_counter = 0;
     char ch  = 0;
-    while(!feof(TreeFile)) {
-        fscanf(TreeFile, " %25[^ ]%n", string, &var_len);
-        if (strlen(string)) {
-            tree->variables = (VarInfo*) realloc(tree->variables, sizeof(VarInfo)*(var_counter + 1));
-            tree->variables[var_counter].var_name = (char*) calloc(var_len + 1, sizeof(char));
-            memcpy(tree->variables[var_counter].var_name, string, sizeof(char)*var_len);
-            tree->variables[var_counter].var_name[var_len] = '\0';
-            tree->variables[var_counter].var_id = var_counter;
-            var_len = 0;
-            var_counter++;
+    char end_symb = -1;
+
+    SkipSpaces(&var_string);
+    while((ch = sscanf(var_string, "%25[^ ]%n", string, &var_len))) {
+
+        tree->variables = (VarInfo*) realloc(tree->variables, sizeof(VarInfo)*(var_counter + 1));
+        tree->variables[var_counter].var_name = (char*) calloc(var_len + 1, sizeof(char));
+        memcpy(tree->variables[var_counter].var_name, string, sizeof(char)*var_len);
+        tree->variables[var_counter].var_name[var_len] = '\0';
+        tree->variables[var_counter].var_id = var_counter;
+        var_counter++;
+
+        var_string += var_len;
+        SkipSpaces(&var_string);
+
+        if (sscanf(var_string, "%c", &end_symb) == EOF) {
+            break;
         }
     }
+
+    free(save_address);
     tree->var_counter = var_counter;
+}
+
+//==========================================================================================================================================//
+
+static void ReadFileString(FILE* TreeFile, char** string_take) {
+    int string_size = GetStringSize(TreeFile);
+    int check_fseek = 0;
+    if (!feof(TreeFile)) {
+        if (fseek(TreeFile, -string_size - 1, SEEK_CUR)) {
+            const char err_messege[] = "fseek error!";
+            perror(err_messege);
+            exit(EXIT_FAILURE);
+        }
+    } else {
+        // if EOF: file ptr don't move and we should step back by string size number
+        if (fseek(TreeFile, -string_size, SEEK_CUR)) {
+            const char err_messege[] = "fseek error!";
+            perror(err_messege);
+            exit(EXIT_FAILURE);
+        }
+    }
+    *string_take = (char*)calloc(string_size + 2, sizeof(char)); 
+    Validator(!*string_take, "memory giving error", exit(MEMORY_ALLOC_ERR));
+
+    fgets(*string_take, string_size + 2, TreeFile);  
+    (*string_take)[string_size] = '\0';
 }
 
 //==========================================================================================================================================//
@@ -91,10 +128,10 @@ Node* BuildTree(char** string) {
         // DeleteTree(node);
         exit(EXIT_FAILURE);
     }
-    // if (_ERROR_FLAG_) {
-    //     PrintError(_ERROR_FLAG_, *string);
-    //     exit(_ERROR_FLAG_);
-    // }
+    if (_ERROR_FLAG_) {
+        PrintError(_ERROR_FLAG_, *string);
+        exit(_ERROR_FLAG_);
+    }
     return node;
 }
 
@@ -302,12 +339,11 @@ Node* GetNumber(char** string) {
     SkipSpaces(string);
     printf("I am GetN, i got such string: <%s>\n", *string);
 
-    Node* ret_data   = {};
+    Node* ret_data   = nullptr;
     int inside_cicle = 0;
     int is_nagative  = 0;
     static int just_for_addres = 0;
     ret_data = CreateNewNode(NUMBER, &just_for_addres);
-
     if (**string == '-') {
         is_nagative = 1;
         (*string)++;
@@ -337,9 +373,6 @@ Node* GetNumber(char** string) {
     if (is_nagative) {
         ret_data->value.number *= -1;
     }
-    // if (!inside_cicle) {
-    //     _ERROR_FLAG_ = UNEXPECTED_SYMBOL;
-    // }
 
     SkipSpaces(string);
 
@@ -378,3 +411,4 @@ static void PrintError(int err_id, char* string) {
     }
 }
 //==========================================================================================================================================//
+
