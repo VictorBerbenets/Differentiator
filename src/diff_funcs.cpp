@@ -141,16 +141,32 @@ static Node* PowFunction(Node* node, const char* var_name) {
     }
     return nullptr;
 }
+
 //==========================================================================================================================================//
 
-
 void DerivativeOnALLVars(Tree* tree) {
-    Node* diff_tree   = nullptr;
+    Validator(tree == nullptr, "tree is nullptr", return ;);
     for(int tree_number = 0; tree_number < tree->var_counter; tree_number++) {
-        diff_tree = Diff(tree->Root, tree->variables[tree_number].var_name);
-        tree->Diff_trees = (Node**) realloc(tree->Diff_trees, sizeof(Node*) * (tree_number + 1));
-        tree->Diff_trees[tree_number] = SimplifyTree(diff_tree);
-        TreeDump(tree->Diff_trees[tree_number]);
+        tree->Diff_trees[tree_number] = Diff(tree->Diff_trees[tree_number], tree->variables[tree_number].var_name);
+        tree->Diff_trees[tree_number] = SimplifyTree(tree->Diff_trees[tree_number]);
     }
 }
 //==========================================================================================================================================//
+
+void CreatePartialDerivatives(Tree* tree) {
+    Validator(tree == nullptr, "tree is nullptr", return ;);
+    if (!tree->var_counter) {
+        printf("I have't any vars. Can't derivative\n");
+        return ;
+    }
+
+    Node** check_calloc = (Node**) calloc(tree->var_counter, sizeof(Node*));
+    Validator(check_calloc == nullptr, "in allocating memory by calloc", return ;);
+    tree->Diff_trees = check_calloc;
+
+    Node* diff_tree   = nullptr;
+    for(int tree_number = 0; tree_number < tree->var_counter; tree_number++) {
+        diff_tree = Diff(tree->Root, tree->variables[tree_number].var_name);
+        tree->Diff_trees[tree_number] = SimplifyTree(diff_tree);
+    }
+}

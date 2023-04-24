@@ -162,7 +162,9 @@ int IsEqual(elem_t value1, elem_t value2) {
 
 void DeleteAllTrees(Tree* tree) {
     for (int tree_counter = 0; tree_counter < tree->var_counter; tree_counter++) {
-        DeleteTree(tree->Diff_trees[tree_counter]);
+        if (tree->Diff_trees) {
+            DeleteTree(tree->Diff_trees[tree_counter]);
+        }
         free(tree->variables[tree_counter].var_name);
     }
     free(tree->variables);

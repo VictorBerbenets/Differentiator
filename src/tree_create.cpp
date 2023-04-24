@@ -23,8 +23,9 @@ void ConstructTree(const char* file_name, Tree* tree) {
     Validator(expression == nullptr, "can't read expression from the file", exit(READING_FILE_ERROR));
 
     char* save_buff_addr = expression;
-    (*tree).Root = CreateNewNode(NUMBER, nullptr);
-    tree->Root   = BuildTree(&expression);
+    tree->Root = BuildTree(&expression);
+
+    CreatePartialDerivatives(tree);
 
     free(save_buff_addr);
 }
@@ -236,6 +237,11 @@ Node*  GetS(char** string) {
         printf("I am GetS, i got such string after GetP: <%s>\n", *string);
 
         node = POW(node_left, node_right);
+        // if (**string == OP_POW) {
+        //     free(node->left_branch);
+        //     free(node->right_branch);
+        // }
+        // node = POW(CopyTree(node, duplic_tree), GetP(string));
     }
 
     return node;

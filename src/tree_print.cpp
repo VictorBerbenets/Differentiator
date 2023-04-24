@@ -241,19 +241,19 @@ void ConverteTreeToPdf(Tree* tree) {
     
     FILE* tree_pdf = fopen("data//derivative.tex", "w+");
     Validator(tree_pdf == nullptr, "in oppening file", exit(READING_FILE_ERROR));
-    _print("%s\n", header);
-    _print("Let's do this shit man and go to drink beer and play World Of Tanks like normal workers after hard day!\n\n");
+    _print("%s", header);
+    _print("Let's do this shit man and go to drink beer and play World Of Tanks like normal workers after hard day!\\newline \\newline");
 
     for (int var_number = 0; var_number < tree->var_counter; var_number++) {
         _print("\n$f(%s)^\\prime = (", tree->variables[var_number].var_name);
         WriteTreeToPdf(tree->Root, tree_pdf);
         _print(")_{%s}^\\prime = ", tree->variables[var_number].var_name);
         WriteTreeToPdf(tree->Diff_trees[var_number], tree_pdf);
-        _print("$\n\n");
+        _print("$ \\newline \\newline");
     }
 
-    _print("\n\tThat's all, I hope your ass is satisfied\n");
-    _print("\n\\end{document}");
+    _print("\tThat's all, I hope your ass is satisfied\\newline");
+    _print("\\end{document}");
 
     int is_fclosed = fclose(tree_pdf);
 
@@ -263,7 +263,6 @@ void ConverteTreeToPdf(Tree* tree) {
 
     Validator(is_fclosed != 0, "in closing file", exit(CLOSING_FILE_ERROR));    
 }
-
 //==========================================================================================================================================//
 
 void WriteTreeToPdf(Node* tree, FILE* tree_pdf) {
@@ -341,6 +340,74 @@ void WriteTreeToPdf(Node* tree, FILE* tree_pdf) {
     }
 }
 
+#undef _print
+
+//==========================================================================================================================================//
+
+#define _print(...) fprintf(tex_file, __VA_ARGS__)
+
+void PrintMakloren(Tree* tree, const char* file_name, int decompos_number) {
+    if (!tree->Root) {
+        fprintf(stderr, "Cant create Graph_Dump: tree pointer = %p\n", tree);
+        return ;
+    }
+    static const int MaxSystemCommandLen = 150;
+    const char header[] = "\\documentclass{article}\n"
+                          "\\usepackage[utf8]{inputenc}\n"
+                          "\\usepackage{float}\n"
+                          "\\usepackage{pgfplots}\n"
+                          "\\usepackage{amsmath,amsfonts,amssymb,amsthm,mathtools}\n"
+                          "\\usepackage{graphicx}\n"
+                          "\\usepackage{comment}\n"
+
+    "\\begin{document}\n";
+
+    FILE* tex_file = fopen(file_name, "w+");
+    Validator(tex_file == nullptr, "in oppening file", exit(READING_FILE_ERROR));
+
+    _print("%s", header);
+
+    int var_number = 1;
+    _print("$");
+    WriteTreeToPdf(tree->Root, tex_file);
+    _print(" = ");
+
+    WriteTreeToPdf(tree->Root, tex_file);
+    _print("+");
+
+    int func_counter = 0;
+    int degree       = 1;
+    for (func_counter = 0; func_counter < decompos_number - 1; func_counter++, degree++) {
+        _print("\\frac{");
+        WriteTreeToPdf(tree->Diff_trees[0], tex_file);
+        _print("}{");
+        _print("%d!}", degree);
+        _print("\\cdot(%s - %s_{0})^{%d}", tree->variables[0].var_name, tree->variables[0].var_name, degree);
+        DerivativeOnALLVars(tree);
+        _print("+");
+
+    }
+    _print("\\frac{");
+    WriteTreeToPdf(tree->Diff_trees[0], tex_file);
+    _print("}{");
+    _print("%d!}", degree);
+    _print("\\cdot(%s - %s_{0})^{%d}", tree->variables[0].var_name, tree->variables[0].var_name, degree);
+
+    _print(" + o(%s - %s_{0})^{%d}", tree->variables[0].var_name, tree->variables[0].var_name,  decompos_number);
+
+    _print("$\\newline");
+    _print("\\newline ");
+    _print("\\end{document} ");
+
+    int is_fclosed = fclose(tex_file);
+
+    system("cd data");
+    system("pdflatex data//makloren.tex");
+    system("cd ..");
+
+    Validator(is_fclosed != 0, "in closing file", exit(CLOSING_FILE_ERROR));
+}
+#undef _print
 //==========================================================================================================================================//
 
 void PrintTree(Node* tree) {

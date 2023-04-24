@@ -4,12 +4,6 @@
 #include <string.h>
 #include <math.h>
 
-// Xelatex - из консооли сделать .tex -> .pdf 
-// 1. много срет в консоль можно перенаправить вывод
-// 2. Жестко обсирается при малейшей ошибке
-// 3. Нужно долбиться с русским языком
-
-                                   
 
 int main(int argc, char** argv) {
 
@@ -21,11 +15,15 @@ int main(int argc, char** argv) {
 
     ConstructTree(argv[1], &tree);
     TreeDump(tree.Root);
-
+    
     DerivativeOnALLVars(&tree);
-    ConverteTreeToPdf(&tree);
+    DerivativeOnALLVars(&tree);
 
+    ConverteTreeToPdf(&tree);
+    PrintMakloren(&tree, "data//makloren.tex", 3);
     DeleteAllTrees(&tree);
+
     return 0;
 }
+
 
