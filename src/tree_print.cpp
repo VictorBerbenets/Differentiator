@@ -1,12 +1,9 @@
 #include "include//differentiator.h"
 #include "include//graphviz.h"
-// #include "include//stack.h"
 #include "include//Queue.h"
 #include <string.h>
 #include <ctype.h>
 
-//******************************************************************************************************************************************//
-static void PrintExpression(FILE* tex_file, Tree* tree, elem_t number, int degree);
 //==========================================================================================================================================//
 int TreeDump(Node* tree) {
     static int graph_number = 0;
@@ -71,6 +68,7 @@ void CreateNextGraphNode(FILE* dot_file, Node* ptr, int* node_head, int* node_ne
 }
 
 //==========================================================================================================================================//
+
 void CreateGraphNode(FILE* dot_file, Node* ptr, int* node_counter) {
     if (ptr->type == NUMBER) {
         DotPrint("node%d [shape = Mrecord, style = filled, fillcolor = \"#FFD0D0\", label ="
@@ -169,11 +167,9 @@ void InOrder(Node* tree, FILE* Tree_file) {
     InOrder(tree->left_branch, Tree_file);
     if (tree->type == VAR) {
         fprintf(Tree_file, "%s ", tree->value.var);
-    }
-    else if (tree->type == FUNC) {
+    } else if (tree->type == FUNC) {
         fprintf(Tree_file, "%s ", _Diff_Functions_[tree->value.func].func_name);
-    }
-    else if (tree->type == OPER) {
+    } else if (tree->type == OPER) {
         fprintf(Tree_file, "%c ", tree->value.oper);
     }
     else if (tree->type == NUMBER) {
@@ -228,7 +224,6 @@ void ConverteTreeToPdf(Tree* tree) {
         fprintf(stderr, "Cant create Graph_Dump: tree pointer = %p\n", tree);
         return ;
     }
-    static const int MaxSystemCommandLen = 150;
 
     const char header[] = "\\documentclass{article}\n"
                           "\\usepackage[utf8]{inputenc}\n"
@@ -239,7 +234,6 @@ void ConverteTreeToPdf(Tree* tree) {
                           "\\usepackage{comment}\n"
 
     "\\begin{document}\n";
-    char file_name[MaxSystemCommandLen] = {0};
     
     FILE* tree_pdf = fopen("data//derivative.tex", "w+");
     Validator(tree_pdf == nullptr, "in oppening file", exit(READING_FILE_ERROR));
@@ -265,6 +259,7 @@ void ConverteTreeToPdf(Tree* tree) {
 
     Validator(is_fclosed != 0, "in closing file", exit(CLOSING_FILE_ERROR));    
 }
+
 //==========================================================================================================================================//
 
 void WriteTreeToPdf(Node* tree, FILE* tree_pdf) {
@@ -342,124 +337,6 @@ void WriteTreeToPdf(Node* tree, FILE* tree_pdf) {
     }
 }
 
-#undef _print
-
-//==========================================================================================================================================//
-
-#define _print(...) fprintf(tex_file, __VA_ARGS__)
-
-void PrintMakloren(Tree* tree, const char* file_name, elem_t number, int decompos_number) {
-    if (!tree->Root) {
-        fprintf(stderr, "Cant create Graph_Dump: tree pointer = %p\n", tree);
-        return ;
-    }
-    static const int MaxSystemCommandLen = 150;
-    const char header[] = "\\documentclass{article}\n"
-                          "\\usepackage[utf8]{inputenc}\n"
-                          "\\usepackage{float}\n"
-                          "\\usepackage{pgfplots}\n"
-                          "\\usepackage{amsmath,amsfonts,amssymb,amsthm,mathtools}\n"
-                          "\\usepackage{graphicx}\n"
-                          "\\usepackage{comment}\n"
-
-    "\\begin{document}\n";
-
-    FILE* tex_file = fopen(file_name, "w+");
-    Validator(tex_file == nullptr, "in oppening file", exit(READING_FILE_ERROR));
-
-    _print("%s", header);
-
-    int var_number = 1;
-    _print("$");
-    WriteTreeToPdf(tree->Root, tex_file);
-    _print(" = ");
-    Node* Copy      = CopyTree(tree->Diff_trees[0], Copy);
-    elem_t tree_val = Ebal(Copy, number, tree->variables[0].var_name);
-    TreeDump(Copy);
-    if (!IsEqual(tree_val, 0)) {
-        if (!IsEqual(tree_val, 1) && !IsEqual(tree_val, -1)) {
-            TreeDump(Copy);
-            WriteTreeToPdf(Copy, tex_file);
-        } else if (IsEqual(tree_val, 1)) {
-            _print("1");
-        } else {
-            _print("-1");
-        }
-        _print(" + ");
-    }
-
-    int func_counter = 0;
-    int degree       = 1;
-    for (func_counter = 0; func_counter < decompos_number - 1; func_counter++, degree++) {
-        PrintExpression(tex_file, tree, number, degree);
-        DerivativeOnALLVars(tree);
-    }
-    Copy     = CopyTree(tree->Diff_trees[0], Copy);
-    tree_val = Ebal(Copy, number, tree->variables[0].var_name);
-    printf("tree value = <%lg>\n", tree_val);
-    if (!IsEqual(tree_val, 0)) {
-        _print("\\frac{");
-        if (!IsEqual(tree_val, 1)) {
-            
-                TreeDump(Copy);
-            WriteTreeToPdf(Copy, tex_file);
-        } else {
-            _print("1");
-        }
-        _print("}");
-        _print("{%d!}", degree);
-        
-        if (!IsEqual(number, 0)) {
-            _print("\\cdot(%s - %lg)^{%d}", tree->variables[0].var_name, number, degree);
-        } else {
-            _print("\\cdot %s^{%d}", tree->variables[0].var_name, degree);
-        }
-    }
-    if (!IsEqual(number, 0)) {
-        _print(" + o(%s - %lg)^{%d}", tree->variables[0].var_name, number, decompos_number);
-    } else {
-        _print(" + o(%s)^{%d}", tree->variables[0].var_name, decompos_number);
-    }
-
-    _print("$\\newline");
-    _print("\\newline ");
-    _print("\\end{document} ");
-
-    int is_fclosed = fclose(tex_file);
-
-    system("cd data");
-    system("pdflatex data//makloren.tex");
-    system("cd ..");
-
-    Validator(is_fclosed != 0, "in closing file", exit(CLOSING_FILE_ERROR));
-}
-//==========================================================================================================================================//
-
-static void PrintExpression(FILE* tex_file, Tree* tree, elem_t number, int degree) {
-    Node* Copy      = CopyTree(tree->Diff_trees[0], Copy);
-    elem_t tree_val = Ebal(Copy, number, tree->variables[0].var_name);
-    printf("tree value = <%lg>\n", tree_val);
-    if (!IsEqual(tree_val, 0)) {
-        _print("\\frac{");
-        if (!IsEqual(tree_val, 1) && !IsEqual(tree_val, -1)) {
-            TreeDump(Copy);
-            WriteTreeToPdf(Copy, tex_file);
-        } else if (IsEqual(tree_val, 1)) {
-            _print("1");
-        } else {
-            _print("-1");
-        }
-        _print("}");
-        _print("{%d!}", degree);
-        if (!IsEqual(number, 0)) {
-            _print("\\cdot(%s - %lg)^{%d}", tree->variables[0].var_name, number, degree);
-        } else {
-            _print("\\cdot %s^{%d}", tree->variables[0].var_name, degree);
-        }
-    _print("+");
-
-    }
-}
 #undef _print
 
 //==========================================================================================================================================//

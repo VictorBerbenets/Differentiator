@@ -99,8 +99,6 @@ Node* CopyTree(Node* tree_to_copy, Node* duplic_tree);
 
 void PrintTree(Node* tree);
 
-void PrintMakloren(Tree* tree, const char* file_name, elem_t number, int decompos_number);
-
 void  FindVariables(FILE* TreeFile, Tree* tree);
 
 void CreatePartialDerivatives(Tree* tree);

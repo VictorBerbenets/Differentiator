@@ -1,2 +1,2 @@
-sin(x)
-x 
+sin(arcsin(arctg(x^2 + 5*y)))
+    x     y     

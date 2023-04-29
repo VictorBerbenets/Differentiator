@@ -57,7 +57,7 @@ void  FindVariables(FILE* TreeFile, Tree* tree) {
     char string[MAX_VARIABLE_SIZE + 1] = {0};
     int var_len = 0;
     int var_counter = 0;
-    char ch  = 0;
+    int ch  = 0;
     char end_symb = -1;
 
     SkipSpaces(&var_string);
@@ -85,7 +85,7 @@ void  FindVariables(FILE* TreeFile, Tree* tree) {
 //==========================================================================================================================================//
 
 static void ReadFileString(FILE* TreeFile, char** string_take) {
-    int string_size = GetStringSize(TreeFile);
+    size_t string_size = GetStringSize(TreeFile);
     int check_fseek = 0;
     if (!feof(TreeFile)) {
         if (fseek(TreeFile, -string_size - 1, SEEK_CUR)) {
@@ -104,13 +104,13 @@ static void ReadFileString(FILE* TreeFile, char** string_take) {
     *string_take = (char*)calloc(string_size + 2, sizeof(char)); 
     Validator(!*string_take, "memory giving error", exit(MEMORY_ALLOC_ERR));
 
-    fgets(*string_take, string_size + 2, TreeFile);  
+    fgets(*string_take, (int)string_size + 2, TreeFile);  
     (*string_take)[string_size] = '\0';
 }
 
 //==========================================================================================================================================//
 
-#define CMP(func_id, func_name, body, address_name) static const int address_name = _##func_id;
+#define CMP(func_id, func_name, body, address_name) static const int address_name = func_id;
     #include "codegeneration.h"
 #undef CMP
 
@@ -298,21 +298,21 @@ Node* GetFunc(char** string) {
     printf("I am GetF, i got such string after GetE: <%s>\n", *string);
 
         switch(func_id) {
-            case _SIN:    return SIN_    (node_left, nullptr);
-            case _COS:    return COS_    (node_left, nullptr);
-            case _TG:     return TG_     (node_left, nullptr);
-            case _CTG:    return CTG_    (node_left, nullptr);
-            case _SH:     return SH_     (node_left, nullptr);
-            case _CH:     return CH_     (node_left, nullptr);
-            case _TH:     return TH_     (node_left, nullptr);
-            case _CTH:    return CTH_    (node_left, nullptr);
-            case _ARCSIN: return ARCSIN_ (node_left, nullptr);
-            case _ARCCOS: return ARCCOS_ (node_left, nullptr);
-            case _ARCTG:  return ARCTG_  (node_left, nullptr);
-            case _ARCCTG: return ARCCTG_ (node_left, nullptr);
-            case _SQRT:   return SQRT_   (node_left, nullptr);
-            case _EXP:    return EXP_    (node_left, nullptr);
-            case _LN:     return LN_     (node_left, nullptr);
+            case SIN:    return SIN_    (node_left, nullptr);
+            case COS:    return COS_    (node_left, nullptr);
+            case TG:     return TG_     (node_left, nullptr);
+            case CTG:    return CTG_    (node_left, nullptr);
+            case SH:     return SH_     (node_left, nullptr);
+            case CH:     return CH_     (node_left, nullptr);
+            case TH:     return TH_     (node_left, nullptr);
+            case CTH:    return CTH_    (node_left, nullptr);
+            case ARCSIN: return ARCSIN_ (node_left, nullptr);
+            case ARCCOS: return ARCCOS_ (node_left, nullptr);
+            case ARCTG:  return ARCTG_  (node_left, nullptr);
+            case ARCCTG: return ARCCTG_ (node_left, nullptr);
+            case SQRT:   return SQRT_   (node_left, nullptr);
+            case EXP:    return EXP_    (node_left, nullptr);
+            case LN:     return LN_     (node_left, nullptr);
             default: break;
         }
     }

@@ -13,16 +13,17 @@ typedef struct {
 } Function_info;
 
 
-#define CMP(func_id, func, body, address) {func, _##func_id},
-    const Function_info _Diff_Functions_[] = {
-        #include "codegeneration.h"
-        {"I am not a function, baby:)", -777}
-    };
+#define CMP(func_id, func, body, address) {func, func_id},
+
+const Function_info _Diff_Functions_[] = {
+    #include "codegeneration.h"
+    {"I am not a function, baby:)", -777}
+};
+
 #undef CMP
 
 typedef union {
     double number;
-    // char var[MAX_VARIABLE_SIZE];
     char* var;
     int func;
     int oper;

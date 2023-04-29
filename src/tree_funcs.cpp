@@ -7,7 +7,7 @@
 
 //******************************************************************************************************************************************//
 
-static void ReplaceVarToNumber(Node** node_ptr, elem_t value, const char* var_name);
+static void ReplaceVarToNumber(Node** node_ptr, elem_t value);
 
 //==========================================================================================================================================//
 
@@ -18,12 +18,12 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
     if (TYPE_NUM == NUMBER) {
         new_node->type = NUMBER;
         if (value) {
-            new_node->value.number = *(elem_t*)value;
+            new_node->value.number = *(const elem_t*)value;
         }
     } else if (TYPE_NUM == OPER) {
         new_node->type = OPER;
         if (value) {
-            new_node->value.oper = *(int*)value;
+            new_node->value.oper = *(const int*)value;
         }
     } else if (TYPE_NUM == VAR) {
         new_node->type = VAR;
@@ -32,7 +32,7 @@ Node* CreateNewNode(int TYPE_NUM, const void* value, Node* left_node, Node* righ
         }
     } else if (TYPE_NUM == FUNC) {
         new_node->type = FUNC;
-        new_node->value.func = *(int*)value;
+        new_node->value.func = *(const int*)value;
     } else {
         printf("Error: invalid value type: %d\n", TYPE_NUM);
         new_node->type = NotAType;
@@ -78,7 +78,7 @@ elem_t Ebal(Node* node_ptr, elem_t value, const char* var_name) {
     if (node_ptr->type == NUMBER) {
         return node_ptr->value.number;
     }
-    ReplaceVarToNumber(&node_ptr, value, var_name);
+    ReplaceVarToNumber(&node_ptr, value);
     
     switch(node_ptr->type) {
         case OPER:
@@ -97,29 +97,33 @@ elem_t Ebal(Node* node_ptr, elem_t value, const char* var_name) {
                     PrintWarningInvalidOper();
                     return INVALID_OPERATOR;
             }
+            break;
         case FUNC:
             switch (node_ptr->value.func) {
-                case _SIN:    return  sin  (GetValue());
-                case _COS:    return  cos  (GetValue());
-                case _TG:     return  tan  (GetValue());
-                case _CTG:    return  1/tan(GetValue());
-                case _ARCSIN: return  asin (GetValue());
-                case _ARCCOS: return  acos (GetValue());
-                case _ARCTG:  return  atan (GetValue());
-                case _ARCCTG: return  M_PI/2 + atan(GetValue());
-                case _SH:     return  sinh  (GetValue());
-                case _CH:     return  cosh  (GetValue());
-                case _TH:     return  tanh  (GetValue());
-                case _CTH:    return  1/tanh(GetValue());
-                case _EXP:    return  exp   (GetValue());
-                case _LN:     return  log   (GetValue());
-                case _SQRT:   return  sqrt  (GetValue());
-            }    
+                case SIN:    return  sin  (GetValue());
+                case COS:    return  cos  (GetValue());
+                case TG:     return  tan  (GetValue());
+                case CTG:    return  1/tan(GetValue());
+                case ARCSIN: return  asin (GetValue());
+                case ARCCOS: return  acos (GetValue());
+                case ARCTG:  return  atan (GetValue());
+                case ARCCTG: return  M_PI/2 + atan(GetValue());
+                case SH:     return  sinh  (GetValue());
+                case CH:     return  cosh  (GetValue());
+                case TH:     return  tanh  (GetValue());
+                case CTH:    return  1/tanh(GetValue());
+                case EXP:    return  exp   (GetValue());
+                case LN:     return  log   (GetValue());
+                case SQRT:   return  sqrt  (GetValue());
+                default: printf("invalid func id: %d\n", node_ptr->value.func); break;
+            }
+            break;
+        default: printf("invalid type: %d\n", node_ptr->type); break;
     }
     return 0;
 }
 
-static void ReplaceVarToNumber(Node** node_ptr, elem_t value, const char*  var_name) {
+static void ReplaceVarToNumber(Node** node_ptr, elem_t value) {
     if ((*node_ptr)->left_branch) {
         if ((*node_ptr)->left_branch->type == VAR  ) {                 
             (*node_ptr)->left_branch->value.number = value;
@@ -173,6 +177,8 @@ void DeleteAllTrees(Tree* tree) {
 }
 
 void DeleteTree(Node* tree) {
+    static char* var_ptr = nullptr;
+
     if (!tree) {
         return;
     }
@@ -181,7 +187,8 @@ void DeleteTree(Node* tree) {
     
     if (tree->type == VAR) {
         if (tree->value.var) {
-            free(tree->value.var);
+            var_ptr = (char*)tree->value.var;
+            free(var_ptr);
             tree->value.var = nullptr;
         }
     }

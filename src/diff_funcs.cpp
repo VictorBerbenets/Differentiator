@@ -7,7 +7,6 @@ static Node* FindVariable(Node* tree, int* is_function);
 static int IsFunction(Node* tree);
 static Node* CopyNode(Node* node_to_copy);
 static Node* Digit(elem_t number);
-static Node* duplic_tree = nullptr;
 
 #define POW_FUNCTION(node, var_name) PowFunction(node, var_name);
 
@@ -20,15 +19,16 @@ static const int Div  = OP_DIV;
 static const int Pow  = OP_POW;
 
 //Functions
-#define CMP(func_id, func_name, body, address_name) static const int address_name = _##func_id;
+#define CMP(func_id, func_name, body, address_name) static const int address_name = func_id;
     #include "codegeneration.h"
 #undef CMP
 //******************************************************************************************************************************************//
 //---------------------------------------------------Function   bodies----------------------------------------------------------------------//
 
-#define CMP(func_id, func_name, body, ...) case _##func_id: return body;
+#define CMP(func_id, func_name, body, ...) case func_id: return body;
 
 Node* Diff(Node* node, const char* var_name) {
+static Node* duplic_tree = nullptr;
 
     if (!node) {
         return nullptr;
@@ -46,14 +46,17 @@ Node* Diff(Node* node, const char* var_name) {
         case FUNC:
             switch (node->value.func) {               
                 #include "codegeneration.h"
-                default:  break;
-            } 
+                default:  printf("invalid func id: %d\n", node->value.func); break;
+            }
+            break;
         case NUMBER: return CONST_(); 
         case VAR:    VAR_(); 
         default:
             printf ("No such node\n");
             return nullptr;
     }
+    printf("something went wrong...");
+    return nullptr;
 }
 #undef CMP
 //==========================================================================================================================================//
@@ -91,7 +94,7 @@ static Node* CopyNode(Node* node_to_copy) {
     if (node_to_copy->type == VAR) {
         size_t var_len = strlen(node_to_copy->value.var);
         copied_version->value.var = (char*) calloc(strlen(node_to_copy->value.var) + 1, sizeof(char));
-        memcpy(copied_version->value.var, node_to_copy->value.var, sizeof(char) * var_len);
+        memcpy((char*)copied_version->value.var, node_to_copy->value.var, sizeof(char) * var_len);
     }
 
     return copied_version;
@@ -130,6 +133,7 @@ static Node* FindVariable(Node* tree, int* is_function) {
 //==========================================================================================================================================//
 
 static Node* PowFunction(Node* node, const char* var_name) {
+    static Node* duplic_tree = nullptr;
     if (R->type == NUMBER) {
         return MUL(MUL(POW(cL, Digit(R->value.number - 1)), cR), dL);  
     }

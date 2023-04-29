@@ -3,13 +3,14 @@
 
 OUTPUT_FILE_NAME = main
 
-SRC =   src/main.cpp   \
-        src/queue.cpp   \
-        src/backend.cpp  \
-        src/frontend.cpp  \
-        src/file_utils.cpp \
-        src/diff_funcs.cpp  \
-        src/parsing.cpp
+SRC =   src/main.cpp      \
+        src/queue.cpp      \
+        src/tree_funcs.cpp  \
+        src/tree_simple.cpp  \
+        src/tree_print.cpp    \
+        src/file_utils.cpp     \
+        src/diff_funcs.cpp      \
+        src/tree_create.cpp
 
 # already compiled objects
 

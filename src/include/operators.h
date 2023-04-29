@@ -21,7 +21,7 @@ const int NUM = -10;
 
 enum Functions {
 
-    #define CMP(func_id, ...) _##func_id,
+    #define CMP(func_id, ...) func_id,
     #include "codegeneration.h"
     #undef CMP
 };
