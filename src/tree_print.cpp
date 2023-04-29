@@ -5,6 +5,8 @@
 #include <string.h>
 #include <ctype.h>
 
+//******************************************************************************************************************************************//
+static void PrintExpression(FILE* tex_file, Tree* tree, elem_t number, int degree);
 //==========================================================================================================================================//
 int TreeDump(Node* tree) {
     static int graph_number = 0;
@@ -346,7 +348,7 @@ void WriteTreeToPdf(Node* tree, FILE* tree_pdf) {
 
 #define _print(...) fprintf(tex_file, __VA_ARGS__)
 
-void PrintMakloren(Tree* tree, const char* file_name, int decompos_number) {
+void PrintMakloren(Tree* tree, const char* file_name, elem_t number, int decompos_number) {
     if (!tree->Root) {
         fprintf(stderr, "Cant create Graph_Dump: tree pointer = %p\n", tree);
         return ;
@@ -371,29 +373,53 @@ void PrintMakloren(Tree* tree, const char* file_name, int decompos_number) {
     _print("$");
     WriteTreeToPdf(tree->Root, tex_file);
     _print(" = ");
-
-    WriteTreeToPdf(tree->Root, tex_file);
-    _print("+");
+    Node* Copy      = CopyTree(tree->Diff_trees[0], Copy);
+    elem_t tree_val = Ebal(Copy, number, tree->variables[0].var_name);
+    TreeDump(Copy);
+    if (!IsEqual(tree_val, 0)) {
+        if (!IsEqual(tree_val, 1) && !IsEqual(tree_val, -1)) {
+            TreeDump(Copy);
+            WriteTreeToPdf(Copy, tex_file);
+        } else if (IsEqual(tree_val, 1)) {
+            _print("1");
+        } else {
+            _print("-1");
+        }
+        _print(" + ");
+    }
 
     int func_counter = 0;
     int degree       = 1;
     for (func_counter = 0; func_counter < decompos_number - 1; func_counter++, degree++) {
-        _print("\\frac{");
-        WriteTreeToPdf(tree->Diff_trees[0], tex_file);
-        _print("}{");
-        _print("%d!}", degree);
-        _print("\\cdot(%s - %s_{0})^{%d}", tree->variables[0].var_name, tree->variables[0].var_name, degree);
+        PrintExpression(tex_file, tree, number, degree);
         DerivativeOnALLVars(tree);
-        _print("+");
-
     }
-    _print("\\frac{");
-    WriteTreeToPdf(tree->Diff_trees[0], tex_file);
-    _print("}{");
-    _print("%d!}", degree);
-    _print("\\cdot(%s - %s_{0})^{%d}", tree->variables[0].var_name, tree->variables[0].var_name, degree);
-
-    _print(" + o(%s - %s_{0})^{%d}", tree->variables[0].var_name, tree->variables[0].var_name,  decompos_number);
+    Copy     = CopyTree(tree->Diff_trees[0], Copy);
+    tree_val = Ebal(Copy, number, tree->variables[0].var_name);
+    printf("tree value = <%lg>\n", tree_val);
+    if (!IsEqual(tree_val, 0)) {
+        _print("\\frac{");
+        if (!IsEqual(tree_val, 1)) {
+            
+                TreeDump(Copy);
+            WriteTreeToPdf(Copy, tex_file);
+        } else {
+            _print("1");
+        }
+        _print("}");
+        _print("{%d!}", degree);
+        
+        if (!IsEqual(number, 0)) {
+            _print("\\cdot(%s - %lg)^{%d}", tree->variables[0].var_name, number, degree);
+        } else {
+            _print("\\cdot %s^{%d}", tree->variables[0].var_name, degree);
+        }
+    }
+    if (!IsEqual(number, 0)) {
+        _print(" + o(%s - %lg)^{%d}", tree->variables[0].var_name, number, decompos_number);
+    } else {
+        _print(" + o(%s)^{%d}", tree->variables[0].var_name, decompos_number);
+    }
 
     _print("$\\newline");
     _print("\\newline ");
@@ -407,7 +433,35 @@ void PrintMakloren(Tree* tree, const char* file_name, int decompos_number) {
 
     Validator(is_fclosed != 0, "in closing file", exit(CLOSING_FILE_ERROR));
 }
+//==========================================================================================================================================//
+
+static void PrintExpression(FILE* tex_file, Tree* tree, elem_t number, int degree) {
+    Node* Copy      = CopyTree(tree->Diff_trees[0], Copy);
+    elem_t tree_val = Ebal(Copy, number, tree->variables[0].var_name);
+    printf("tree value = <%lg>\n", tree_val);
+    if (!IsEqual(tree_val, 0)) {
+        _print("\\frac{");
+        if (!IsEqual(tree_val, 1) && !IsEqual(tree_val, -1)) {
+            TreeDump(Copy);
+            WriteTreeToPdf(Copy, tex_file);
+        } else if (IsEqual(tree_val, 1)) {
+            _print("1");
+        } else {
+            _print("-1");
+        }
+        _print("}");
+        _print("{%d!}", degree);
+        if (!IsEqual(number, 0)) {
+            _print("\\cdot(%s - %lg)^{%d}", tree->variables[0].var_name, number, degree);
+        } else {
+            _print("\\cdot %s^{%d}", tree->variables[0].var_name, degree);
+        }
+    _print("+");
+
+    }
+}
 #undef _print
+
 //==========================================================================================================================================//
 
 void PrintTree(Node* tree) {

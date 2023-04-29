@@ -16,11 +16,11 @@ int main(int argc, char** argv) {
     ConstructTree(argv[1], &tree);
     TreeDump(tree.Root);
     
-    DerivativeOnALLVars(&tree);
-    DerivativeOnALLVars(&tree);
+    // printf("EBAL = %lg\n", Ebal(&treee, 0, "x"));
+    // TreeDump(tree.Root);
 
     ConverteTreeToPdf(&tree);
-    PrintMakloren(&tree, "data//makloren.tex", 3);
+    PrintMakloren(&tree, "data//makloren.tex", 0, 5);
     DeleteAllTrees(&tree);
 
     return 0;
